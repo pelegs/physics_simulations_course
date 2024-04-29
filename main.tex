@@ -1,0 +1,34 @@
+\documentclass{article}
+
+% Math packages
+\usepackage{amsthm, commath, bm}
+
+% Physics stuff
+\usepackage{physics}
+
+% Graphics
+\usepackage{tikz}
+
+% For code samples
+\usepackage{listings}
+
+% Content related-stuff
+\title{Some Course on Something}
+\author{Peleg Bar Sapir}
+
+%%%% MAIN DOC %%%%
+
+\begin{document}
+\maketitle
+
+\ifdefined\testcode
+  YES
+\else
+  Nooooo
+\fi
+
+
+\input{sections/intro}
+\input{sections/simple_mechanics}
+
+\end{document}
