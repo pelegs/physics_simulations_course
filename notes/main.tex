@@ -1,5 +1,10 @@
 \documentclass[a4paper, twoside, symmetric, nobib, nohyper]{tufte-book}
 \raggedbottom
+% \setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{2}
+\fancyhead[LE]{Physics simulation lecture notes}
+\fancyhead[RO]{Chapter \thechapter, section \thesection}
+\fancyfoot[LE, RO]{\thepage}
 
 \usepackage{parskip}
 \setlength{\parskip}{1.5em}
@@ -28,7 +33,36 @@
 \usepackage{tikz}
 \usetikzlibrary{calc, positioning, arrows.meta, decorations.pathmorphing, decorations.text, decorations.pathreplacing, patterns}
 \tikzset{
+  vector/.style = {#1, ultra thick, -stealth, cap=round},
   springcoil/.style={thick, decoration={aspect=0.3, segment length=3mm, amplitude=3mm, coil}, decorate},
+}
+\usepackage{pgfplots}
+\pgfplotsset{
+	compat=1.16,
+	every axis/.append style={font=\small},
+	function/.style n args={1}{line width=1.5pt, color=#1},
+	graph2d/.style={
+		axis x line=middle,
+		axis y line=middle,
+		every axis x label/.style={
+			at={(ticklabel* cs:1.01)},
+			anchor=west,
+		},
+		every axis y label/.style={
+			at={(ticklabel* cs:1.01)},
+			anchor=south,
+		},
+		axis line style={stealth-stealth, thick},
+		label style={font=\large},
+		xlabel=$x$,
+		ylabel=$y$,
+		tick label style={font=\small},
+		samples=200,
+		grid=both,
+		grid style={line width=.1pt, draw=gray!20},
+		major grid style={line width=.2pt,draw=gray!50},
+		minor tick num=4,
+	},
 }
 
 % Colors

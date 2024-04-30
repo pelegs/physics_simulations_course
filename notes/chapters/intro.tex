@@ -12,6 +12,7 @@ Text
 Text
 
 \section{Harmonic Oscillator}
+\subsection{Simple Harmonic Oscillator}
 Many systems in physics present a simple, periodic (repeating) motion. One such system is a simple mass-less spring connected to a mass $m$ and allowed to move in a single dimension only. If we ignore the effects of gravity, the only force acting on the mass arises from the spring itself: the more we pull or push the spring, the stronger it will resist to that change. This resistant force is given by
 \begin{equation}
   F = -kx,
@@ -73,7 +74,7 @@ or even more succinctly as
 
 \autoref{eq:simple_spring_newton_2nd_law_as_ddot} is one of the simplest possible 2nd-order \textit{ordinary} differential equations. Its solution is a combination of the two basic trigonometric equations:
 \begin{equation}
-  x(t) = c_{1}\sin(\alpha t) + c_{2}\cos(\beta t),
+  x(t) = c_{1}\sin\left(\alpha t\right) + c_{2}\cos\left(\beta t\right),
   \label{eq:harmonic_solution_ode}
 \end{equation}
 where $c_{1}$ and $c_{2}$ are constants which we can find using the \textit{starting conditions} (see note \autoref{note:ode_start_cond}), and $\alpha,\beta$ are parameters of the motion. Since function arguments must be unitless, these two parameters also cause the total quantity inside the trigonometric functions to be unitless by having units corresponding to \SIe{1\over time}. For example, if we measure the time in \SIe{\second}, then the units of $\alpha$ and $\beta$ are \SIe{\per\second} = \SIe{\hertz}.
@@ -81,3 +82,91 @@ where $c_{1}$ and $c_{2}$ are constants which we can find using the \textit{star
 \begin{note}{Starting conditions for solving ODEs}{ode_start_cond}
   Recall that in order to completely solve an ordinary differential equation of order $n$ we must have $n$ starting conditions.
 \end{note}
+
+In the case where the initial position of the mass is $x_{0}$ and the initial velocity is $\dot{x}_{0}=0$ we get the simplified solution
+\begin{equation}
+  x(t) = x_{0}\cos(\omega t),
+  \label{eq:harmonic_normal_solution}
+\end{equation}
+where $\omega=\sqrt{\frac{k}{m}}$. The plot of the position $x(t)$ of the mass is given in \autoref{fig:simple_spring_plot}.
+
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[
+      name=pos_vs_time,
+      graph2d,
+      width=10cm, height=4cm,
+      xmin=0, xmax=6*pi+0.5,
+      ymin=-1.1, ymax=1.1,
+      domain={0:6*pi+0.5},
+      xlabel=$\frac{t}{2\pi\omega}$,
+      ylabel=$\frac{x}{x_{0}}$,
+      xtick={2*pi,4*pi,6*pi},
+      ytick={-1,0,1},
+      xticklabels={$2\pi$,$4\pi$,$6\pi$}
+    ]
+    \addplot[function={xblue}] {cos(x * 180/pi)};
+    \end{axis}
+    \begin{axis}[
+      at=(pos_vs_time.below south west),
+      anchor=north west,
+      yshift=-1cm,
+      graph2d,
+      width=10cm, height=4cm,
+      xmin=0, xmax=6*pi+0.5,
+      ymin=-1.1, ymax=1.1,
+      domain={0:6*pi+0.5},
+      xlabel=$\frac{t}{2\pi\omega}$,
+      ylabel=$\frac{\dot{x}}{\dot{x}_{\max}}$,
+      xtick={2*pi,4*pi,6*pi},
+      ytick={-1,0,1},
+      xticklabels={$2\pi$,$4\pi$,$6\pi$}
+    ]
+    \addplot[function={xred}] {-sin(x * 180/pi)};
+  \end{axis}
+  \end{tikzpicture}
+  \caption{Simple harmonic oscillator, top (blue): position $x$ vs. time $t$. The axes units are such that a full period of the oscillation takes $\Delta t=2\pi$, and that the minimum and maximum values of the position are $\pm1$, respectively. Bottom (red): velocity vs. time on the same time axes, and a velocity axis which is scaled such that $v_{\max}=1$.}
+  \label{fig:simple_spring_plot}
+\end{figure}
+
+We can now plot the position of the mass vs. its momentum $p=m\dot{x}$ (\autoref{fig:harmonic_oscillator_phase_space}). This is called a \textbf{phase space} plot.
+
+
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[
+      graph2d,
+      width=10cm, height=10cm,
+      xmin=-3, xmax=3,
+      ymin=-3, ymax=3,
+      axis equal=true,
+      domain={-3:3},
+      xlabel=$\frac{x}{X_{0}}$,
+      ylabel=$\frac{p}{P_{\max}}$,
+      xtick={-3,-2,...,3},
+      ytick={-3,-2,...,3},
+      samples=100,
+    ]
+    \addplot[-stealth, function={xpurple}, domain=-1:1] {sqrt(0.25-x^2)};
+    \addplot[stealth-, function={xpurple}, domain=-1:1] {-sqrt(0.25-x^2)};
+
+    \addplot[-stealth, function={xblue}, domain=-1:1] {sqrt(1-x^2)};
+    \addplot[stealth-, function={xblue}, domain=-1:1] {-sqrt(1-x^2)};
+
+    \addplot[-stealth, function={xgreen}, domain=-2.5:2.5] {sqrt(1.5^2-x^2)};
+    \addplot[stealth-, function={xgreen}, domain=-2.5:2.5] {-sqrt(1.5^2-x^2)};
+
+    \addplot[-stealth, function={xorange}, domain=-2.7:2.7] {sqrt(4-x^2)};
+    \addplot[stealth-, function={xorange}, domain=-2.7:2.7] {-sqrt(4-x^2)};
+
+    \addplot[-stealth, function={xred}, domain=-3.5:3.5] {sqrt(2.5^2-x^2)};
+    \addplot[stealth-, function={xred}, domain=-3.5:3.5] {-sqrt(2.5^2-x^2)};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Phase space plot of simple harmonic oscillators with different momenta (either their masses are different, or their initial distance are different). The axes are scaled such that their units are the initial position $X_{0}$ and maximum momentum $P_{0}$, respectively, of the second oscillator (trajectory drawn in blue).}
+  \label{fig:harmonic_oscillator_phase_space}
+\end{figure}
+
+\subsection{Damped Harmonic Oscillator}
