@@ -9,7 +9,29 @@
 
 % Graphics
 \usepackage{tikz}
-\usetikzlibrary{calc, arrows.meta}
+\usetikzlibrary{calc, positioning, arrows.meta, decorations.pathmorphing, decorations.text, decorations.pathreplacing, patterns}
+\tikzset{
+  springcoil/.style={thick, decoration={aspect=0.3, segment length=3mm, amplitude=3mm, coil}, decorate},
+}
+
+% Colors
+\definecolor{xred}{HTML}{BD4242}
+\definecolor{xblue}{HTML}{4268BD}
+\definecolor{xgreen}{HTML}{52B256}
+\definecolor{xpurple}{HTML}{7F52B2}
+\definecolor{xorange}{HTML}{FD9337}
+\definecolor{xdotted}{HTML}{999999}
+\definecolor{xgray}{HTML}{777777}
+\definecolor{xcyan}{HTML}{80F5DC}
+\definecolor{xpink}{HTML}{F690EA}
+\definecolor{xgrayblue}{HTML}{49B095}
+\definecolor{xgraycyan}{HTML}{5AA1B9}
+
+\colorlet{xdarkred}{xred!50!black}
+\colorlet{xdarkblue}{xblue!50!black}
+\colorlet{xdarkgreen}{xgreen!50!black}
+\colorlet{xdarkpurple}{xpurple!50!black}
+\colorlet{xdarkorange}{xorange!50!black}
 
 % For code samples
 \usepackage{listings}
@@ -19,8 +41,12 @@
 \usepackage{hyperref}
 % \usepackage{cleveref}
 
+% Text stuff
+\usepackage{csquotes}
+
 % Content related-stuff
-\title{Some Course on Something}
+\title{Course: Physics Simulations\\Lecture Notes}
+% NOTE: add mote details!
 \author{Peleg Bar Sapir}
 
 %%%% MAIN DOC %%%%

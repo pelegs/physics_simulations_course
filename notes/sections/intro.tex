@@ -3,3 +3,44 @@
 \subsection{Python}
 \subsection{A Bit About Git}
 \subsection{Some Mathematical Background}
+
+\subsection{Harmonic Oscillator}
+Many system in physics present a simple, periodic (repeating) motion. One such system is a simple mass-less spring connected to a mass $m$ and allowed to move in a single dimension only. If we ignore the effects of gravity, the only force acting on the mass arises from the spring itself: the more we pull or push the spring, the stronger it will resist to that change. This resistant force is given by
+\begin{equation}
+  F = -kx,
+  \label{eq:spring_force}
+\end{equation}
+where $k$ is the \textbf{spring constant}, and $x$ is the amount by which the spring contracts or expands relative to its rest length $L$. In \autoref{fig:simple_spring} we
+
+\begin{figure}
+  \begin{center}
+    \begin{tikzpicture}
+      \coordinate (x0) at (3,1.5);
+      \draw[thick, dashed, black] (x0 |- 0,1) node [above] {$x_0$} -- ++(0,-8);
+      \draw[thick, dashed,-stealth] (-0.5, 1.7) -- ++(3,0) node [midway, above] {positive $x$ direction};
+
+      \draw[line width=5mm, black!30] (-0.25,1) -- ++(0,-1.75) -- ++(6.25,0);
+      \draw[thick] (0,1) -- ++(0,-1.5) -- ++(6,0);
+      \draw[thick, fill=xred!50] (3,0) circle (0.5) node (m1) {$m$};
+      \draw[springcoil, xdarkblue] (0,0) -- ($(m1)-(0.5,0)$);
+
+      \draw[line width=5mm, black!30] (-0.25,-2) -- ++(0,-1.75) -- ++(6.25,0);
+      \draw[thick] (0,-2) -- ++(0,-1.5) -- ++(6,0);
+      \draw[thick, fill=xred!50] (5,-3) circle (0.5) node (m2) {$m$};
+      \draw[springcoil, xdarkblue] (0,-3) -- ($(m2)-(0.5,0)$);
+
+      \draw[line width=5mm, black!30] (-0.25,-5) -- ++(0,-1.75) -- ++(6.25,0);
+      \draw[thick] (0,-5) -- ++(0,-1.5) -- ++(6,0);
+      \draw[thick, fill=xred!50] (1.5,-6) circle (0.5) node (m3) {$m$};
+      \draw[springcoil, xdarkblue] (0,-6) -- ($(m3)-(0.5,0)$);
+
+      \draw[xred, thick, cap=round, decorate, decoration={brace, amplitude=3pt, raise=3pt}] (m1 |- 0,-2.5) -- (m2 |- 0,-2.5) node[midway, above, yshift=5pt]{$\Delta x_{1}>0$};
+      \draw[xred, thick, cap=round, decorate, decoration={brace, amplitude=3pt, raise=3pt, mirror}] (m1 |- 0,-5.5) -- (m3 |- 0,-5.5) node[midway, above, yshift=5pt]{$\Delta x_{2}<0$};
+
+      \draw[-stealth, thick, xdarkblue] (2.5,-2) -- ++(-1,0) node[midway, above] {$F_{1}<0$};
+      \draw[-stealth, thick, xdarkblue] (0.5,-5) -- ++(0.6,0) node[midway, above] {$F_{2}>0$};
+    \end{tikzpicture}
+  \end{center}
+  \caption{A simple spring-mass system with spring constant $k$ and a mass $m$. The top figure shows the spring at rest - i.e. when the mass is located at position $x_{0}$ the spring applies no force on the mass (since $\Delta x = x_{m}-x_{0}=0$). The middle figure show the spring being at a \textit{positive} displacement $\Delta x_{1}>0$, causing the spring to pull back with a negative force $F_{1}=-k\Delta x_{1}$. The bottom picture shows the spring contracting by $\Delta x_{2}<0$, casing the spring to apply a positive force $F_{2}=-k\Delta x_{2}$ on the mass.}\label{fig:simple_spring}
+\end{figure}
+
