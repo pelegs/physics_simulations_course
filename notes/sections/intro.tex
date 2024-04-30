@@ -5,12 +5,16 @@
 \subsection{Some Mathematical Background}
 
 \subsection{Harmonic Oscillator}
-Many system in physics present a simple, periodic (repeating) motion. One such system is a simple mass-less spring connected to a mass $m$ and allowed to move in a single dimension only. If we ignore the effects of gravity, the only force acting on the mass arises from the spring itself: the more we pull or push the spring, the stronger it will resist to that change. This resistant force is given by
+Many systems in physics present a simple, periodic (repeating) motion. One such system is a simple mass-less spring connected to a mass $m$ and allowed to move in a single dimension only. If we ignore the effects of gravity, the only force acting on the mass arises from the spring itself: the more we pull or push the spring, the stronger it will resist to that change. This resistant force is given by
 \begin{equation}
   F = -kx,
   \label{eq:spring_force}
 \end{equation}
-where $k$ is the \textbf{spring constant}, and $x$ is the amount by which the spring contracts or expands relative to its rest length $L$. In \autoref{fig:simple_spring} we
+where $k$ is the \textbf{spring constant}, and $x$ is the amount by which the spring contracts or expands relative to its rest position $x_{0}$. In \autoref{fig:simple_spring} we show three cases: when the mass is at the springs rest position, $x_{m}=x_{0}$, the spring applies no force on it. When the mass is displaced by a positive amount $\Delta x>0$, the spring applied a \textit{negative} force on it: $F=-k\Delta x<0$ (see note \autoref{note:negative_force}). And when the mass is displaced such that it contracts the spring, $\Delta x<0$ and thus the force applied by the spring is positive, $F=k\Delta x>0$.
+
+\begin{note}{Negative and positive forces}{negative_force}
+  Recall that in this context, negative force means a force in the negative $x$ direction.
+\end{note}
 
 \begin{figure}
   \begin{center}
@@ -44,3 +48,29 @@ where $k$ is the \textbf{spring constant}, and $x$ is the amount by which the sp
   \caption{A simple spring-mass system with spring constant $k$ and a mass $m$. The top figure shows the spring at rest - i.e. when the mass is located at position $x_{0}$ the spring applies no force on the mass (since $\Delta x = x_{m}-x_{0}=0$). The middle figure show the spring being at a \textit{positive} displacement $\Delta x_{1}>0$, causing the spring to pull back with a negative force $F_{1}=-k\Delta x_{1}$. The bottom picture shows the spring contracting by $\Delta x_{2}<0$, casing the spring to apply a positive force $F_{2}=-k\Delta x_{2}$ on the mass.}\label{fig:simple_spring}
 \end{figure}
 
+Using Newtons second law of motion (REF?) with $x$ being the displacement from the rest position $x_{0}$, we get the relation
+\begin{equation}
+  a = -kx,
+  \label{eq:simple_spring_newton_2nd_law}
+\end{equation}
+but since $a = \od{v}{t} = \od[2]{x}{t}$, we can re-write \autoref{eq:simple_spring_newton_2nd_law} as
+\begin{equation}
+  \od[2]{x}{t} = -kx,
+  \label{eq:simple_spring_newton_2nd_law_as_derivative}
+\end{equation}
+or even more succinctly as
+\begin{equation}
+  \ddot{x} = -kx.
+  \label{eq:simple_spring_newton_2nd_law_as_ddot}
+\end{equation}
+
+\autoref{eq:simple_spring_newton_2nd_law_as_ddot} is one of the simplest possible 2nd-order \textit{ordinary} differential equations. Its solution is a combination of the two basic trigonometric equations:
+\begin{equation}
+  x(t) = c_{1}\sin(at) + c_{2}\cos(bt),
+  \label{eq:harmonic_solution_ode}
+\end{equation}
+where $c_{1}$ and $c_{2}$ are constants which we can find using the \textit{starting conditions} (see note \autoref{note:ode_start_cond}).
+
+\begin{note}{Starting conditions for solving a differential equation}{ode_start_cond}
+  Recall that in order to completely solve an ordinary differential equation of order $n$ we must have $n$ starting conditions.
+\end{note}

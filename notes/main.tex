@@ -1,5 +1,7 @@
 \documentclass{article}
 \usepackage[a4paper, margin=2cm]{geometry}
+\usepackage{parskip}
+\setlength{\parskip}{1.5em}
 
 % Math packages
 \usepackage{amsthm, commath, bm}
@@ -32,6 +34,117 @@
 \colorlet{xdarkgreen}{xgreen!50!black}
 \colorlet{xdarkpurple}{xpurple!50!black}
 \colorlet{xdarkorange}{xorange!50!black}
+
+% \usepackage{enumitem}
+
+% Font-related stuff
+\usepackage{fontawesome}
+
+% Fancy environments
+\usepackage[most]{tcolorbox}
+\newenvironment{descitemize}
+{\begin{description}[leftmargin=*, before=\let\makelabel\descitemlabel]}
+{\end{description}}
+\newcommand{\descitemlabel}[1]{\textbullet\ \textbf{#1}:}
+
+\usepackage[most]{tcolorbox}
+
+\tikzset{
+	second box/.style={
+		anchor=east,
+		text=white,
+		% rounded corners,
+		fill=#1,
+		xshift=-4mm,
+	},
+}
+\tikzset{tcbreak/.style = {fill=white, thick, draw=#1, text=#1, font=\bfseries}}
+\tcbset{
+	common/.style n args={2}{
+		colframe={#1},
+		colback={#1!5},
+		colbacktitle={#1},
+		lower separated=false,
+		coltitle=white,
+		boxrule=1pt,
+		fonttitle=\bfseries,
+		enhanced,
+		breakable,
+		top=8pt,
+		sharp corners,
+		before skip=1em,
+		after skip=2em,
+		attach boxed title to top left={
+			yshift=-0.25cm,
+			xshift=0.38cm,
+		},
+		boxed title style={
+			boxrule=0pt,
+			colframe=white,
+			arc=0pt,
+			outer arc=0pt,
+		},
+		separator sign={~~},
+		% -- overlays based on the following TeX SE answer: https://tex.stackexchange.com/a/545324/162087
+		overlay unbroken={
+			\node[text=white, align=right, fill=#1, xshift=-4mm, minimum height=6mm, anchor=east] at (frame.south east) {#2};
+		},
+		overlay first={
+			\draw[thick, #1, decoration={coil, amplitude=0.5mm}, decorate]
+				(frame.south west) -- (frame.south east);
+			\path[font=\small\itshape] (frame.south) node [tcbreak={#1}] (cont) {continues in the next page \faHandORight};
+		},
+		overlay middle={%
+			% upper break
+			\draw[thick, #1, decoration={coil, amplitude=0.5mm}, decorate]
+				(frame.north west) -- (frame.north east);
+			\path[font=\small\itshape] (frame.north) node [tcbreak={#1}] (cont) {\faHandORight continues from the previous page};
+
+			% lower break
+			\draw[thick, #1, decoration={coil, amplitude=0.5mm}, decorate]
+				(frame.south west) -- (frame.south east);
+			\path[font=\small\itshape] (frame.south) node [tcbreak={#1}] (cont) {continues in the next page \faHandORight};
+		},
+		overlay last={
+			\node[text=white, align=right, fill=#1, xshift=-4mm, minimum height=6mm, anchor=east] at (frame.south east) {#2};
+			\draw[thick, #1, decoration={coil, amplitude=0.5mm}, decorate]
+				(frame.north west) -- (frame.north east);
+			\path[font=\small\itshape] (frame.north) node [tcbreak={#1}] (cont) {\faHandORight continues from the previous page};
+		}
+	},
+	defstyle/.style={
+		common={xpurple}{$\bm{\pi}$},
+	},
+	theoremstyle/.style={
+		common={xgraycyan}{$\multimapdotbothA$},
+	},
+	lemmastyle/.style={
+		common={xgrayblue}{$\multimap$},
+	},
+	proofstyle/.style={
+		common={xgreen}{\textbf{QED}},
+	},
+	examplestyle/.style={
+		common={xblue}{\faStar},
+	},
+	notestyle/.style={
+		common={xred}{\textbf{!}},
+	},
+	challengestyle/.style={
+		common={xgreen}{\textbf{?}},
+	},
+	quotestyle/.style={
+		common={gray}{\textbf{"}},
+	},
+}
+
+\newtcbtheorem[auto counter, number within=section]{definition}{Definition}{defstyle}{def}
+\newtcbtheorem[auto counter, number within=section]{theorem}{Theorem}{theoremstyle}{theorem}
+\newtcbtheorem[auto counter, number within=section]{lemma}{Lemma}{lemmastyle}{lemma}
+% \newtcbtheorem[auto counter, number within=section]{proof}{Proof}{proofstyle}{proof}
+\newtcbtheorem[auto counter, number within=section]{example}{Example}{examplestyle}{example}
+\newtcbtheorem[auto counter, number within=section]{note}{Note}{notestyle}{note}
+\newtcbtheorem[auto counter, number within=section]{challenge}{Challenge}{challengestyle}{challenge}
 
 % For code samples
 \usepackage{listings}
