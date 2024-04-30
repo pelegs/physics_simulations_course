@@ -135,34 +135,34 @@ We can now plot the position of the mass vs. its momentum $p=m\dot{x}$ (\autoref
 \begin{figure}
   \centering
   \begin{tikzpicture}
-    % \begin{axis}[
-    %   graph2d,
-    %   width=10cm, height=10cm,
-    %   xmin=-3, xmax=3,
-    %   ymin=-3, ymax=3,
-    %   axis equal=true,
-    %   domain={-3:3},
-    %   xlabel=$\frac{x}{X_{0}}$,
-    %   ylabel=$\frac{p}{P_{\max}}$,
-    %   xtick={-3,-2,...,3},
-    %   ytick={-3,-2,...,3},
-    %   samples=100,
-    % ]
-    % \addplot[-stealth, function={xpurple}, domain=-1:1] {sqrt(0.25-x^2)};
-    % \addplot[stealth-, function={xpurple}, domain=-1:1] {-sqrt(0.25-x^2)};
-    %
-    % \addplot[-stealth, function={xblue}, domain=-1:1] {sqrt(1-x^2)};
-    % \addplot[stealth-, function={xblue}, domain=-1:1] {-sqrt(1-x^2)};
-    %
-    % \addplot[-stealth, function={xgreen}, domain=-2.5:2.5] {sqrt(1.5^2-x^2)};
-    % \addplot[stealth-, function={xgreen}, domain=-2.5:2.5] {-sqrt(1.5^2-x^2)};
-    %
-    % \addplot[-stealth, function={xorange}, domain=-2.7:2.7] {sqrt(4-x^2)};
-    % \addplot[stealth-, function={xorange}, domain=-2.7:2.7] {-sqrt(4-x^2)};
-    %
-    % \addplot[-stealth, function={xred}, domain=-3.5:3.5] {sqrt(2.5^2-x^2)};
-    % \addplot[stealth-, function={xred}, domain=-3.5:3.5] {-sqrt(2.5^2-x^2)};
-    % \end{axis}
+    \begin{axis}[
+      graph2d,
+      width=10cm, height=10cm,
+      xmin=-3, xmax=3,
+      ymin=-3, ymax=3,
+      axis equal=true,
+      domain={-3:3},
+      xlabel=$\frac{x}{X_{0}}$,
+      ylabel=$\frac{p}{P_{\max}}$,
+      xtick={-3,-2,...,3},
+      ytick={-3,-2,...,3},
+      samples=100,
+    ]
+    \addplot[-stealth, function={xpurple}, domain=-1:1] {sqrt(0.25-x^2)};
+    \addplot[stealth-, function={xpurple}, domain=-1:1] {-sqrt(0.25-x^2)};
+
+    \addplot[-stealth, function={xblue}, domain=-1:1] {sqrt(1-x^2)};
+    \addplot[stealth-, function={xblue}, domain=-1:1] {-sqrt(1-x^2)};
+
+    \addplot[-stealth, function={xgreen}, domain=-2.5:2.5] {sqrt(1.5^2-x^2)};
+    \addplot[stealth-, function={xgreen}, domain=-2.5:2.5] {-sqrt(1.5^2-x^2)};
+
+    \addplot[-stealth, function={xorange}, domain=-2.7:2.7] {sqrt(4-x^2)};
+    \addplot[stealth-, function={xorange}, domain=-2.7:2.7] {-sqrt(4-x^2)};
+
+    \addplot[-stealth, function={xred}, domain=-3.5:3.5] {sqrt(2.5^2-x^2)};
+    \addplot[stealth-, function={xred}, domain=-3.5:3.5] {-sqrt(2.5^2-x^2)};
+    \end{axis}
   \end{tikzpicture}
   \caption{Phase space plot of simple harmonic oscillators with different momenta (either their masses are different, or their initial distance are different). The axes are scaled such that their units are the initial position $X_{0}$ and maximum momentum $P_{0}$, respectively, of the second oscillator (trajectory drawn in blue).}
   \label{fig:harmonic_oscillator_phase_space}
@@ -198,3 +198,6 @@ For the solutions to $\lambda$ to be real numbers, $c^{2}\geq4km$ - otherwise th
   x(t) = 
   \label{eq:label}
 \end{equation}
+
+\subsection{Simulating Harmonic Oscillators in Python}
+Text
