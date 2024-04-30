@@ -130,43 +130,71 @@ where $\omega=\sqrt{\frac{k}{m}}$. The plot of the position $x(t)$ of the mass i
   \label{fig:simple_spring_plot}
 \end{figure}
 
-We can now plot the position of the mass vs. its momentum $p=m\dot{x}$ (\autoref{fig:harmonic_oscillator_phase_space}). This is called a \textbf{phase space} plot.
-
+We can now plot the position of the mass vs. its momentum $p=m\dot{x}$ (\autoref{fig:harmonic_oscillator_phase_space}). This is called a \textbf{phase space} plot. MORE TEXT ON THE PHASE SPACE.
 
 \begin{figure}
   \centering
   \begin{tikzpicture}
-    \begin{axis}[
-      graph2d,
-      width=10cm, height=10cm,
-      xmin=-3, xmax=3,
-      ymin=-3, ymax=3,
-      axis equal=true,
-      domain={-3:3},
-      xlabel=$\frac{x}{X_{0}}$,
-      ylabel=$\frac{p}{P_{\max}}$,
-      xtick={-3,-2,...,3},
-      ytick={-3,-2,...,3},
-      samples=100,
-    ]
-    \addplot[-stealth, function={xpurple}, domain=-1:1] {sqrt(0.25-x^2)};
-    \addplot[stealth-, function={xpurple}, domain=-1:1] {-sqrt(0.25-x^2)};
-
-    \addplot[-stealth, function={xblue}, domain=-1:1] {sqrt(1-x^2)};
-    \addplot[stealth-, function={xblue}, domain=-1:1] {-sqrt(1-x^2)};
-
-    \addplot[-stealth, function={xgreen}, domain=-2.5:2.5] {sqrt(1.5^2-x^2)};
-    \addplot[stealth-, function={xgreen}, domain=-2.5:2.5] {-sqrt(1.5^2-x^2)};
-
-    \addplot[-stealth, function={xorange}, domain=-2.7:2.7] {sqrt(4-x^2)};
-    \addplot[stealth-, function={xorange}, domain=-2.7:2.7] {-sqrt(4-x^2)};
-
-    \addplot[-stealth, function={xred}, domain=-3.5:3.5] {sqrt(2.5^2-x^2)};
-    \addplot[stealth-, function={xred}, domain=-3.5:3.5] {-sqrt(2.5^2-x^2)};
-    \end{axis}
+    % \begin{axis}[
+    %   graph2d,
+    %   width=10cm, height=10cm,
+    %   xmin=-3, xmax=3,
+    %   ymin=-3, ymax=3,
+    %   axis equal=true,
+    %   domain={-3:3},
+    %   xlabel=$\frac{x}{X_{0}}$,
+    %   ylabel=$\frac{p}{P_{\max}}$,
+    %   xtick={-3,-2,...,3},
+    %   ytick={-3,-2,...,3},
+    %   samples=100,
+    % ]
+    % \addplot[-stealth, function={xpurple}, domain=-1:1] {sqrt(0.25-x^2)};
+    % \addplot[stealth-, function={xpurple}, domain=-1:1] {-sqrt(0.25-x^2)};
+    %
+    % \addplot[-stealth, function={xblue}, domain=-1:1] {sqrt(1-x^2)};
+    % \addplot[stealth-, function={xblue}, domain=-1:1] {-sqrt(1-x^2)};
+    %
+    % \addplot[-stealth, function={xgreen}, domain=-2.5:2.5] {sqrt(1.5^2-x^2)};
+    % \addplot[stealth-, function={xgreen}, domain=-2.5:2.5] {-sqrt(1.5^2-x^2)};
+    %
+    % \addplot[-stealth, function={xorange}, domain=-2.7:2.7] {sqrt(4-x^2)};
+    % \addplot[stealth-, function={xorange}, domain=-2.7:2.7] {-sqrt(4-x^2)};
+    %
+    % \addplot[-stealth, function={xred}, domain=-3.5:3.5] {sqrt(2.5^2-x^2)};
+    % \addplot[stealth-, function={xred}, domain=-3.5:3.5] {-sqrt(2.5^2-x^2)};
+    % \end{axis}
   \end{tikzpicture}
   \caption{Phase space plot of simple harmonic oscillators with different momenta (either their masses are different, or their initial distance are different). The axes are scaled such that their units are the initial position $X_{0}$ and maximum momentum $P_{0}$, respectively, of the second oscillator (trajectory drawn in blue).}
   \label{fig:harmonic_oscillator_phase_space}
 \end{figure}
 
 \subsection{Damped Harmonic Oscillator}
+We can make the harmonic oscillator model a bit more realistic if we add a damping force proportional to the velocity of the mass. This corresponds e.g. to introducing friction into the model. The form of the damping force is $F_{\text{damp}}(t)=-cv(t)=-c\dot{x}$, for some real damping coefficient $c\geq0$ (in the case where $c=0$ we get back the simple harmonic oscillator model). Thus, the overall Newton 2nd law equation of the system has the following form:
+\begin{equation}
+  m\ddot{x} = -c\dot{x}-kx.
+  \label{eq:damped_harmonic_oscillator}
+\end{equation}
+
+The term $-c\dot{x}$ always acts in the opposite direction to the velocity due to the minus sign. Re-arranging \autoref{eq:damped_harmonic_oscillator} we get the more \enquote{canonical} form
+\begin{equation}
+  m\ddot{x} + c\dot{x} + kx = 0,
+  \label{eq:damped_harmonic_oscillator_different_form}
+\end{equation}
+We then use the solution $x(t)=\Eu{\lambda t}$, subtituting it into \autoref{eq:damped_harmonic_oscillator_different_form}:
+\begin{align}
+  F_{\text{total}}(t) &= \lambda^{2}m\Eu{\lambda t} + c\Eu{\lambda t} + k\Eu{\lambda t}\\
+  &= \Eu{\lambda t}\left(m\lambda^{2}+c\lambda+k\right)\\
+  &= 0.
+  \label{eq:2nd_order_ODE_polynomial}
+\end{align}
+
+Since \autoref{eq:2nd_order_ODE_polynomial} is true for all $t$ (and in any case $\Eu{\lambda t}\neq 0$ for all $t$), for the equation to be true it must be that the quadratic eqaution in $\lambda$ equals zero. Using the quadratic formula we get that
+\begin{equation}
+  \lambda_{1,2} = \frac{-c\pm\sqrt{c^{2}-4km}}{2m}.
+  \label{eq:2nd_order_ODE_polynomial_solution}
+\end{equation}
+For the solutions to $\lambda$ to be real numbers, $c^{2}\geq4km$ - otherwise the term in the square root is negative. When $c^{2}>4km$ we call the system \textbf{overdamped}, and the case where $c^{2}=4km$ is the \textbf{critical damping} value. The overall position vs. time relationship of the damped system is given by
+\begin{equation}
+  x(t) = 
+  \label{eq:label}
+\end{equation}

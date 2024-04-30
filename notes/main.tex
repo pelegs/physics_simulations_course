@@ -20,8 +20,19 @@
     eprint=false
 ]{biblatex}
 \addbibresource{ref/references.bib}
-% Math packages
+
+% Math related defs
 \usepackage{amsthm, commath, bm}
+
+% Easier space-notation
+\newcommand{\Rs}[1][]{\mathbb{R}^{#1}}
+\newcommand{\Cs}[1][]{\mathbb{C}^{#1}}
+
+% Better imaginary unit and natural base notation (to separate from variables)
+\newcommand{\iu}{\mathrm{i}\mkern1mu}
+\newcommand{\eu}{\mathrm{e}}
+\newcommand{\Eu}[1]{\mathrm{e}^{#1}}
+\newcommand{\EX}[1]{\exp\left(#1\right)}
 
 % Physics stuff
 \usepackage{physics}
