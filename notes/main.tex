@@ -1,8 +1,19 @@
-\documentclass{article}
-\usepackage[a4paper, margin=2cm]{geometry}
+\documentclass[a4paper, twoside, symmetric, nobib, nohyper]{tufte-book}
+% \usepackage[a4paper, margin=2cm]{geometry}
 \usepackage{parskip}
 \setlength{\parskip}{1.5em}
 
+% Bibliography
+\usepackage[
+    backend=biber,
+    style=authoryear-icomp,
+    sortlocale=de_DE,
+    natbib=true,
+    url=false, 
+    doi=true,
+    eprint=false
+]{biblatex}
+\addbibresource{ref/references.bib}
 % Math packages
 \usepackage{amsthm, commath, bm}
 
@@ -158,7 +169,7 @@
 \usepackage{csquotes}
 
 % Content related-stuff
-\title{Course: Physics Simulations\\Lecture Notes}
+\title{Physics Simulations\\(Lecture Notes)}
 % NOTE: add mote details!
 \author{Peleg Bar Sapir}
 
