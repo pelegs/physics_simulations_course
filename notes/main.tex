@@ -1,5 +1,6 @@
 \documentclass[a4paper, twoside, symmetric, nobib, nohyper]{tufte-book}
-% \usepackage[a4paper, margin=2cm]{geometry}
+\raggedbottom
+
 \usepackage{parskip}
 \setlength{\parskip}{1.5em}
 
@@ -19,6 +20,9 @@
 
 % Physics stuff
 \usepackage{physics}
+\usepackage{siunitx}
+\renewcommand{\SI}[3][]{\mbox{$\num[#1]{#2}\,\left[\si{#3}\right]$}}
+\newcommand{\SIe}[1]{\SI{}{#1}}
 
 % Graphics
 \usepackage{tikz}
@@ -149,13 +153,13 @@
 	},
 }
 
-\newtcbtheorem[auto counter, number within=section]{definition}{Definition}{defstyle}{def}
-\newtcbtheorem[auto counter, number within=section]{theorem}{Theorem}{theoremstyle}{theorem}
-\newtcbtheorem[auto counter, number within=section]{lemma}{Lemma}{lemmastyle}{lemma}
-% \newtcbtheorem[auto counter, number within=section]{proof}{Proof}{proofstyle}{proof}
-\newtcbtheorem[auto counter, number within=section]{example}{Example}{examplestyle}{example}
-\newtcbtheorem[auto counter, number within=section]{note}{Note}{notestyle}{note}
-\newtcbtheorem[auto counter, number within=section]{challenge}{Challenge}{challengestyle}{challenge}
+\newtcbtheorem[auto counter, number within=chapter]{definition}{Definition}{defstyle}{def}
+\newtcbtheorem[auto counter, number within=chapter]{theorem}{Theorem}{theoremstyle}{theorem}
+\newtcbtheorem[auto counter, number within=chapter]{lemma}{Lemma}{lemmastyle}{lemma}
+% \newtcbtheorem[auto counter, number within=chapter]{proof}{Proof}{proofstyle}{proof}
+\newtcbtheorem[auto counter, number within=chapter]{example}{Example}{examplestyle}{example}
+\newtcbtheorem[auto counter, number within=chapter]{note}{Note}{notestyle}{note}
+\newtcbtheorem[auto counter, number within=chapter]{challenge}{Challenge}{challengestyle}{challenge}
 
 % For code samples
 \usepackage{listings}
@@ -180,7 +184,7 @@
 
 % For tests
 \ifdefined\testcode
-  \section{Tests}
+  \chapter{Tests}
   This is a test. And this is a reference to some code: \autoref{lst:code1}.
   \input{code/maths}
 
@@ -200,10 +204,13 @@
 \fi
 
 % Content
-\input{sections/intro}
-\input{sections/mechanics}
-\input{sections/waves}
-\input{sections/thermodynamics}
-\input{sections/molecular_dynamics}
+\makeatletter
+\def\input@path{{./chapters/}}
+\input{intro}
+% \input{mechanics}
+% \input{waves}
+% \input{thermodynamics}
+% \input{molecular_dynamics}
+\makeatother
 
 \end{document}
