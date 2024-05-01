@@ -130,7 +130,7 @@ where $\omega=\sqrt{\frac{k}{m}}$. The plot of the position $x(t)$ of the mass i
   \label{fig:simple_spring_plot}
 \end{figure}
 
-We can now plot the position of the mass vs. its momentum $p=m\dot{x}$ (\autoref{fig:harmonic_oscillator_phase_space}). This is called a \textbf{phase space} plot. MORE TEXT ON THE PHASE SPACE.
+It would be useful to understand how does the spring-mass system evolve given a specific combination of position and velocity. This can be done by plotting the \textbf{phase space} of the system (\autoref{fig:harmonic_oscillator_phase_space}): on the horizontal axis we specify the position $x$ of the mass, and on the vertical axis the velocity $\dot{x}$.
 
 \begin{figure}
   \centering
@@ -143,30 +143,71 @@ We can now plot the position of the mass vs. its momentum $p=m\dot{x}$ (\autoref
       axis equal=true,
       domain={-3:3},
       xlabel=$\frac{x}{X_{0}}$,
-      ylabel=$\frac{p}{P_{\max}}$,
+      ylabel=$\frac{\dot{x}}{\dot{X}_{\max}}$,
       xtick={-3,-2,...,3},
       ytick={-3,-2,...,3},
       samples=100,
     ]
-    \addplot[-stealth, function={xpurple}, domain=-1:1] {sqrt(0.25-x^2)};
-    \addplot[stealth-, function={xpurple}, domain=-1:1] {-sqrt(0.25-x^2)};
-
-    \addplot[-stealth, function={xblue}, domain=-1:1] {sqrt(1-x^2)};
-    \addplot[stealth-, function={xblue}, domain=-1:1] {-sqrt(1-x^2)};
-
-    \addplot[-stealth, function={xgreen}, domain=-2.5:2.5] {sqrt(1.5^2-x^2)};
-    \addplot[stealth-, function={xgreen}, domain=-2.5:2.5] {-sqrt(1.5^2-x^2)};
-
-    \addplot[-stealth, function={xorange}, domain=-2.7:2.7] {sqrt(4-x^2)};
-    \addplot[stealth-, function={xorange}, domain=-2.7:2.7] {-sqrt(4-x^2)};
-
-    \addplot[-stealth, function={xred}, domain=-3.5:3.5] {sqrt(2.5^2-x^2)};
-    \addplot[stealth-, function={xred}, domain=-3.5:3.5] {-sqrt(2.5^2-x^2)};
+    \draw[very thick, xpurple] (0,0) circle (0.5);
+    \draw[very thick, xblue] (0,0) circle (1);
+    \draw[very thick, xgreen] (0,0) circle (1.5);
+    \draw[very thick, xorange] (0,0) circle (2);
+    \draw[very thick, xred] (0,0) circle (2.5);
     \end{axis}
   \end{tikzpicture}
-  \caption{Phase space plot of simple harmonic oscillators with different momenta (either their masses are different, or their initial distance are different). The axes are scaled such that their units are the initial position $X_{0}$ and maximum momentum $P_{0}$, respectively, of the second oscillator (trajectory drawn in blue).}
+  \caption{Phase space plot of simple harmonic oscillators with different momenta (either their masses are different, or their initial distance are different). The axes are scaled such that their units are the initial position $X_{0}$ and maximum velocity $\dot{X}_{0}$, respectively, of the second oscillator (trajectory drawn in blue).}
   \label{fig:harmonic_oscillator_phase_space}
 \end{figure}
+
+In the case of a simple harmonic oscialltor, the evolution of the system is shown on the phase space plot as ellipses - and when we use normalized coordinates ($\tilde{x}=\frac{x}{x_{0}}$ and $\tilde{x}=\frac{\dot{x}}{\dot{X}_{\max}}$), the ellipses turn into perfect circles - just like we see in \autoref{fig:harmonic_oscillator_phase_space}. These circles or ellipses are \underline{paths of constant energy}: this can be seen when we \enquote{translate} the plot to have the potential energy and kinetric energy as horizontal and vertical axes, respectively.
+
+Recall that for close mechanical systems, the total energy $E$ is given by the sum of the sum of the \textit{kinetic energy} $K$ and the \textit{potential energy} $U$:
+\begin{equation}
+  E = K + U.
+  \label{eq:total_energy}
+\end{equation}
+The kinetic energy is a function of the velocity $v=\dot{x}$:
+\begin{equation}
+  K = \frac{1}{2}\dot{x}^{2} = \frac{p^{2}}{2m},
+  \label{eq:kinetric_energy}
+\end{equation}
+and the potential energy is a function of the position $x$ via the force $F$:
+\begin{equation}
+  F = -\od{U}{x}.
+  \label{eq:force_from_potential}
+\end{equation}
+In the case of an harmonic oscillator $F=-kx$, and therefore
+\begin{equation}
+  U = \int\displaystyle F \dif x = -k\int\displaystyle x \dif x = -\frac{1}{2}kx^{2} + c.
+  \label{eq:potential_energy_harmonic_oscillator}
+\end{equation}
+Since we can add to the potential any constant with no change to the force derived from it (remember that the derivative of a constant is zero), we can simply set the potential at $x=0$ to $U\left(x=0\right)=0$, meaning that the integral constant is $c=0$. Altogether, we get the following system energy:
+\begin{equation}
+  E = \frac{p}{2m} - \frac{1}{2}kx^{2},
+  \label{eq:total_energy_harmonic_oscillator}
+\end{equation}
+Essentially, this is equal to applying the following transformations to the phase space plot:
+\begin{align}
+  x &\to -\frac{1}{2}kx^{2},\\
+  \dot{x} &\to \frac{p^{2}}{2m} = \frac{1}{2m}{m^{2}\dot{x}^{2}} = \frac{1}{2}m\dot{x}^{2}.
+\end{align}
+Since the transformation \enquote{streches} both axes by the same power (up to the constants $m$ and $k$), the shapes remain the same as in the original plot.
+
+The total energy of the system can then be extracted from the radius of each circle path:
+\begin{equation}
+  E = \sqrt{K^{2}+U^{2}} = \sqrt{\frac{p^{2}}{4m^{2}} + \frac{k^{2}x^{4}}{4}} = \frac{1}{2}\left(\frac{p^{2}}{m^{2}}+k^{2}x^{4}\right).
+  \label{eq:label}
+\end{equation}
+When $K=0$ (i.e. $p=0$) the entire energy is stored as potential energy:
+\begin{equation}
+  E = \frac{1}{2}\sqrt{k^{2}x^{4}} = \frac{1}{2}kx^{2}.
+  \label{eq:label}
+\end{equation}
+And when $U=0$ (i.e. $x=0$) the entire energy is stored as kinetic energy:
+\begin{equation}
+  E = \frac{1}{2}\sqrt{\frac{p^{2}}{m^{2}}} = \frac{P}{2m} = \frac{1}{2}m\dot{x}^{2}.
+  \label{eq:label}
+\end{equation}
 
 \subsection{Damped Harmonic Oscillator}
 We can make the harmonic oscillator model a bit more realistic if we add a damping force proportional to the velocity of the mass. This corresponds e.g. to introducing friction into the model. The form of the damping force is $F_{\text{damp}}(t)=-cv(t)=-c\dot{x}$, for some real damping coefficient $c\geq0$ (in the case where $c=0$ we get back the simple harmonic oscillator model). Thus, the overall Newton 2nd law equation of the system has the following form:
