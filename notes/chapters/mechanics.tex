@@ -2,7 +2,8 @@
 \section{Preface}
 Text text text
 
-\section{Relevant Physics Background}
+\section{Relevant Physical and Mathetmatical Background}
+\subsection{Classic Gravitational Force}
 Already in the 17th century, \textit{Isaac Newton} formulated the gravitational force existing between any two objects with masses greater than zero. The strength of the force is given by the equation
 \begin{equation}
     F = G\frac{m_{1}m_{2}}{r^{2}},
@@ -116,6 +117,21 @@ Let us look at an example of calculating the gravitational forces between two ob
     \vec{F}_{B\to A} = -\vec{F}_{A\to B} = \colvec{-0.0050;-0.0353;0.101}.
   \]
 \end{example}
+
+In the case where we only consider two objects, and choose our frame of reference such that one of the objects is stationary - an analytical solution to the spatial trajectory taken by the second object is known and well studied. It always takes the form of a conic section.
+
+\subsection{Conic Sections}
+A conic section (sometimes simply just called \enquote{a conic}) is the 2-dimensional intersection of a plane and a cone (see \autoref{fig:3d_conic_1}).
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[scale=0.875]{figs/cone_plane_3d.pdf}
+  \end{center}
+  \caption{An intersection of a cone and a plane. Both the cone and plane are infinite - the cone extends infinitely \enquote{down}, but also has a second \enquote{inverted} part on the top, also extending to infinity. In the case here shown, the intersection is an ellipse. Image reproduced with modifications from !SOURCE!}
+  \label{fig:3d_conic_1}
+\end{figure}
+
+
 
 \section{Forward Euler Method}
 
