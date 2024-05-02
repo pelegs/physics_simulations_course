@@ -1,5 +1,54 @@
-\section{Simulating Simple Mechanics}
-\subsection{Forward Euler Method}
-\subsection{Backward Euler Method}
-\subsection{Verlet Integration}
-\subsection{Runge-Kutta Method}
+\chapter{Simulating Orbital Mechanics}
+\section{Preface}
+Text text text
+
+\section{Relevant Physics Background}
+Already in the 17th century, \textit{Isaac Newton} formulated the gravitational force existing between any two objects with masses greater than zero. The strength of the force is given by the equation
+\begin{equation}
+    F = G\frac{m_{1}m_{2}}{r^{2}},
+    \label{eq:force_gravity}
+\end{equation}
+where $m_{1}$ and $m_{2}$ are the respective masses of the two objects, $r$ is the distance between them, and $G$ is a the \textit{universal gravitational constant},
+\begin{equation}
+    G = \SI{6.6743(15)e-11}{\newton\metre\squared\per\kg\squared}
+    \label{eq:universal_gravity_constant}
+\end{equation}
+
+The direction of the force is the line connecting the centers of mass of the two objects. Due to Newton's third law, the forces acting on the two objects are equal and opposite: the force applied by $m_{1}$ on $m_{2}$, $F_{1\to2}$, is pointing \textbf{from} $m_{2}$ \textbf{onto} $m_{1}$, and the force applied by $m_{2}$ on $m_{1}$, $F_{2\to1}$ is pointing \textbf{from} $m_{1}$ \textbf{onto} $m_{2}$ - and is exactly opposite to $F_{1\to2}$, i.e. in vector notation
+\begin{equation}
+    \vec{F}_{1\to2} = -\vec{F}_{2\to1}.
+    \label{eq:gravity_force_vector_directions}
+\end{equation}
+\begin{figure}
+  \begin{center}
+    \begin{tikzpicture}
+      \pgfmathsetmacro{\a}{4}
+      \pgfmathsetmacro{\b}{2}
+      \coordinate (m1) at (0,0);
+      \coordinate (m2) at (\a,\b);
+      \coordinate (dp) at (-\b, \a);
+      \coordinate (l1) at ($(m1)!1.3cm!(dp)$);
+      \coordinate (l2) at ($(m2) + (m1)!1.3cm!(dp)$);
+      \def\R{1cm}
+      \def\r{0.5cm}
+      \def\F{0.8cm}
+      \draw[vector, xred, dashed] ($(m1)+(m1)!\R!(m2)$) -- ++($(m1)!\F!(m2)$) node[midway, below right, xshift=-1mm] {$\vec{F}_{2\to1}$};
+      \draw[vector, xgreen, dashed] ($(m2)-(m1)!\r!(m2)$) -- ++($(m1)!-\F!(m2)$) node[midway, above left, xshift=1mm] {$\vec{F}_{1\to2}$};
+      \draw[thick, fill=xgreen!50] (m1) circle (\R) node {$m_{1}$};
+      \draw[thick, fill=xred!50] (m2) circle (\r) node {$m_{2}$};
+      \draw[thick, cap=round, decorate, decoration={brace, amplitude=5pt}] (l1) -- (l2) node[midway, above left, xshift=0mm, yshift=2mm]{$r$};
+      \draw[thick, densely dotted, black!75] ($(m1)+(m1)!0.15!(l1)$) -- (l1);
+      \draw[thick, densely dotted, black!75] ($(m2)+(m1)!0.15!(l1)$) -- (l2);
+    \end{tikzpicture}
+  \end{center}
+  \caption{Text}
+  \label{fig:gravity_basics}
+\end{figure}
+
+\section{Forward Euler Method}
+
+\section{Backward Euler Method}
+
+\section{Verlet Integration}
+
+\section{Runge-Kutta Method}

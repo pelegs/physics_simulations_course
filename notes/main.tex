@@ -36,7 +36,7 @@
 
 % Physics stuff
 \usepackage{physics}
-\usepackage{siunitx}
+\usepackage[separate-uncertainty=true]{siunitx}
 \renewcommand{\SI}[3][]{\mbox{$\num[#1]{#2}\,\left[\si{#3}\right]$}}
 \newcommand{\SIe}[1]{\SI{}{#1}}
 
@@ -252,8 +252,8 @@
 % Content
 \makeatletter
 \def\input@path{{./chapters/}}
-\input{intro}
-% \input{mechanics}
+% \input{intro}
+\input{mechanics}
 % \input{waves}
 % \input{thermodynamics}
 % \input{molecular_dynamics}
