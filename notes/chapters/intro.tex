@@ -106,7 +106,7 @@ where $\omega=\sqrt{\frac{k}{m}}$. The plot of the position $x(t)$ of the mass i
       ytick={-1,0,1},
       xticklabels={$2\pi$,$4\pi$,$6\pi$}
     ]
-    \addplot[function={xblue}] {cos(x * 180/pi)};
+    \addplot[function={xblue}] {cos(x)};
     \end{axis}
     \begin{axis}[
       at=(pos_vs_time.below south west),
@@ -123,7 +123,7 @@ where $\omega=\sqrt{\frac{k}{m}}$. The plot of the position $x(t)$ of the mass i
       ytick={-1,0,1},
       xticklabels={$2\pi$,$4\pi$,$6\pi$}
     ]
-    \addplot[function={xred}] {-sin(x * 180/pi)};
+    \addplot[function={xred}] {-sin(x)};
   \end{axis}
   \end{tikzpicture}
   \caption{Simple harmonic oscillator, top (blue): position $x$ vs. time $t$. The axes units are such that a full period of the oscillation takes $\Delta t=2\pi$, and that the minimum and maximum values of the position are $\pm1$, respectively. Bottom (red): velocity vs. time on the same time axes, and a velocity axis which is scaled such that $v_{\max}=1$.}
@@ -234,11 +234,63 @@ Since \autoref{eq:2nd_order_ODE_polynomial} is true for all $t$ (and in any case
   \lambda_{1,2} = \frac{-c\pm\sqrt{c^{2}-4km}}{2m}.
   \label{eq:2nd_order_ODE_polynomial_solution}
 \end{equation}
-For the solutions to $\lambda$ to be real numbers, $c^{2}\geq4km$ - otherwise the term in the square root is negative. When $c^{2}>4km$ we call the system \textbf{overdamped}, and the case where $c^{2}=4km$ is the \textbf{critical damping} value. The overall position vs. time relationship of the damped system is given by
+For the solutions to $\lambda$ to be real numbers, $c^{2}\geq4km$ - otherwise the term in the square root is negative. When $c^{2}>4km$ we call the system \textbf{overdamped}, and the case where $c^{2}=4km$ is the \textbf{critical damping} value. MORE TEXT.
+
+The overall position vs. time relationship of the underdamped system is given by
 \begin{equation}
-  x(t) = 
-  \label{eq:label}
+  x(t) = x_{0}\Eu{-\frac{c}{2m}t}\cos\left(\omega t\right),
+  \label{eq:underdampled_oscillation}
 \end{equation}
+where as before $\omega=\sqrt{\frac{k}{m}}$ (see \autoref{fig:underdamped_oscillation}).
+
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[
+      name=pos_vs_time,
+      graph2d,
+      width=10cm, height=4cm,
+      xmin=0, xmax=6*pi+0.5,
+      ymin=-1.25, ymax=1.25,
+      domain={0:6*pi+0.5},
+      xlabel=$\frac{t}{2\pi\omega}$,
+      ylabel=$\frac{x}{x_{0}}\mid\frac{\dot{x}}{\dot{x}_{0}}$,
+      xtick={2*pi,4*pi,6*pi},
+      ytick={-1,...,1},
+      xticklabels={$2\pi$,$4\pi$,$6\pi$}
+    ]
+    \addplot[function={xblue}] {exp(-0.25*x)*cos(x)};
+    \addplot[function={xred}] {-exp(-0.25*x)*(sin(x)+cos(x))};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Underdamped harmonic oscillation\ldots}
+  \label{fig:underdamped_oscillation}
+\end{figure}
+
+The phase space plot of the damped system shows\ldots
+
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[
+      graph2d,
+      width=10cm, height=10cm,
+      xmin=-1.1, xmax=1.1,
+      ymin=-1.1, ymax=1.1,
+      axis equal=true,
+      xlabel=$x$,
+      ylabel=$\dot{x}$,
+      xtick={-1,...,1},
+      ytick={-1,...,1},
+      samples=250,
+    ]
+    \addplot[domain=0:10*pi, function={xpurple}, variable=\t] ({exp(-0.1*t)*cos(t)},{exp(-0.1*t)*sin(t)});
+  \end{axis}
+  \end{tikzpicture}
+  \caption{Phase space plot of an underdamped harmonic oscillator\ldots}
+  \label{fig:underdamped_harmonic_oscillator_phase_space}
+\end{figure}
+
 
 \subsection{Simulating Harmonic Oscillators in Python}
 Text
