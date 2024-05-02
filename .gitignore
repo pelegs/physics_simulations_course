@@ -1,5 +1,8 @@
 *.aux
 *.fdb_latexmk
-*.main.fls
+*.fls
 *.log
+*.bbl
+*.blg
 auxfiles/
+hgerhards/
