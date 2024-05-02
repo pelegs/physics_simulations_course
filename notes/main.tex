@@ -22,7 +22,37 @@
 \addbibresource{ref/references.bib}
 
 % Math related defs
-\usepackage{amsthm, commath, bm}
+\usepackage{amsthm, commath, bm, mathtools}
+
+% Cancel terms
+\usepackage[thicklines]{cancel}
+\renewcommand\CancelColor{\color{xred}}
+\newcommand{\cancelcol}[2][xred]{ % This is such a silly solution...
+	\renewcommand\CancelColor{\color{#1}}
+	\cancel{#2}
+	\renewcommand\CancelColor{\color{xred}}
+}
+
+% Row- and column-vectors: arguments separated by ";".
+% Example: $\vec{a} = \colvec{1;2;3;4}$.
+\makeatletter
+\newcommand\rcvector[2][\\]{\ensuremath{%
+  \global\def\rc@delim{#1}%
+    \negthinspace\begin{bmatrix}
+      \rc@vector #2;\relax\noexpand\@eolst%
+    \end{bmatrix}}}
+\def\rc@vector #1;#2\@eolst{%
+  \ifx\relax#2\relax
+    #1
+  \else
+    #1\rc@delim
+    \rc@vector #2\@eolst%
+  \fi}
+\makeatother
+\newcommand{\colvec}{\rcvector}
+\newcommand{\rowvec}[1]{\rcvector[,\;]{#1}}
+\newcommand{\GenericRowVec}[2][n]{\rowvec{#2_{1};#2_{2};\dots;#2_{#1}}}
+\newcommand{\GenericColVec}[2][n]{\colvec{#2^{1};#2^{2};\vdots;#2^{#1}}}
 
 % Easier space-notation
 \newcommand{\Rs}[1][]{\mathbb{R}^{#1}}
@@ -33,6 +63,10 @@
 \newcommand{\eu}{\mathrm{e}}
 \newcommand{\Eu}[1]{\mathrm{e}^{#1}}
 \newcommand{\EX}[1]{\exp\left(#1\right)}
+
+% Norms and the like
+\renewcommand{\norm}[1]{\left\| #1 \right\|}
+\newcommand{\vnorm}[1]{\left\| \vec{#1} \right\|}
 
 % Physics stuff
 \usepackage{physics}
@@ -231,21 +265,8 @@
 % For tests
 \ifdefined\testcode
   \chapter{Tests}
-  This is a test. And this is a reference to some code: \autoref{lst:code1}.
+  This is a test: a reference to some code: \autoref{lst:code1}.
   \input{code/maths}
-
-  And this is a TikZ drawing: \autoref{fig:tikztest}.
-
-  \begin{figure}
-      \begin{center}
-      \begin{tikzpicture}
-        \draw[-stealth, thick] (0,0) -- (2,1) node[midway, above] {$\vec{a}$};
-        \draw[-stealth, thick, blue] (2,1) -- ++(-1,-3) node[midway, right] {$\vec{b}$};
-      \end{tikzpicture}
-      \end{center}
-    \caption{A figure.}\label{fig:tikztest}
-  \end{figure}
-  
 \else
 \fi
 

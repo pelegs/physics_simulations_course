@@ -19,6 +19,19 @@ The direction of the force is the line connecting the centers of mass of the two
     \vec{F}_{1\to2} = -\vec{F}_{2\to1}.
     \label{eq:gravity_force_vector_directions}
 \end{equation}
+
+If the two objects have positions $\vec{r}_{1}$ and $\vec{r}_{2}$, the vector pointing from object $1$ to object $2$ is
+\begin{equation}
+  \vec{r}_{1\to2} = \vec{r}_{2} - \vec{r}_{1},
+  \label{eq:position_vector}
+\end{equation}
+with the vector pointing from object $2$ to object $1$ having the exact opposite components, i.e. $\vec{r}_{2\to1}=-\vec{r}_{1\to2}$. The norms of $\vec{r}_{1\to2}$ and $\vec{r}_{2\to1}$ are simply $r$ (the distance between the objects), and their directions are the unit vectors in the direction of $\vec{r}_{1\to2}$ and $\vec{r}_{2\to1}$, respectively:
+\begin{align}
+  \hat{r}_{1\to2} &= \frac{\vec{r}_{1\to2}}{\vnorm{r}_{1\to2}} = \frac{\vec{r}_{1\to2}}{r}\nonumber,\\
+  \hat{r}_{2\to1} &= \frac{\vec{r}_{2\to1}}{\vnorm{r}_{2\to1}} = \frac{\vec{r}_{2\to1}}{r} = -\hat{r}_{1\to2}.
+  \label{eq:normed_position_vector}
+\end{align}
+
 \begin{figure}
   \begin{center}
     \begin{tikzpicture}
@@ -41,9 +54,68 @@ The direction of the force is the line connecting the centers of mass of the two
       \draw[thick, densely dotted, black!75] ($(m2)+(m1)!0.15!(l1)$) -- (l2);
     \end{tikzpicture}
   \end{center}
-  \caption{Text}
+  \caption{Gravitational force between two objects with masses $m_{1}$ and $m_{2}$. Each object applies an attrctive force on the other object, with norm $F=G\frac{m_{1}m_{2}}{r^{2}}$ (where $r$ is the distance between the objects) and in the direction pointing from each object to the other object.}
   \label{fig:gravity_basics}
 \end{figure}
+
+In total, the vector notation of the gravitational force applied by the objects on each other are
+\begin{align}
+  \vec{F}_{1\to2} &= Gm_{1}m_{2}\frac{\hat{r}_{1\to2}}{r^{2}}\nonumber,\\
+  \vec{F}_{2\to1} &= Gm_{1}m_{2}\frac{\hat{r}_{2\to1}}{r^{2}} = -\vec{F}_{1\to2}.
+  \label{eq:gravity_forces_vector_notation}
+\end{align}
+
+\begin{note}{Another gravity force vector notation}{}
+  In some textbooks, \autoref{eq:gravity_forces_vector_notation} are written without the unit vectors $\hat{r}_{1\to2}$ and $\hat{r}_{2\to1}$, instead using the distance vectors and dividing by $r^{3}$, i.e.
+  \begin{align*}
+    \vec{F}_{1\to2} &= Gm_{1}m_{2}\frac{\vec{r}_{1\to2}}{r^{3}},\\
+    \vec{F}_{2\to1} &= Gm_{2}m_{1}\frac{\vec{r}_{2\to1}}{r^{3}}.
+  \end{align*}
+  The result is of course the same as in \autoref{eq:gravity_forces_vector_notation}, since for any non zero vector $\vec{v}$,
+  \begin{align*}
+    \frac{\vec{v}}{\vnorm{v}^{3}} = \frac{1}{\vnorm{v}^{2}}\frac{\vec{v}}{\vnorm{v}} = \frac{1}{\vnorm{v}^{2}}\hat{v}.
+  \end{align*}
+\end{note}
+
+Let us look at an example of calculating the gravitational forces between two objects.
+
+\begin{example}{Calculating a gravitational force}{grav_force_2_objects}
+  Let us calculate the gravitational forces between two objects $A$ and $B$, using the following parameters:
+  \begin{align*}
+    \vec{r}_{A}&=\colvec{1;-2;0},\ m_{A} = 1,\\
+    \vec{r}_{B}&=\colvec{2;5;-2},\ m_{B} = 2.
+  \end{align*}
+  For the sake of simplicity, we use $G=1$ and don't consider units with this example.
+
+  The vector pointing from $A$ to $B$ is
+  \[
+    \vec{r}_{A\to B} = \vec{B}-\vec{A} = \colvec{2;5;-2} - \colvec{1;-2;0} = \colvec{1;7;-2},
+  \]
+  and the vector pointing from $B$ to $A$ is
+  \[
+    \vec{r}_{B\to A} = -\vec{r}_{A\to B} = \colvec{-1;-7;2}.
+  \]
+
+  The disntace $r$ between the objects is the norm of either of the above vectors, so we'll use $\vec{r}_{A\to B}$:
+  \[
+    r = \vnorm{r}_{A\to B} = \sqrt{1^{2}+7^{2}+2^{2}} = \sqrt{19} \approx 7.3485.
+  \]
+
+  The direction vectors are therefore
+  \begin{align*}
+    \hat{r}_{A\to B} &= \frac{1}{7.3485}\colvec{1;7;-2} = \colvec{0.1361;0.9526;-0.2722},\\
+    \hat{r}_{B\to A} &= -\hat{r}_{A\to B} = \colvec{-0.1361;-0.9526;0.2722}.
+  \end{align*}
+
+  The gravity force which $A$ applies onto $B$ is then
+  \[
+    \vec{F}_{A\to B} = \cancel{G}\frac{\overbrace{m_{1}m_{2}}^{=2\times1}}{r^{2}}\hat{r}_{A\to B} = \frac{2}{54}\colvec{0.1361;0.9526;-0.2722} = \colvec{0.0050;0.0353;-0.101}.
+  \]
+  and similarily,
+  \[
+    \vec{F}_{B\to A} = -\vec{F}_{A\to B} = \colvec{-0.0050;-0.0353;0.101}.
+  \]
+\end{example}
 
 \section{Forward Euler Method}
 
