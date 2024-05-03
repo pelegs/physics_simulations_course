@@ -76,10 +76,11 @@
 
 % Graphics
 \usepackage{tikz}
-\usetikzlibrary{calc, positioning, arrows.meta, decorations.pathmorphing, decorations.text, decorations.pathreplacing, patterns}
+\usetikzlibrary{calc, positioning, intersections, through, arrows.meta, decorations.pathmorphing, decorations.text, decorations.pathreplacing, patterns}
 \tikzset{
   vector/.style = {#1, ultra thick, -stealth, cap=round},
-  springcoil/.style={thick, decoration={aspect=0.3, segment length=3mm, amplitude=3mm, coil}, decorate},
+  springcoil/.style = {thick, decoration={aspect=0.3, segment length=3mm, amplitude=3mm, coil}, decorate},
+  filledangle/.style = {thick, draw=#1, fill=#1, text=#1, fill opacity=0.3, text opacity=1},
 }
 \usepackage{pgfplots}
 \usepgfplotslibrary{colormaps}
