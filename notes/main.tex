@@ -77,7 +77,7 @@
 % Graphics
 \usepackage{tikz}
 \usetikzlibrary{calc, positioning, intersections, through, arrows.meta, decorations.pathmorphing, decorations.text, decorations.pathreplacing, patterns, external}
-\tikzexternalize[prefix=figs/] % activate externalization of TikZ figures
+\tikzexternalize[prefix=figs/] % activate externalization of TikZ figures, save results in figs folder
 \tikzset{
   vector/.style = {#1, ultra thick, -stealth, cap=round},
   springcoil/.style = {thick, decoration={aspect=0.3, segment length=3mm, amplitude=3mm, coil}, decorate},
@@ -158,7 +158,7 @@
 }
 \tikzset{tcbreak/.style = {fill=white, thick, draw=#1, text=#1, font=\bfseries}}
 \tcbset{
-	shield externalize,
+	shield externalize, % makes tikz not externalized these environments (otherwise compilation fails)
 	common/.style n args={2}{
 		colframe={#1},
 		colback={#1!5},
