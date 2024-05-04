@@ -4,5 +4,8 @@
 *.log
 *.bbl
 *.blg
+*.xml
+*.dpth
+*.md5
 auxfiles/
 hgerhards/
