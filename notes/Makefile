@@ -6,12 +6,12 @@ movefiles:
 	mv auxfiles/main.pdf pdfs
 
 main:
-	latexmk -pdf $(LATEXMKSWITCHES) $@.tex
+	latexmk -shell-escape -pdf $(LATEXMKSWITCHES) $@.tex
 
 full: clean main movefiles
 
 testcode:
-	latexmk -pdf $(LATEXMKSWITCHES) -pretex="\def\testcode{1}" -usepretex main.tex
+	latexmk --shell-escape pdf $(LATEXMKSWITCHES) -pretex="\def\testcode{1}" -usepretex main.tex
 
 test: clean testcode movefiles
 
