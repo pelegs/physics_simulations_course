@@ -128,11 +128,9 @@ A conic section (sometimes simply just called \enquote{a conic}) is a 2-dimensio
   \item If $\alpha<\theta$ the intersection is a \textbf{hyperbola}.
 \end{enumerate}
 
-Depending on the exact parameters of both $C$ and $P$, the resulting conic section can be \textbf{degenerate} - either a point, a line or two intersection lines. This happens if $P$ goes throgh the vertex point of $C$: if $\alpha=\ang{90}$ the result is a single point \footnote{one can understand this as being a circle with radius $r=0$.}, if $\alpha=\theta$ the result is a single line, and if $\alpha>\theta$ the result is two intersecting lines.
-
 \begin{figure}
   \begin{center}
-    \includegraphics[scale=0.75]{figs/mechanics/cone_plane_3d.pdf}
+    \includegraphics[scale=0.65]{figs/mechanics/cone_plane_3d.pdf}
   \end{center}
   \caption{An intersection of a cone and a plane. Both the cone and plane are infinite - the cone extends infinitely \enquote{down}, but also has a second \enquote{inverted} part on the top, also extending to infinity. In the case here shown, the intersection is an ellipse. Image reproduced with modifications from !SOURCE!} % source: https://latexdraw.com/draw-a-plane-intersecting-a-cone-in-latex/
   \label{fig:3d_conic_1}
@@ -178,6 +176,9 @@ Depending on the exact parameters of both $C$ and $P$, the resulting conic secti
   \label{fig:cone_side_view}
 \end{figure}
 
+
+Depending on the exact parameters of both $C$ and $P$, the resulting conic section can be \textbf{degenerate} - either a point, a line or two intersection lines. This happens if $P$ goes throgh the vertex point of $C$: if $\alpha=\ang{90}$ the result is a single point \footnote{one can understand this as being a circle with radius $r=0$.}, if $\alpha=\theta$ the result is a single line, and if $\alpha>\theta$ the result is two intersecting lines.
+
 \subsubsection{Geometric Properties of Conic Sections}
 Of the non-degenerate conic sections, the ellipse is the only closed curve. Both the parabola and hyperbola are open: in essence, this means that they diverge to infinity. A common geometric definition for all conic sections is the following: given a line $L$ (called the \textbf{directrix}) and a point $F$ (called the \textbf{locus}), a conic section is the set $C$ of all points $\left\{p\right\}$ for which the distance $Fp$ is equal to a constant multiple of the distance $Lp$:
 \begin{equation}
@@ -190,20 +191,25 @@ The constant $e$ is called the \textbf{eccentricity} of the conic section.
   \begin{center}
     \begin{tikzpicture}
     \begin{axis}[
-      placeholder,
-      width=10cm, height=10cm,
+      graph2d,
+      width=12cm, height=12cm,
       xmin=-2, xmax=2,
       ymin=-2, ymax=2,
+      restrict y to domain=-3:3,
+      xticklabels={,},
+      yticklabels={,},
+      cycle list/Spectral,
     ]
-      % \pgfmathsetmacro{\a}{0.15}
-      % \pgfmathsetmacro{\b}{0.20}
-      % \addplot[function={xblue}] ({-\a*sin(x)}, {\b*cos(x)+1.5});
-      % \addplot[function={xred}] ({-sinh(x)}, {cosh(x)-0.5}) node[pos=0.75, above] {$e=2$};
-      % \addplot[function={xred}] ({sinh(x)}, {-cosh(x)});
+      \pgfmathsetmacro{\A}{0.5}
+      \foreach \E in {0.0,0.2,...,1.0,1.5,...,4.0} { 
+        \edef\drawconic{\noexpand\addplot+[very thick, data cs=polar, domain=0:2*pi, samples=100, smooth, ] (x,{\A*(\E+\A)/(1+\E*cos(x))}) node[pos=0.75, above] {$e=\E$};}
+          \drawconic
+        }
+      % \addplot[function={xred}] ()
     \end{axis}
     \end{tikzpicture}
   \end{center}
-  \caption{Several conic sections with different eccentricities $\left\{e_{i}\right\}$ and the same locus $F$ and directrix $L$.}
+  \caption{Several conic sections with different eccentricities $\left\{e_{i}\right\}$ and the same locus $F$ and directrix $L$. (NOTE: figure still WIP)}
   \label{fig:conic_sections_geometrically}
 \end{figure}
 
