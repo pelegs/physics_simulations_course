@@ -1,4 +1,18 @@
 \documentclass[a4paper, twoside, symmetric, nobib, nohyper]{tufte-book}
+% I changed the actual tufte-latex definitions by commenting lines 1650-1658
+% in /usr/share/texmf/tex/latex/tufte-latex/tufte-common.def
+% This should be avoided and made such that the subsubsection format
+% can be defined entirely here.
+\titleformat{\subsubsection}%
+  [hang]% shape
+  {\normalfont\large\itshape}% format applied to label+text
+  {\thesubsubsection}% label
+  {1em}% horizontal separation between label and title body
+  {}% before the title body
+  []% after the title body
+\titlespacing*{\subsubsection}{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus.2ex}
+
+
 \raggedbottom
 % \setcounter{tocdepth}{3}
 \setcounter{secnumdepth}{2}
@@ -67,6 +81,7 @@
 % Norms and the like
 \renewcommand{\norm}[1]{\left\| #1 \right\|}
 \newcommand{\vnorm}[1]{\left\| \vec{#1} \right\|}
+\newcommand{\snorm}[1]{\left| #1 \right|}
 
 % Physics stuff
 \usepackage{physics}
@@ -89,6 +104,14 @@
 	compat=1.16,
 	every axis/.append style={font=\small},
 	function/.style n args={1}{line width=1.5pt, color=#1},
+	empty/.style = {
+		axis x line=none,
+		axis y line=none,
+		samples = 100,
+	},
+	placeholder/.style={
+		ticks=none,
+	},
 	graph2d/.style={
 		trig format plots=rad,
 		axis x line=middle,

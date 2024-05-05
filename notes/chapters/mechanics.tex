@@ -178,9 +178,101 @@ Depending on the exact parameters of both $C$ and $P$, the resulting conic secti
   \label{fig:cone_side_view}
 \end{figure}
 
+\subsubsection{Geometric Properties of Conic Sections}
+Of the non-degenerate conic sections, the ellipse is the only closed curve. Both the parabola and hyperbola are open: in essence, this means that they diverge to infinity. A common geometric definition for all conic sections is the following: given a line $L$ (called the \textbf{directrix}) and a point $F$ (called the \textbf{locus}), a conic section is the set $C$ of all points $\left\{p\right\}$ for which the distance $Fp$ is equal to a constant multiple of the distance $Lp$:
+\begin{equation}
+  C = \left\{ p \mid \snorm{Fp} = e\snorm{Lp} \right\}.
+  \label{eq:conic_section_geometric_definition}
+\end{equation}
+The constant $e$ is called the \textbf{eccentricity} of the conic section.
+
+\begin{figure}
+  \begin{center}
+    \begin{tikzpicture}
+    \begin{axis}[
+      placeholder,
+      width=10cm, height=10cm,
+      xmin=-2, xmax=2,
+      ymin=-2, ymax=2,
+    ]
+      % \pgfmathsetmacro{\a}{0.15}
+      % \pgfmathsetmacro{\b}{0.20}
+      % \addplot[function={xblue}] ({-\a*sin(x)}, {\b*cos(x)+1.5});
+      % \addplot[function={xred}] ({-sinh(x)}, {cosh(x)-0.5}) node[pos=0.75, above] {$e=2$};
+      % \addplot[function={xred}] ({sinh(x)}, {-cosh(x)});
+    \end{axis}
+    \end{tikzpicture}
+  \end{center}
+  \caption{Several conic sections with different eccentricities $\left\{e_{i}\right\}$ and the same locus $F$ and directrix $L$.}
+  \label{fig:conic_sections_geometrically}
+\end{figure}
+
+MORE TEXT HERE
+
+\subsubsection{Cartesian coefficients}
+All conic sections can be expressed as the solutions to the following general equation in $\Rs[2]$:
+\begin{equation}
+  Ax^{2}+Bxy+Cy^{2}+Dx+Ey+F=0,
+  \label{eq:conic_section_cartesian_form}
+\end{equation}
+where $A, B, C, D, E, F$ are all real coefficients such that $A, B$ and $C$ are all nonzero. The above equation can be written in matrix form as
+\begin{equation}
+  \rowvec{x;y;1}
+  \begin{bmatrix}
+    A   & B/2 & D/2 \\
+    B/2 &   C & E/2 \\
+    D/2 & E/2 &   F
+  \end{bmatrix}
+  \colvec{x;y;1}=0.
+  \label{eq:conic_section_cartesian_form_matrix}
+\end{equation}
+
+In this form, the different typs of conic sections arise from the sign of the term
+\begin{equation}
+  \Delta = B^{2}-4AC,
+  \label{eq:conic_section_discriminant}
+\end{equation}
+called the \textbf{discriminent} of the conic equation, as following:
+\begin{enumerate}
+  \item If $B^{2}-4AC<0$ the equation represents an ellipse. If in addition $A=C$ and $B=0$ the discriminent collapses to $-A^{2}$ - which represents a circle.
+  \item If $B^{2}-4AC=0$, the equation represents a parabola.
+  \item If $B^{2}-4AC>0$, the equation represents a hyperbola.
+\end{enumerate}
+
+Note that the discriminent can be represented as a $2\times2$ determinant derived from the matrix form of the Cartesian coefficients:
+\begin{equation}
+  \Delta = -4\begin{vmatrix} A & B/2 \\ B/2 & C \end{vmatrix}.
+  \label{eq:conic_section_discriminant_as_determinant}
+\end{equation}
+
+\subsubsection{Conic Section From 5 Points}
+If we know 5 points lying on a conic,
+\begin{equation}
+  \begin{cases}
+    \bm{p}_{1}=\left(x_{1},y_{1}\right)\\
+    \bm{p}_{2}=\left(x_{2},y_{2}\right)\\
+    \vdots\\
+    \bm{p}_{5}=\left(x_{5},y_{5}\right),
+  \end{cases}
+  \label{eq:5_points_on_conic}
+\end{equation}
+we can determine all the conic Cartesian coefficients by solving the equation
+\begin{equation}
+  \begin{bmatrix}
+    x_{1}^{2} & x_{1}y_{1} & y_{1}^{2} & x_{1} & y_{1} & 1\\
+    x_{2}^{2} & x_{2}y_{2} & y_{2}^{2} & x_{2} & y_{2} & 1\\
+    x_{3}^{2} & x_{3}y_{3} & y_{3}^{2} & x_{3} & y_{3} & 1\\
+    x_{4}^{2} & x_{4}y_{4} & y_{4}^{2} & x_{4} & y_{4} & 1\\
+    x_{5}^{2} & x_{5}y_{5} & y_{5}^{2} & x_{5} & y_{5} & 1
+  \end{bmatrix}
+  \colvec{A;B;C;D;E;F} = \colvec{0;0;0;0;0},
+  \label{eq:5_points_determine_conic_matrix_equation}
+\end{equation}
+which can be done by finding the null space of the matrix in the above equation.
+
 % TBW:
 % geometric parameters
-% coefficienst A-F
+% Cartesian coefficients A-F
 % conic section fron 5 points
 % more text: https://mathworld.wolfram.com/ConicSection.html
 
