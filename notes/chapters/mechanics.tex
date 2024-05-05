@@ -276,13 +276,42 @@ we can determine all the conic Cartesian coefficients by solving the equation
 \end{equation}
 which can be done by finding the null space of the matrix in the above equation.
 
-% TBW:
-% geometric parameters
-% Cartesian coefficients A-F
-% conic section fron 5 points
+\subsubsection{Some More About Ellipses}
+Unlike the other conic sections, an ellipse has two focus points (simply called its \textbf{foci}): $F_{1}$ and $F_{2}$. One of these always corresponds to the conic section definition of the focus. In an ellipse, the sum of the distances from any point to the two foci is always constant. In a sense, an ellipse is an elognated circle: instead of having a single radius, it has two orthogonal \textbf{axes}: the semi-major axis $a$ and the semi-minor axis $b$ (such that $a\geq b$).
+
+\begin{figure}
+  \begin{center}
+    \begin{tikzpicture}
+      \pgfmathsetmacro{\a}{5.5}
+      \pgfmathsetmacro{\b}{3.5}
+      \pgfmathsetmacro{\c}{\a*sqrt(1-(\b/\a)^2)}
+
+      % Drawings
+      \draw[ultra thick, xred] (0,0) ellipse [x radius=\a, y radius=\b];
+      \node[point={}] (C) at (0,0) {};
+      \node[point={}] (pa1) at (\a,0) {};
+      \node[point={}] (pa2) at (-\a,0) {};
+      \node[point={}] (pb1) at (0,\b) {};
+      \node[point={}] (pb2) at (0,-\b) {};
+      \draw[thick, dashed, black!75] (pa1) -- (pa2);
+      \draw[thick, dashed, black!75] (pb1) -- (pb2);
+      \draw[ultra thick, xgreen] (C) -- (pb1) node[midway, below, rotate=90] {semi-minor axis, $b$};
+      \node[point={$F_{1}$}] (F1) at (\c,0) {};
+      \node[point={$F_{2}$}] (F2) at (-\c,0) {};
+      \draw[ultra thick, xpurple] (F2) -- (C) node[pos=0.5, below] {linear eccentricity, $l$};
+      \draw[ultra thick, xblue] (C) -- (pa1) node[midway, below] {semi-major axis, $a$};
+    \end{tikzpicture}
+  \end{center}
+  \caption{Some common geometric properties of an ellipse. NOTE: figure still WIP}
+  \label{fig:ellipse_geometerically}
+\end{figure}
+
+MORE TEXT
+
 % more text: https://mathworld.wolfram.com/ConicSection.html
 
 \subsection{Orbital Constants}
+
 \subsection{Multiple Objects}
 
 \section{Euler Method}
