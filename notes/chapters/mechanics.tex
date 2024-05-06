@@ -321,12 +321,37 @@ Back from our short detour, we can now discuss the Keplerian orbits in more deta
 
 Although space is 3-dimensional, a Keplerian orbit is always 2-dimensional - since as mentioned before, it is always a conic section. The plane on which the orbit takes place, the \textbf{orbital plane}, is determined by the direction of velocity of the satellite and the direction connecting the centers of mass of the massive object and the satellite. The massive object is found at the locus of the conic section. The relative values of $m_{1}$ and the angular momentum of the satellite determine the eccentricity of the orbit.
 
-For now, let us concentrate on an elliptic orbit, i.e. where $0\leq e < 1$. As mentioned, in such an orbit the massive object is at the locus of the ellipse, which is one of its foci - we will call it $F_{1}$ here. The point of closest to $F_{1}$ on the elliptical orbit is called the \textbf{periapsis} and denoted $r_{p}$. The point directly opposite $r_{p}$, i.e. the point closest to the second focus $F_{2}$ of the ellipse and furthest away from $F_{1}$ is called the \textbf{apoapsis}, denoted $r_{a}$. The relation between the eccentricity of the orbit and the two distances $r_{p},r_{a}$ is
+For now, let us concentrate on an elliptic orbit, i.e. where $0\leq e < 1$. As mentioned, in such an orbit the massive object is at the locus of the ellipse, which is one of its foci - we will call it $F_{1}$ here. The point of closest to $F_{1}$ on the elliptical orbit is called the \textbf{periapsis} and denoted $r_{p}$. The point directly opposite $r_{p}$, i.e. the point closest to the second focus $F_{2}$ of the ellipse and furthest away from $F_{1}$ is called the \textbf{apoapsis}, denoted $r_{a}$ (\autoref{fig:terms_elliptical_orbit}).
+
+\begin{figure}
+  \begin{center}
+    \begin{tikzpicture}
+      \pgfmathsetmacro{\a}{4}
+      \pgfmathsetmacro{\b}{3}
+      \pgfmathsetmacro{\c}{\a*sqrt(1-(\b/\a)^2)}
+
+      % Drawings
+      \draw[ultra thick, black!50] (0,0) ellipse [x radius=\a, y radius=\b];
+      \node[point={center of orbit}] (C) at (0,0) {};
+      \node[point={Perihelion}, rotate=-90] (pa1) at ({\a},0) {};
+      \node[point={Aphelion}, rotate=90] (pa2) at (-\a,0) {};
+      \node[point={}, fill=xblue, minimum size=7pt] (F1) at (\c,0) {};
+      \node[point={$F_{2}$}] (F2) at (-\c,0) {};
+      \node[draw=xblue, thick, fill=white, rounded corners, above left of=F1, xshift=-4mm, yshift=4mm, text=xblue] (F1txt) {Massive object at $F_{1}$};
+      \draw[-stealth, thick, xblue] (F1txt) to [out=-90,in=90] (F1);
+      \draw[xred, thick, cap=round, dashed, decorate, decoration={brace, amplitude=3pt, raise=5pt, mirror}] (\c,0) -- (pa1) node[midway, below, yshift=-2mm]{$r_{p}$};
+      \draw[xdarkgreen, thick, cap=round, dashed, decorate, decoration={brace, amplitude=3pt, raise=5pt, mirror}] (pa2) -- (\c,0) node[midway, below, yshift=-2mm]{$r_{a}$};
+    \end{tikzpicture}
+  \end{center}
+  \caption{Common terms in elliptical orbits.}
+  \label{fig:terms_elliptical_orbit}
+\end{figure}
+
+The relation between the eccentricity of the orbit and the two distances $r_{p},r_{a}$ is
 \begin{equation}
   e = \frac{r_{a}-r_{p}}{r_{a}+r_{p}} = 1-\frac{2}{\frac{r_{a}}{r_{p}}+1}.
   \label{eq:eccentricity_relation_to_apsis_1}
 \end{equation}
-
 Conversly, we can write the above relation as
 \begin{equation}
   \frac{r_{a}}{r_{p}} = \frac{1+e}{1-e}.
@@ -343,29 +368,7 @@ Conversly, we can write the above relation as
   This is a pretty round orbit (not a scientific term). 
 \end{example}
 
-\begin{figure}
-  \begin{center}
-    \begin{tikzpicture}
-      \pgfmathsetmacro{\a}{4}
-      \pgfmathsetmacro{\b}{3}
-      \pgfmathsetmacro{\c}{\a*sqrt(1-(\b/\a)^2)}
-
-      % Drawings
-      \draw[ultra thick, black!75] (0,0) ellipse [x radius=\a, y radius=\b];
-      \node[point={center of orbit}] (C) at (0,0) {};
-      \node[point={Perihelion}, rotate=-90] (pa1) at ({\a},0) {};
-      \node[point={Aphelion}, rotate=90] (pa2) at (-\a,0) {};
-      \node[point={}, fill=xblue, minimum size=7pt] (F1) at (\c,0) {};
-      \node[point={$F_{2}$}] (F2) at (-\c,0) {};
-      \node[draw=xblue, thick, fill=white, rounded corners, above left of=F1, xshift=-4mm, yshift=4mm, text=xblue] (F1txt) {Massive object at $F_{1}$};
-      \draw[-stealth, thick, xblue] (F1txt) to [out=-90,in=90] (F1);
-      \draw[xred, thick, cap=round, dashed, decorate, decoration={brace, amplitude=3pt, raise=5pt, mirror}] (\c,0) -- (pa1) node[midway, below, yshift=-2mm]{$r_{p}$};
-      \draw[xdarkgreen, thick, cap=round, dashed, decorate, decoration={brace, amplitude=3pt, raise=5pt, mirror}] (pa2) -- (\c,0) node[midway, below, yshift=-2mm]{$r_{a}$};
-    \end{tikzpicture}
-  \end{center}
-  \caption{Common terms in elliptical orbits.}
-  \label{fig:terms_elliptical_orbit}
-\end{figure}
+At any point in a Keplerian trajectory, the velocity of the satellite is always tangent to the trajectory. In the case\ldots
 
 \subsection{Multiple Objects}
 
