@@ -199,10 +199,17 @@ The constant $e$ is called the \textbf{eccentricity} of the conic section.
       xticklabels={,},
       yticklabels={,},
       cycle list/Spectral,
+      declare function={
+        conic(\x,\A,\E) = \A*(\E+\A)/(1+\E*cos(\x));
+      },
     ]
       \pgfmathsetmacro{\A}{0.5}
-      \foreach \E in {0.0,0.2,...,1.0,1.5,...,4.0} { 
-        \edef\drawconic{\noexpand\addplot+[very thick, data cs=polar, domain=0:2*pi, samples=100, smooth, ] (x,{\A*(\E+\A)/(1+\E*cos(x))}) node[pos=0.75, above] {$e=\E$};}
+      \foreach \E in {0.0,0.1,...,5,5.5,...,10} { 
+        \edef\drawconic{\noexpand\addplot[black!5, very thick, data cs=polar, domain=0:2*pi, samples=100, smooth] (x,{conic(x,\A,\E)});}
+          \drawconic
+        }
+      \foreach \E in {0,0.25,...,1,2,...,5} { 
+        \edef\drawconic{\noexpand\addplot+[very thick, data cs=polar, domain=0:2*pi, samples=100, smooth] (x,{conic(x,\A,\E)});}
           \drawconic
         }
       % \addplot[function={xred}] ()
