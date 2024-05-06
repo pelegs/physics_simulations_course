@@ -218,24 +218,24 @@
 		overlay first={
 			\draw[thick, #1, decoration={coil, amplitude=0.5mm}, decorate]
 				(frame.south west) -- (frame.south east);
-			\path[font=\small\itshape] (frame.south) node [tcbreak={#1}] (cont) {continues in the next page \faHandORight};
+			\path[font=\small\itshape] (frame.south) node [tcbreak={#1}] (cont) {continuing on the next page \faHandORight};
 		},
 		overlay middle={%
 			% upper break
 			\draw[thick, #1, decoration={coil, amplitude=0.5mm}, decorate]
 				(frame.north west) -- (frame.north east);
-			\path[font=\small\itshape] (frame.north) node [tcbreak={#1}] (cont) {\faHandORight continues from the previous page};
+			\path[font=\small\itshape] (frame.north) node [tcbreak={#1}] (cont) {\faHandORight\ continuing from the previous page};
 
 			% lower break
 			\draw[thick, #1, decoration={coil, amplitude=0.5mm}, decorate]
 				(frame.south west) -- (frame.south east);
-			\path[font=\small\itshape] (frame.south) node [tcbreak={#1}] (cont) {continues in the next page \faHandORight};
+			\path[font=\small\itshape] (frame.south) node [tcbreak={#1}] (cont) {continuing on the next page \faHandORight};
 		},
 		overlay last={
 			\node[text=white, align=right, fill=#1, xshift=-4mm, minimum height=6mm, anchor=east] at (frame.south east) {#2};
 			\draw[thick, #1, decoration={coil, amplitude=0.5mm}, decorate]
 				(frame.north west) -- (frame.north east);
-			\path[font=\small\itshape] (frame.north) node [tcbreak={#1}] (cont) {\faHandORight continues from the previous page};
+			\path[font=\small\itshape] (frame.north) node [tcbreak={#1}] (cont) {\faHandORight\ continuing from the previous page};
 		}
 	},
 	defstyle/.style={
