@@ -118,7 +118,7 @@ Let us look at an example of calculating the gravitational forces between two ob
   \]
 \end{example}
 
-In the case where we only consider two objects, and choose our frame of reference such that one of the objects is stationary - an analytical solution to the spatial trajectory taken by the second object is known and well studied. It is called a \textbf{Keplerian orbit}, and it always takes the form of a conic section.
+In the case where we only consider two objects, and choose our frame of reference such that one of the objects is stationary - an analytical solution to the spatial trajectory taken by the second object is known and well studied. It is called a \textbf{Keplerian orbit}, and it always takes the form of a conic section. Let us take a short detour to discuss conic sections.
 
 \subsection{Conic Sections}
 A conic section (sometimes simply just called \enquote{a conic}) is a 2-dimensional shape resulting from the intersection of a plane and a cone (see \autoref{fig:3d_conic_1}). Depending on the angle $\alpha$ by which the plane intersects the cone relative to the the cone's side, the resulting shape can be one of 3 general types (here $\theta$ is the cone's angle):
@@ -306,18 +306,75 @@ Unlike the other conic sections, an ellipse has two focus points (simply called 
   \label{fig:ellipse_geometerically}
 \end{figure}
 
-MORE TEXT
+The two foci are at a distance of $c=\sqrt{a^{2}-b^{2}}$ away from the center of the ellipse, a measure that also called \textbf{linear eccentricity}. The eccentricity of the ellipse is
+\begin{equation}
+  e = \frac{c}{a} = \frac{\sqrt{a^{2}-b^{2}}}{a} = \sqrt{1-\frac{b^{2}}{a^{2}}}.
+  \label{eq:label}
+\end{equation}
+
+As mentioned already, in the case of a circle $e=0$, and we get that $c=0$ and that $\sqrt{1-\frac{b^{2}}{a^{2}}}=0$, i.e. $a=b$. The first equality means that the foci are located at the center of the ellipse, and the second equality means that the semi-major and semi-minor axes of the ellipse are the same. This is exactly what we excpect for a circle.
 
 % more text: https://mathworld.wolfram.com/ConicSection.html
 
-\subsection{Orbital Constants}
+\subsection{Orbital Shapes}
+Back from our short detour, we can now discuss the Keplerian orbits in more details. Suppose there are two objects: the first has mass $m_{a}$, and second mass $m_{b}$. For simplicity we will assume that $m_{1}\gg m_{2}$, such that we can assume it is stationary, while the second object experiences the Keplerian orbit - consider for example a satellite orbiting the earth. We will indeed from now on refer to the first (more massive) object simply as the \enquote{massive object}, and the second object as the \enquote{satellite}.
+
+Although space is 3-dimensional, a Keplerian orbit is always 2-dimensional - since as mentioned before, it is always a conic section. The plane on which the orbit takes place, the \textbf{orbital plane}, is determined by the direction of velocity of the satellite and the direction connecting the centers of mass of the massive object and the satellite. The massive object is found at the locus of the conic section. The relative values of $m_{1}$ and the angular momentum of the satellite determine the eccentricity of the orbit.
+
+For now, let us concentrate on an elliptic orbit, i.e. where $0\leq e < 1$. As mentioned, in such an orbit the massive object is at the locus of the ellipse, which is one of its foci - we will call it $F_{1}$ here. The point of closest to $F_{1}$ on the elliptical orbit is called the \textbf{periapsis} and denoted $r_{p}$. The point directly opposite $r_{p}$, i.e. the point closest to the second focus $F_{2}$ of the ellipse and furthest away from $F_{1}$ is called the \textbf{apoapsis}, denoted $r_{a}$. The relation between the eccentricity of the orbit and the two distances $r_{p},r_{a}$ is
+\begin{equation}
+  e = \frac{r_{a}-r_{p}}{r_{a}+r_{p}} = 1-\frac{2}{\frac{r_{a}}{r_{p}}+1}.
+  \label{eq:eccentricity_relation_to_apsis_1}
+\end{equation}
+
+Conversly, we can write the above relation as
+\begin{equation}
+  \frac{r_{a}}{r_{p}} = \frac{1+e}{1-e}.
+  \label{eq:eccentricity_relation_to_apsis_2}
+\end{equation}
+
+\begin{example}{Earth's orbit around the sun}{}
+  In the sun-earth system, where the sun is the massive object and the earth is the satellite, the periapsis distance is $r_{p}=\SI{1.47098450e+11}{\meter}$, and the apoapsis distance is $r_{a}=\SI{1.52097597e+11}{\meter}$. Therefore, the orbital eccentricity of Earth's orbit around the sun is about
+  \begin{align*}
+    e &= 1-\frac{2}{\frac{r_{a}}{r_{p}}+1} = 1-\frac{2}{\frac{1.52097597}{1.47098450}+1}\\
+      &= 1-\frac{2}{1.033985+1} = 1-\frac{2}{2.033985}\\
+      &= 1-0.983291 = 0.016709.
+  \end{align*}
+  This is a pretty round orbit (not a scientific term). 
+\end{example}
+
+\begin{figure}
+  \begin{center}
+    \begin{tikzpicture}
+      \pgfmathsetmacro{\a}{4}
+      \pgfmathsetmacro{\b}{3}
+      \pgfmathsetmacro{\c}{\a*sqrt(1-(\b/\a)^2)}
+
+      % Drawings
+      \draw[ultra thick, black!75] (0,0) ellipse [x radius=\a, y radius=\b];
+      \node[point={center of orbit}] (C) at (0,0) {};
+      \node[point={Perihelion}, rotate=-90] (pa1) at ({\a},0) {};
+      \node[point={Aphelion}, rotate=90] (pa2) at (-\a,0) {};
+      \node[point={}, fill=xblue, minimum size=7pt] (F1) at (\c,0) {};
+      \node[point={$F_{2}$}] (F2) at (-\c,0) {};
+      \node[draw=xblue, thick, fill=white, rounded corners, above left of=F1, xshift=-4mm, yshift=4mm, text=xblue] (F1txt) {Massive object at $F_{1}$};
+      \draw[-stealth, thick, xblue] (F1txt) to [out=-90,in=90] (F1);
+      \draw[xred, thick, cap=round, dashed, decorate, decoration={brace, amplitude=3pt, raise=5pt, mirror}] (\c,0) -- (pa1) node[midway, below, yshift=-2mm]{$r_{p}$};
+      \draw[xdarkgreen, thick, cap=round, dashed, decorate, decoration={brace, amplitude=3pt, raise=5pt, mirror}] (pa2) -- (\c,0) node[midway, below, yshift=-2mm]{$r_{a}$};
+    \end{tikzpicture}
+  \end{center}
+  \caption{Common terms in elliptical orbits.}
+  \label{fig:terms_elliptical_orbit}
+\end{figure}
 
 \subsection{Multiple Objects}
 
-\section{Euler Method}
-\subsection{Forward Method}
-\subsection{Backward Method}
+\section{Integration Methods}
+\subsection{Euler Method}
+% \subsubsection{Forward Method}
+% \subsubsection{Backward Method}
+% \subsubsection{Central Method}
 
-\section{Verlet Integration}
+\subsection{Verlet Integration}
 
-\section{Runge-Kutta Method}
+\subsection{Runge-Kutta Method}
