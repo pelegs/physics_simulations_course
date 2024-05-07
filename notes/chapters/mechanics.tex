@@ -324,11 +324,11 @@ As mentioned already, in the case of a circle $e=0$, and we get that $c=0$ and t
 % more text: https://mathworld.wolfram.com/ConicSection.html
 
 \subsection{Orbital Shapes}
-Back from our short detour, we can now discuss the Keplerian orbits in more details. Suppose there are two objects: the first has mass $m_{a}$, and second mass $m_{b}$. For simplicity we will assume that $m_{1}\gg m_{2}$, such that we can assume it is stationary, while the second object experiences the Keplerian orbit - consider for example a satellite orbiting the earth. We will indeed from now on refer to the first (more massive) object simply as the \enquote{massive object}, and the second object as the \enquote{satellite}.
+Back from our short detour, we can now discuss the Keplerian orbits in more details. Suppose there are two objects: the first has mass $m_{1}$, and second mass $m_{2}$. For simplicity we will assume that $m_{1}\gg m_{2}$, such that we can assume it is stationary, while the second object experiences the Keplerian orbit - consider for example a satellite orbiting the earth. We will indeed from now on refer to the first (more massive) object simply as the \enquote{massive object}, and the second object as the \enquote{satellite}.
 
 Although space is 3-dimensional, a Keplerian orbit is always 2-dimensional - since as mentioned before, it is always a conic section. The plane on which the orbit takes place, the \textbf{orbital plane}, is determined by the direction of velocity of the satellite and the direction connecting the centers of mass of the massive object and the satellite. The massive object is found at the locus of the conic section. The relative values of $m_{1}$ and the angular momentum of the satellite determine the eccentricity of the orbit.
 
-For now, let us concentrate on an elliptic orbit, i.e. where $0\leq e < 1$. As mentioned, in such an orbit the massive object is at the locus of the ellipse, which is one of its foci - we will call it $F_{1}$ here. The point of closest to $F_{1}$ on the elliptical orbit is called the \textbf{periapsis} and denoted $r_{p}$. The point directly opposite $r_{p}$, i.e. the point closest to the second focus $F_{2}$ of the ellipse and furthest away from $F_{1}$ is called the \textbf{apoapsis}, denoted $r_{a}$ (\autoref{fig:terms_elliptical_orbit}).
+For now, let us concentrate on an elliptic orbit, i.e. where $0\leq e < 1$. As mentioned, in such an orbit the massive object is at the locus of the ellipse, which is one of its foci - we will call it $F_{1}$ here. The point of closest to $F_{1}$ on the elliptical orbit is called the \textbf{periapsis} and denoted $r_{p}$. The point directly opposite $r_{p}$, i.e. the point closest to the second focus $F_{2}$ of the ellipse and furthest away from $F_{1}$ is called the \textbf{apoapsis}, denoted $r_{a}$ (\autoref{fig:terms_elliptical_orbit}). The direction from $F_{1}$ to the periapsis point is (unsuprisingly) called the \textbf{direction of periapsis}.
 
 \begin{figure}
   \begin{center}
@@ -375,8 +375,68 @@ Conversly, we can write the above relation as
   This is a pretty round orbit (not a scientific term). 
 \end{example}
 
-At any point in a Keplerian trajectory, the velocity of the satellite is always tangent to its trajectory.
-MORE TEXT
+At any point in a Keplerian trajectory, the velocity of the satellite is always tangent to its trajectory. The angle between the direction of periapsis and the line connecting $F_{1}$ and the position of the satellite $r(t)$ at some given time $t$ is called the \textbf{true anomaly}, denoted as $\theta$.
+
+\begin{figure}
+  \begin{center}
+    \begin{tikzpicture}
+      \pgfmathsetmacro{\a}{3.5}
+      \pgfmathsetmacro{\b}{3}
+      \pgfmathsetmacro{\e}{sqrt(1-(\b/\a)^2)}
+      \newcommand{\E}{47}
+      \pgfmathsetmacro{\L}{1}
+
+      % Drawings
+      \draw[ultra thick, black!50] (0,0) ellipse [x radius=\a, y radius=\b];
+      \node[point={}, fill=xdarkgreen, minimum size=10pt] (F1) at ({\a*\e},0) {};
+      \draw[thick, black!75] (F1) -- (\a,0);
+      \coordinate (r) at ({\a*cos(\E)},{\b*sin(\E)});
+      \pgfmathsetmacro{\th}{atan(sin(\E)*sqrt(1-\e^2)/(cos(\E)-\e))}
+      \draw[filledangle={xpurple}] (F1) -- ++(\L,0) arc (0:\th:\L) -- (F1); % why cycle doesn't work here? weird
+      \pgfmathsetmacro{\XVA}{\L/2*cos(\th/2)}%
+      \pgfmathsetmacro{\YVA}{\L/2*sin(\th/2)}%
+      \node[xpurple] at ($(F1)+(\XVA,\YVA)$) {$\theta$};
+
+      \pgfmathsetmacro{\dP}{180+atan(-\b/(\a*tan(\E)))}
+      \draw[vector={xblue}] (r) -- ++(\dP:1cm) node[midway, above right] {$\vec{v}(t)$};
+      \draw[xblue, very thick, dashed] (r) -- ++(\dP:-2cm);
+      \draw[vector={xred}, very thick] (F1) -- (r) node[point={}] {};
+      \node[below left=of r, xshift=8mm, yshift=5mm, xred] {$\vec{r}(t)$};
+    \end{tikzpicture}
+  \end{center}
+  \caption{Position $\vec{r}$, velocity $\vec{v}$ and true anomaly $\theta$ in an elliptic orbit. Notice how the velocity is tangent to the trajectory.}
+  \label{fig:magnitudes_elliptical_orbit}
+\end{figure}
+
+In general, Keplerian trajectories have some scalar and vector constants - i.e. quantities that are conserved throughout the orbit. The first is the \textbf{standard gravitational parameter} $\mu$, which is the universal gravitational constant $G$ times the total mass of the two objects:
+\begin{equation}
+  \mu = G\left(m_{1}+m_{2}\right),
+  \label{eq:label}
+\end{equation}
+which in practice is approximately just
+\begin{equation}
+  \mu \approx Gm_{1},
+  \label{eq:label}
+\end{equation}
+since $m_{1}\gg m_{2}$.
+
+The second constant is the \textbf{specific relative angular momentum} of the sattelite, denoted $\bm{h}$. It is the cross product of the position vector of the sattelite at some time $\tau$, and its velocity at the same time:
+\begin{equation}
+  \bm{h} = \vec{r}\times\vec{v}.
+  \label{eq:specific_relative_angular_momentum}
+\end{equation}
+\begin{note}{Angular momentum is not a vector}{}
+  Since angular momentum in general is defined via the cross product, it is not a vector but a \textbf{pseudovector}. Therefore, it does not denoted using the vector symbol and instead is denoted by a bold-face letter. However, for the sake of simplicity we will consider it as a vector, since in $\Rs[3]$ vectors and pseudovectors behave very similarly. To better understand the concept of pseudo-vectors it is recommended to learn \textbf{geometrical algebra} (also sometimes called \textbf{Clifford algebra}). !SOURCE!
+\end{note}
+
+The third constant is the \textbf{specific orbital energy} $\varepsilon$. It is defined by the \textbf{vis-viva equation}
+\begin{equation}
+  \varepsilon = \frac{v^{2}}{2} - \frac{\mu}{r},
+  \label{eq:vis-viva}
+\end{equation}
+where $v$ is the speed (norm of the velocity) of the satellite at any time $t'$, and $r$ is the distance to the massive object at the same time $t'$. 
+
+%The first is the \textbf{specific relative angular momentum} $h$, 
 
 \subsubsection{Calculating the precise trajectory from known magnitudes}
 To get a precise projected trajectory for a satellite with known velocity $\vec{v}$ and position $\vec{r}$ around a massive object of known mass $M$ we can use the following steps:
