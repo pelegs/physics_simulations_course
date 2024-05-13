@@ -408,63 +408,66 @@ At any point in a spatial trajectory, the velocity of the object in motion is al
   \label{fig:magnitudes_elliptical_orbit}
 \end{figure}
 
-In general, Keplerian trajectories have some scalar and vector constants - i.e. quantities that are conserved throughout the orbit. The first is the \textbf{standard gravitational parameter} $\mu$, which is the universal gravitational constant $G$ times the total mass of the two objects:
-\begin{equation}
-  \mu = G\left(m_{1}+m_{2}\right),
-\end{equation}
-which in practice is approximately just
-\begin{equation}
-  \mu \approx Gm_{1},
-  \label{eq:standard_gravitational_parameter}
-\end{equation}
-since $m_{1}\gg m_{2}$.
+% TO WRITE: orbital constants and the vis-viva equation from energy conservation.
+% TO WRITE: orbital equation.
 
-The second constant is the \textbf{specific relative angular momentum} of the sattelite, denoted $\bm{h}$. It is the cross product of the position vector of the sattelite at some time $\tau$, and its velocity at the same time:
-\begin{equation}
-  \bm{h} = \vec{r}\times\vec{v}.
-  \label{eq:specific_relative_angular_momentum}
-\end{equation}
-\begin{note}{Angular momentum is not a vector}{}
-  Since angular momentum in general is defined via the cross product, it is not a vector but a \textbf{pseudovector}. Therefore, it does not denoted using the vector symbol and instead is denoted by a bold-face letter. However, for the sake of simplicity we will consider it as a vector, since in $\Rs[3]$ vectors and pseudovectors behave very similarly. To better understand the concept of pseudo-vectors it is recommended to learn \textbf{geometrical algebra} (also sometimes called \textbf{Clifford algebra}). !SOURCE!
-\end{note}
-
-The third constant is the \textbf{specific orbital energy} $\varepsilon$. It is defined by the \textbf{vis-viva equation} using the kinetic energy $\varepsilon_{k}$ and potential energy $\varepsilon_{u}$:
-\begin{equation}
-  \varepsilon = \varepsilon_{k}+\varepsilon_{u} = \frac{v^{2}}{2} - \frac{\mu}{r},
-  \label{eq:vis-viva}
-\end{equation}
-where $v$ is the speed (norm of the velocity) of the satellite at any time $t'$, and $r$ is the distance to the massive object at the same time $t'$. Another form for this same energy is
-\begin{equation}
-  \varepsilon = -\frac{\mu}{2a},
-  \label{eq:vis-viva2}
-\end{equation}
-where here $a$ is the semi-major axis of the trajectory.
-
-We can use the above constants to calculate some conditions for the shape of the trajectory. For example - when it is expected to be perferctly circular. This happens when $e=0$. By solving \autoref{eq:vis-viva} for $v$ we get
-\[
-  \frac{v^{2}}{2} = \varepsilon+\frac{\mu}{r} = -\frac{\mu}{2a} + \frac{\mu}{r}.
-\]
-For a circular orbit $a=r$, and the above equation becomes
-\[
-  \frac{v^{2}}{2} = -\frac{\mu}{2r} + \frac{\mu}{r} = -\frac{\mu}{2r} + \frac{2\mu}{2r} = \frac{\mu}{2r},
-\]
-i.e.
-\begin{equation}
-  v = \sqrt{\frac{\mu}{r}} = \sqrt{\frac{Gm_{1}}{r}}.
-  \label{eq:speed_circular_orbit}
-\end{equation}
-
-In perfect circular motion we know that the total force acting on the object in motion is directed into the center of motion, is always orthogonal to its velocity and has a magnitude of exactly
-\begin{equation}
-  F = m\frac{v^{2}}{r}.
-  \label{eq:force_circular_motion}
-\end{equation}
-
-We can bring \autoref{eq:speed_circular_orbit} to the form of \autoref{eq:force_circular_motion} by raising $v$ to the second power, multiplying by $m_{2}$ and dividing by the radius. Its right hand side would then be
-\[
-  F = \frac{m_{2}}{r}\frac{Gm_{1}}{r} = G\frac{m_{1}m_{2}}{r^{2}},
-\]
-exactly the form of the gravitational force. This confirms \autoref{eq:speed_circular_orbit}.
+% In general, Keplerian trajectories have some scalar and vector constants - i.e. quantities that are conserved throughout the orbit. The first is the \textbf{standard gravitational parameter} $\mu$, which is the universal gravitational constant $G$ times the total mass of the two objects:
+% \begin{equation}
+%   \mu = G\left(m_{1}+m_{2}\right),
+% \end{equation}
+% which in practice is approximately just
+% \begin{equation}
+%   \mu \approx Gm_{1},
+%   \label{eq:standard_gravitational_parameter}
+% \end{equation}
+% since $m_{1}\gg m_{2}$.
+%
+% The second constant is the \textbf{specific relative angular momentum} of the sattelite, denoted $\bm{h}$. It is the cross product of the position vector of the sattelite at some time $\tau$, and its velocity at the same time:
+% \begin{equation}
+%   \bm{h} = \vec{r}\times\vec{v}.
+%   \label{eq:specific_relative_angular_momentum}
+% \end{equation}
+% \begin{note}{Angular momentum is not a vector}{}
+%   Since angular momentum in general is defined via the cross product, it is not a vector but a \textbf{pseudovector}. Therefore, it does not denoted using the vector symbol and instead is denoted by a bold-face letter. However, for the sake of simplicity we will consider it as a vector, since in $\Rs[3]$ vectors and pseudovectors behave very similarly. To better understand the concept of pseudo-vectors it is recommended to learn \textbf{geometrical algebra} (also sometimes called \textbf{Clifford algebra}). !SOURCE!
+% \end{note}
+%
+% The third constant is the \textbf{specific orbital energy} $\varepsilon$. It is defined by the \textbf{vis-viva equation} using the kinetic energy $\varepsilon_{k}$ and potential energy $\varepsilon_{u}$:
+% \begin{equation}
+%   \varepsilon = \varepsilon_{k}+\varepsilon_{u} = \frac{v^{2}}{2} - \frac{\mu}{r},
+%   \label{eq:vis-viva}
+% \end{equation}
+% where $v$ is the speed (norm of the velocity) of the satellite at any time $t'$, and $r$ is the distance to the massive object at the same time $t'$. Another form for this same energy is
+% \begin{equation}
+%   \varepsilon = -\frac{\mu}{2a},
+%   \label{eq:vis-viva2}
+% \end{equation}
+% where here $a$ is the semi-major axis of the trajectory.
+%
+% We can use the above constants to calculate some conditions for the shape of the trajectory. For example - when it is expected to be perferctly circular. This happens when $e=0$. By solving \autoref{eq:vis-viva} for $v$ we get
+% \[
+%   \frac{v^{2}}{2} = \varepsilon+\frac{\mu}{r} = -\frac{\mu}{2a} + \frac{\mu}{r}.
+% \]
+% For a circular orbit $a=r$, and the above equation becomes
+% \[
+%   \frac{v^{2}}{2} = -\frac{\mu}{2r} + \frac{\mu}{r} = -\frac{\mu}{2r} + \frac{2\mu}{2r} = \frac{\mu}{2r},
+% \]
+% i.e.
+% \begin{equation}
+%   v = \sqrt{\frac{\mu}{r}} = \sqrt{\frac{Gm_{1}}{r}}.
+%   \label{eq:speed_circular_orbit}
+% \end{equation}
+%
+% In perfect circular motion we know that the total force acting on the object in motion is directed into the center of motion, is always orthogonal to its velocity and has a magnitude of exactly
+% \begin{equation}
+%   F = m\frac{v^{2}}{r}.
+%   \label{eq:force_circular_motion}
+% \end{equation}
+%
+% We can bring \autoref{eq:speed_circular_orbit} to the form of \autoref{eq:force_circular_motion} by raising $v$ to the second power, multiplying by $m_{2}$ and dividing by the radius. Its right hand side would then be
+% \[
+%   F = \frac{m_{2}}{r}\frac{Gm_{1}}{r} = G\frac{m_{1}m_{2}}{r^{2}},
+% \]
+% exactly the form of the gravitational force. This confirms \autoref{eq:speed_circular_orbit}.
 
 \subsubsection{Calculating the precise trajectory from known magnitudes}
 To get a precise projected trajectory for a satellite with known velocity $\vec{v}$ and position $\vec{r}$ around a massive object of known mass $M$ we can use the following steps:
