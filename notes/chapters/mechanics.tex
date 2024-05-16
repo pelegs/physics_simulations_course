@@ -380,11 +380,11 @@ At any point in a spatial trajectory, the velocity of the object in motion is al
 \begin{figure}
   \begin{center}
     \begin{tikzpicture}
-      \pgfmathsetmacro{\a}{3.5}
-      \pgfmathsetmacro{\b}{3}
+      \pgfmathsetmacro{\a}{3.75}
+      \pgfmathsetmacro{\b}{2.5}
       \pgfmathsetmacro{\e}{sqrt(1-(\b/\a)^2)}
-      \newcommand{\E}{47}
-      \pgfmathsetmacro{\L}{1}
+      \newcommand{\E}{37}
+      \pgfmathsetmacro{\L}{0.75}
 
       % Drawings
       \draw[ultra thick, black!50] (0,0) ellipse [x radius=\a, y radius=\b];
@@ -407,6 +407,33 @@ At any point in a spatial trajectory, the velocity of the object in motion is al
   \caption{Position $\vec{r}$, velocity $\vec{v}$ and true anomaly $\theta$ in an elliptic orbit. Notice how the velocity is tangent to the trajectory.}
   \label{fig:magnitudes_elliptical_orbit}
 \end{figure}
+
+% TO WRITE: Kepler laws
+
+In the 17th century, \textbf{Johannes Kepler} formalized his \textbf{laws of planetary motion}. There are three of them, and we already met the first one: in a 2-body system, the trajectory of the satellite object under gravity is a conic section. His second law states that in any time period $\Delta t$ along its path, the satellite will sweap a constant area $A$ in relation to the massive object (see \autoref{fig:keplers_2nd_law}). A direct result of this law is that the satellite moves faster when close to the massive object, and slower when it is far away.
+
+\begin{figure}
+  \begin{center}
+    \begin{tikzpicture}
+      \pgfmathsetmacro{\a}{3.75}
+      \pgfmathsetmacro{\b}{2.5}
+      \pgfmathsetmacro{\e}{sqrt(1-(\b/\a)^2)}
+
+      % Drawings
+      \draw[ultra thick, black!50] (0,0) ellipse [x radius=\a, y radius=\b];
+      \node[point={}, fill=xdarkgreen, minimum size=10pt] (F1) at ({\a*\e},0) {};
+      % \draw[thick] (F1) -- (\a,0) arc (0:35:\acm and 2.5cm);
+    \end{tikzpicture}
+  \end{center}
+  \caption{Kepler's second law: at any constant time period $\Delta t$, the satellite sweeps a constant area $A$ defined between its two positions at times $t$ and $t+\Delta t$ and the massive object.}
+  \label{fig:keplers_2nd_law}
+\end{figure}
+
+Kepler's third law states that for a given massive object, there is a constant relation between $a^{3}$, the semi-major axis of the orbit to third power - and $T^{2}$, the orbital period (the time it takes the satellite to complete a single orbit), given by
+\begin{equation}
+  \frac{a^{3}}{T^{2}} = \frac{GM}{4\pi^{2}}.
+  \label{eq:keplers_3rd_law}
+\end{equation}
 
 % TO WRITE: orbital constants and the vis-viva equation from energy conservation.
 % TO WRITE: orbital equation.
@@ -469,13 +496,13 @@ At any point in a spatial trajectory, the velocity of the object in motion is al
 % \]
 % exactly the form of the gravitational force. This confirms \autoref{eq:speed_circular_orbit}.
 
-\subsubsection{Calculating the precise trajectory from known magnitudes}
-To get a precise projected trajectory for a satellite with known velocity $\vec{v}$ and position $\vec{r}$ around a massive object of known mass $M$ we can use the following steps:
-\begin{enumerate}
-  \item Calculate the standard gravitational parameter $\mu$ (REF) and the specific angular momentum vector $\vec{h}$ (REF). The eccentricity vector can then be calculated using (REF).
-  \item If $\vnorm{e}<1$, the orbit is elliptical and we can proceed. If not - MORE TEXT?
-  \item \ldots
-\end{enumerate}
+% \subsubsection{Calculating the precise trajectory from known magnitudes}
+% To get a precise projected trajectory for a satellite with known velocity $\vec{v}$ and position $\vec{r}$ around a massive object of known mass $M$ we can use the following steps:
+% \begin{enumerate}
+%   \item Calculate the standard gravitational parameter $\mu$ (REF) and the specific angular momentum vector $\vec{h}$ (REF). The eccentricity vector can then be calculated using (REF).
+%   \item If $\vnorm{e}<1$, the orbit is elliptical and we can proceed. If not - MORE TEXT?
+%   \item \ldots
+% \end{enumerate}
 
 \subsection{Multiple Objects}
 
