@@ -415,14 +415,19 @@ In the 17th century, \textbf{Johannes Kepler} formalized his \textbf{laws of pla
 \begin{figure}
   \begin{center}
     \begin{tikzpicture}
-      \pgfmathsetmacro{\a}{3.75}
+      \pgfmathsetmacro{\a}{3.0}
       \pgfmathsetmacro{\b}{2.5}
       \pgfmathsetmacro{\e}{sqrt(1-(\b/\a)^2)}
+      \pgfmathsetmacro{\Ea}{110}
+      \pgfmathsetmacro{\Eb}{130}
 
       % Drawings
       \draw[ultra thick, black!50] (0,0) ellipse [x radius=\a, y radius=\b];
-      \node[point={}, fill=xdarkgreen, minimum size=10pt] (F1) at ({\a*\e},0) {};
-      % \draw[thick] (F1) -- (\a,0) arc (0:35:\acm and 2.5cm);
+      \coordinate (F1) at ({\a*\e},0) {};
+      \draw[filledangle={xred}] (F1) -- (\a,0) arc (0:25:3.0cm and 2.5cm) node [pos=0.5, xshift=7pt, yshift=3pt] {$\Delta t$} node[pos=0.5, xshift=-10pt, yshift=-3pt] {$A$} -- cycle;
+      % \coordinate (r) at ({\a*cos(\E)},{\b*sin(\E)});
+      \draw[filledangle={xblue}] (F1) -- ({\a*cos(\Ea)},{\b*sin(\Ea)}) arc (\Ea:\Eb:3.0cm and 2.5cm) node [pos=0.5, xshift=-5pt, yshift=5pt] {$\Delta t$} node[pos=0.5, xshift=15pt, yshift=-10pt] {$A$} -- cycle;
+      \node[point={}, fill=xdarkgreen, minimum size=10pt] at (F1) {};
     \end{tikzpicture}
   \end{center}
   \caption{Kepler's second law: at any constant time period $\Delta t$, the satellite sweeps a constant area $A$ defined between its two positions at times $t$ and $t+\Delta t$ and the massive object.}
