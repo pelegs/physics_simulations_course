@@ -510,6 +510,31 @@ Kepler's third law states that for a given massive object, there is a constant r
 % \end{enumerate}
 
 \subsection{Multiple Objects}
+We can extend the 2-body problem into an $n$-body problem: we define a system with $n$ objects of masses $m_{1},m_{2},\dots,m_{n}$, positions $\vec{r}_{1},\vec{r}_{2},\dots,\vec{r}_{n}$ and velocities $\vec{v}_{1},\vec{v}_{2},\dots,\vec{v}_{n}$. The total gravitational force experienced by the $i$-th object is the sum of all of the gravitational forces from the other objects:
+\begin{equation}
+  \vec{F}_{i} = \sum\limits_{j\neq i}\vec{F}_{j\to i} = G\sum\limits_{j\neq i}\frac{m_{i}m_{j}}{r_{ij}^{2}}\hat{r}_{ij}.
+  \label{eq:n_body_single_force}
+\end{equation}
+
+\begin{figure}
+  \begin{center}
+    \begin{tikzpicture}
+      \coordinate (1) at (0,0);
+      \coordinate (2) at (-2,3);
+      \coordinate (3) at (2,-1);
+      \coordinate (4) at (3,1);
+      \foreach \k in {2,...,4} {
+        \draw[vector={xcol\k}] (1) -- ($(1)!1.5cm!(\k)$) node [midway] {$\vec{F}_{1\ \k}$};
+        \node[point={}, fill=xcol\k, minimum size=20pt] at (\k) {\k};
+      }
+      \node[point={}, fill=xcol1, minimum size=20pt] at (1) {1};
+    \end{tikzpicture}
+  \end{center}
+  \caption{A $4$-body system, showing the total gravitational force acting on one of the objects as the sum of the gravitational forces exerted on it by all other objects.}
+  \label{fig:4_body_system}
+\end{figure}
+
+Unfortunately, there is no general analytical solution to this problem. We can either use approximations and special cases, or use numerical integration to simulate such a system. The next section deals exactly with these kinds of simulations.
 
 \section{Integration Methods}
 \subsection{Euler Method}
