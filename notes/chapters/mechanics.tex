@@ -537,6 +537,26 @@ We can extend the 2-body problem into an $n$-body problem: we define a system wi
 Unfortunately, there is no general analytical solution to this problem. We can either use approximations and special cases, or use numerical integration to simulate such a system. The next section deals exactly with these kinds of simulations.
 
 \section{Integration Methods}
+The term \textbf{integration} in the context of numerical simulations means the discrete propagation of a system. In the case of the $n$-body problem, an integration step includes for each object the following: first finding all the forces acting on the object, adding up all these forces, calculating the object's accelaration (according to Newton's second law) and thus its new velocity (since $a=\dot{v}$) - and finally using this velocity to calculate its new position (since $v=\dot{x}$).
+
+The reason such a scheme is refered to as an \enquote{integration} is that we can reverse the derivative-connection between acceleration, velocity and position and write it as an integral:
+\begin{equation}
+  x(t) = x(0) + \int\limits_{0}^{t}v(t)\dif t,
+  \label{eq:position_from_velocity}
+\end{equation}
+and in turn
+\begin{equation}
+  v(t) = v(0) + \int\limits_{0}^{t}a(t)\dif t.
+  \label{eq:velocity_from_accelration}
+\end{equation}
+
+In the case of a constant acceleration, the above two equations add up together to give
+\begin{equation}
+  x(t) = x_{0} + v_{0}t + \frac{1}{2}at^{2},
+  \label{eq:position_from_constant_acceleration}
+\end{equation}
+where $x_{0}=x(0)$ and $v_{0}=v(0)$.
+
 \subsection{Euler Method}
 % \subsubsection{Forward Method}
 % \subsubsection{Backward Method}
