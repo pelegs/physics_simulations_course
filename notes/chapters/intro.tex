@@ -9,7 +9,32 @@ Text
 Text
 
 \section{Some Mathematical Background}
-Text
+\subsection{Radians}
+In the context of trigonometry in mathematics and physics, we most commonly use \textbf{radians} in place of \textbf{degrees}. This sometimes causes some confusion with newer students, so I find it appropriate to briefly discuss the what and why of radians and their usage.
+
+Degrees are defined as a measurement of \textbf{angles}. That is, for historical and practical reasons we define a full rotation as $\ang{360}$. The main problem with using angles is that they are units by themselves, i.e. they differ from lengths. This can cause some consistency issues with regards to units. Consider for example the following equation for a \textbf{centripetal force}:
+\begin{equation}
+  F = m\frac{v^{2}}{r},
+  \label{eq:centripetal_force}
+\end{equation}
+where $m$ is the mass of the rotationg object, $v^{2}$ is the square of the linear velocity the object experiences in each time instance, and $r$ is the distance of the rotating object from the center of rotation (\autoref{fig:centripetal_force}).
+
+\begin{figure}
+  \begin{center}
+    % TO BE DRAWN
+  \end{center}
+  \caption{Centripetal force. MORE TEXT.}
+  \label{fig:centripetal_force}
+\end{figure}
+
+
+In the standard SI scheme, $F$ has units of \SI{}{\kilo\gram\meter\per\second}. We know that $m$ has units of \SI{}{\kilo\gram}, $v$ of \SI{}{meter\per\second} and $r$ units of \SI{}{\meter} - so both sides of the equation have the same units. However, nothing prevents us from measuring the rotation associated with $\frac{v^{2}}{r}$ directly using angular velocity - which can be defined as the amounth of degrees of rotation per second:
+\begin{equation}
+  F = m\omega^{2}r.
+  \label{eq:centripetal_force_angular_velocity}
+\end{equation}
+
+\subsection{Taylor Series}
 
 \section{Harmonic Oscillator}
 \subsection{Simple Harmonic Oscillator}
