@@ -15,7 +15,7 @@ In the context of trigonometry in mathematics and physics, we most commonly use 
 Degrees are defined as a measurement of \textbf{angles}. That is, for historical and practical reasons we define a full rotation as $\ang{360}$. The main problem with using angles is that they are units by themselves, i.e. they differ from lengths. This can cause some consistency issues with regards to units. Consider for example the following equation for a \textbf{centripetal force}:
 \begin{equation}
   F = m\frac{v^{2}}{r},
-  \label{eq:centripetal_force}
+  \label{eq:centripetal_force_velocity}
 \end{equation}
 where $m$ is the mass of the rotationg object, $v^{2}$ is the square of the linear velocity the object experiences in each time instance, and $r$ is the distance of the rotating object from the center of rotation (\autoref{fig:centripetal_force}).
 
@@ -27,12 +27,71 @@ where $m$ is the mass of the rotationg object, $v^{2}$ is the square of the line
   \label{fig:centripetal_force}
 \end{figure}
 
+In the standard SI scheme, $F$ has units of \SI{}{\newton} ("Newtons"), i.e. \SI{}{\kilo\gram\meter\per\second}. We know that $m$ has units of \SI{}{\kilo\gram}, $v$ of \SI{}{\meter\per\second} and $r$ units of \SI{}{\meter} - so both sides of the equation have the same units.
 
-In the standard SI scheme, $F$ has units of \SI{}{\kilo\gram\meter\per\second}. We know that $m$ has units of \SI{}{\kilo\gram}, $v$ of \SI{}{meter\per\second} and $r$ units of \SI{}{\meter} - so both sides of the equation have the same units. However, nothing prevents us from measuring the rotation associated with $\frac{v^{2}}{r}$ directly using angular velocity - which can be defined as the amounth of degrees of rotation per second:
+However, nothing prevents us from measuring the rotation associated with $\frac{v^{2}}{r}$ directly using angular velocity $\omega$ - which can be defined as the amounth of degrees of rotation per time $T$ if the rotation is uniform:
+\begin{equation}
+  \omega = \frac{\theta}{T},
+  \label{eq:angular_velocity_constant}
+\end{equation}
+or more generally as the time derivative of the angle,
+\begin{equation}
+  \omega = \od{\theta}{t} = \dot{\theta}.
+  \label{eq:angular_velocity_as_derivative}
+\end{equation}
+
+If we measure the angle $\theta$ in degrees, we get that the units of angular velocity is \SI{}{\degree\per\second}. If we then want to use $\omega$ in the centripetal force equation, we must somehow cancel the degrees unit to get the proper units of \SI{}{\newton}. This obviously leads to a somewhat cumbersome equation.
+
+A much better approach is to measure the \textit{ratio} between the length of an arc created by our angle at a radius of \SI{1}{\meter} and the same radius itself (\autoref{fig:radians_measure}). This gives a unitless measure which we call \textit{radians}, and can be either ignored in the unit calculation (since it is unitless), or simply denoted \SI{}{\radian}.
+
+\begin{figure}
+  \begin{center}
+    % TO BE DRAWN
+  \end{center}
+  \caption{Measuring angles using radians.}
+  \label{fig:radians_measure}
+\end{figure}
+
+Another way to view radians is that they measure an arc length in units of the radius (not necessarily a unit radius). If we scale the radius by any scalar, an arc length of the same angle will scale by exactly the same scalar, and so the amount of radians we measure for the arc length won't change (the ratio stays the same, as both the numerator and denominator are scaled by the same number).
+
+We can easily replace any measurement of angles in degrees by a corresponding measurement in radians, since any amount of degrees has a 1-to-1 correspondence with a single value in radians. Let us find this correspondence: since there are $2\pi$ radii in a full circle, and a full angle is $\ang{360}$, we see that each radii length of an arc corresponds to $\frac{\ang{360}}{2\pi}=\frac{\ang{180}}{\pi}\approx\ang{57.2958}$.
+
+Now, using the radian unit to measure an angle $\theta$, we get that $\omega$ has units of \SI{}{\radian\per\second}, or simply \SI{}{\per\second}. In turn, if we raise $\omega$ to the 2nd power and multiply it by the distance $r$ between the rotating object and center of rotation, and the mass $m$ of the object, we get the units \SI{}{\kilo\gram\meter\per\second}, which is exactly the excplicit form of Newtons. Indeed, using this perspective, \autoref{eq:centripetal_force_velocity} can be written as
+
 \begin{equation}
   F = m\omega^{2}r.
   \label{eq:centripetal_force_angular_velocity}
 \end{equation}
+
+In my mind, this is simply beautiful.
+
+Let's finish with some example correspondences between degrees and radians, which can be seen in \autoref{tab:degrees_to_radians}.
+
+\begin{table}
+  \caption{Example correspondences between measurements in degrees and radians.}
+  \label{tab:degrees_to_radians}
+  \begin{center}
+    {
+      \renewcommand{\arraystretch}{1.2}
+      \begin{tabular}[c]{l|l}
+        \toprule
+        \SI{}{\degree} & \SI{}{\radian}\\
+        \midrule
+        0   & $0$ \\
+        30  & $\frac{\pi}{6}$ \\
+        45  & $\frac{\pi}{4}$ \\
+        60  & $\frac{\pi}{3}$ \\
+        90  & $\frac{\pi}{2}$ \\
+        120 & $\frac{2\pi}{3}$ \\
+        180 & $\pi$ \\
+        270 & $\frac{3\pi}{2}$ \\
+        360 & $2\pi$ \\
+        \bottomrule
+      \end{tabular}
+    }
+  \end{center}
+\end{table}
+
 
 \subsection{Taylor Series}
 
