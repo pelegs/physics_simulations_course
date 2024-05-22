@@ -56,13 +56,26 @@ or more generally as the time derivative of the angle,
 
 If we measure the angle $\theta$ in degrees, we get that the units of angular velocity is \SI{}{\degree\per\second}. If we then want to use $\omega$ in the centripetal force equation, we must somehow cancel the degrees unit to get the proper units of \SI{}{\newton}. This obviously leads to a somewhat cumbersome equation.
 
-A much better approach is to measure the \textit{ratio} between the length of an arc created by our angle at a radius of \SI{1}{\meter} and the same radius itself (\autoref{fig:radians_measure}). This gives a unitless measure which we call \textit{radians}, and can be either ignored in the unit calculation (since it is unitless), or simply denoted \SI{}{\radian}.
+A much better approach is to measure the \textit{ratio} between the length of an arc created by our angle at a radius $R$ and the same radius itself (\autoref{fig:radians_measure}). This gives a unitless measure which we call \textit{radians}, and can be either ignored in the unit calculation (since it is unitless), or simply denoted \SI{}{\radian}.
 
 \begin{figure}
   \begin{center}
-    % TO BE DRAWN
+    \begin{tikzpicture}
+      \pgfmathsetmacro{\R}{2}
+      \pgfmathsetmacro{\L}{0.75}
+      \pgfmathsetmacro{\th}{45}
+      \pgfmathsetmacro{\dt}{30}
+      \draw[thick, xblue, dashed, fill=xblue!10] (0,0) circle (\R);
+      \draw[very thick, dashed, xblue!75, fill=xblue!30] (0,0) -- ({\R*cos(\th-\dt)}, {\R*sin(\th-\dt)}) node[pos=0.7, below] {$R$} arc ({\th-\dt}:{\th+\dt}:\R) -- cycle node[pos=0.3, left] {$R$};
+      \pic[very thick, xblue]{carc={\th-\dt}:{\th+\dt}:\R};
+      \pic[very thick, black]{carc={\th-\dt}:{\th+\dt}:\L};
+      \pic[|-|, very thick, xdarkblue]{carc={\th-\dt}:{\th+\dt}:{1.1*\R}};
+      \node[point={}, minimum size=5pt] at (0,0) {};
+      \node at ({\L*0.6*cos(\th)},{\L*0.6*sin(\th)}) {$\theta$};
+      \node at ({\R*1.25*cos(\th)},{\R*1.25*sin(\th)}) {$S$};
+    \end{tikzpicture}
   \end{center}
-  \caption{Measuring angles using radians.}
+  \caption{Measuring angles using radians. We express the length of $S$ in units of $R$, e.g. if $S=1$ then the arc length is equal to $R$, if $S=\pi$ the arc length is half that of the entire circumference of the circle, etc. The ratio $S/R$ is constant for any real positive value of $R$, and thus can be used to uniquely describe the angle $\theta$.}
   \label{fig:radians_measure}
 \end{figure}
 
