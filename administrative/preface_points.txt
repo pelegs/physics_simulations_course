@@ -1,0 +1,21 @@
+* About me/pre-preface
+ - How to contact: emails (prefer personal over DHBW address).
+ - Salutations: no Dr, prefer first name.
+ - Academic background (+ teaching).
+ - Will be happy to discuss other topics of interest *outside* lecture times.
+ - Can speak German, prefer English since its more fluent.
+ - Students are encouraged to ask questions without waiting for me to allow them - however, please be reasonable (e.g. don't interrupt in the middle of a sentence).
+ - Also, please comment if you see any wrong arithmetics, I tend to do that.
+
+* Course structure
+ - Lectures: ...
+ - Course assignment: ...
+ - Lecture notes: ...
+
+* Mathematics
+ - We'll have a lot of it, it's critical for this topic.
+ - I will try to teach it in as much an intuitive and graphical way as I can.
+ - Some background is expected: linear algebra, calculus, high-school level maths.
+ - Are you familiar with Taylor series? Radians? (other bg maths will be added here later).
+
+* And finally, actually introducing the topic.
