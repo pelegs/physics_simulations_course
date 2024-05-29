@@ -142,9 +142,45 @@ For other functions, on the other hand, it is not that easy to calculate their v
 
 However, given that the function behaves nicely enough (we'll discuss in a moment what that means), we can \textit{approximate} its value to whatever percision we wish, using a method called the \textbf{Taylor series} of the function. The \enquote{price} we pay for greater percision is simply performing more calculations.
 
-The basic idea of a Taylor series of a function $f(x)$ is that we approximate the function by adding higher and higher derivatives of the same function, at some point $a$ for which we know precisely the value of the function and its derivatives to any order. This might sound a bit abstract, so let's explore this process using an example function - again, the exponential $f(x)=\Eu{x}$. As mentioned, we only really know one value of the function precisely, namely at $a=0$: $\Eu{0}=1$. Moreover, since $\od[n]{}{x}\Eu{x}=\Eu{x}$ for any $n\in\mathbb{N}$, we know that $\left.\od[n]{}{x}\Eu{x}\right|_{x=0}=1$.
+The basic idea of a Taylor series of a function $f(x)$ is that we approximate the function by adding higher and higher derivatives of the same function, at some point $a$ for which we know precisely the value of the function and its derivatives to any order. This might sound a bit abstract, so let's explore this process using an example function - again, the exponential $f(x)=\Eu{x}$. As mentioned, we only really know one value of the function precisely, namely at $a=0$: $\Eu{0}=1$.
 
-  We can therefore start approximating $\Eu{x}$ simply as $\Eu{0}$. This is obviously a very impercise approximation, but the important thing is that if we look at a very close neighborhood of $x=0$, the approximation is not \textit{that} bad: consider, for example $x_{0}=0.0001$. Our approximation gives $\Eu{x_{0}}\approx1$, which is not far from the more precise value $\Eu{x_{0}}=1.0001000$ (the value here is shown up to the seventh decimal). Of course, the closer we get to $a=0$, the better our approximation gets: for example, with $x_{1}=0.00001$, we get $\Eu{x_{1}}\approx1$ again, where in reality $\Eu{x_{1}}=1.0000100$ (again, shown up to the seventh decimal). 
+We can therefore start approximating $\Eu{x}$ simply as $\Eu{0}$. This is obviously a very impercise approximation, but the important thing is that if we look at a very close neighborhood of $x=0$, the approximation is not \textit{that} bad: consider, for example $x_{0}=0.0001$. Our approximation gives $\Eu{x_{0}}\approx1$, which is not far from the more precise value $\Eu{x_{0}}=1.000100005$ (the value here is shown up to the ninth decimal). Of course, the closer we get to $a=0$, the better our approximation gets: for example, with $x_{1}=0.00001$, we get $\Eu{x_{1}}\approx1$ again, where in reality $\Eu{x_{1}}=1.000010000$ (also shown here up to the ninth decimal). On the other hand, if we as we get farther away from $x=0$, the approximation becomes worse and worse, as seen in \autoref{tab:zeroth_order_approx_exp} below.
+
+\begin{table}
+  \caption{Zero order Taylor series approximation of $\Eu{x}$.}
+  \label{tab:zeroth_order_approx_exp}
+  \begin{center}
+    {
+      \renewcommand{\arraystretch}{1.2}
+      \begin{tabular}[c]{lll}
+        \toprule
+        $x$ & $\Eu{x}$ (exact) & $\Delta$ (error) \\
+        \midrule
+        $0.000$ & $1.000000000$ & $0.000000000$\\
+        $0.100$ & $1.105170918$ & $0.105170918$\\
+        $0.010$ & $1.010050167$ & $0.010050167$\\
+        $0.001$ & $1.001000500$ & $0.001000500$\\
+        $0.500$ & $1.648721271$ & $0.648721271$\\
+        $0.510$ & $1.665291195$ & $0.665291195$\\
+        $0.520$ & $1.682027650$ & $0.682027650$\\
+        $1.000$ & $2.718281828$ & $1.718281828$\\
+        $1.100$ & $3.004166024$ & $2.004166024$\\
+        $1.500$ & $4.481689070$ & $3.481689070$\\
+        $2.000$ & $7.389056099$ & $6.389056099$\\
+        \bottomrule
+      \end{tabular}
+    }
+  \end{center}
+\end{table}
+
+Now, let's take this a step further: since the derivative of a function at a point tells us how the functions changes close to the point, we can use this information to improve our approximation by adding the value of the first derivative of $\Eu{x}$ at $x=0$, which is also $1$. In fact, this is true for any order derivative of $\Eu{x}$, since $\od[n]{}{x}\Eu{x}=\Eu{x}$ for any $n\in\mathbb{N}$. Since the derivative changes with the value of $x$, we will multiply it by $x$ in the approximation. Thus we get
+\begin{equation}
+  \Eu{x} \approx 1 + 1\cdot x = 1+x,
+  \label{eq:first_order_approx_exp}
+\end{equation}
+which we call the \textbf{first order} approximation of the function $\Eu{x}$.
+
+Using the first order approximation, we get that for $x_{1}=0.$ 
 
 \section{Harmonic Oscillator}
 \subsection{Simple Harmonic Oscillator}
