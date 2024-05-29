@@ -157,9 +157,9 @@ We can therefore start approximating $\Eu{x}$ simply as $\Eu{0}$. This is obviou
         $x$ & $\Eu{x}$ (exact) & $\Delta$ (error) \\
         \midrule
         $0.000$ & $1.000000000$ & $0.000000000$\\
-        $0.100$ & $1.105170918$ & $0.105170918$\\
-        $0.010$ & $1.010050167$ & $0.010050167$\\
         $0.001$ & $1.001000500$ & $0.001000500$\\
+        $0.010$ & $1.010050167$ & $0.010050167$\\
+        $0.100$ & $1.105170918$ & $0.105170918$\\
         $0.500$ & $1.648721271$ & $0.648721271$\\
         $0.510$ & $1.665291195$ & $0.665291195$\\
         $0.520$ & $1.682027650$ & $0.682027650$\\
@@ -178,9 +178,56 @@ Now, let's take this a step further: since the derivative of a function at a poi
   \Eu{x} \approx 1 + 1\cdot x = 1+x,
   \label{eq:first_order_approx_exp}
 \end{equation}
-which we call the \textbf{first order} approximation of the function $\Eu{x}$.
+which we call the \textbf{first order} approximation of the function $\Eu{x}$. \autoref{tab:first_order_approx_exp} below shows the same values from \autoref{tab:zeroth_order_approx_exp} for $x$, but using the first order approximation for $\Eu{x}$.
 
-Using the first order approximation, we get that for $x_{1}=0.$ 
+\begin{table}
+  \caption{First order Taylor series approximation of $\Eu{x}$.}
+  \label{tab:first_order_approx_exp}
+  \begin{center}
+    {
+      \renewcommand{\arraystretch}{1.2}
+      \begin{tabular}[c]{llll}
+        \toprule
+        $x$ & $1+x$ & $\Eu{x}$ (exact) & $\Delta$ (error) \\
+        \midrule
+        $0.000$ & $1.000000000$ & $1.000000000$ & $0.000000000$\\
+        $0.001$ & $1.001000000$ & $1.001000500$ & $0.000000500$\\
+        $0.010$ & $1.010000000$ & $1.010050167$ & $0.000050167$\\
+        $0.100$ & $1.100000000$ & $1.105170918$ & $0.005170918$\\
+        $0.500$ & $1.500000000$ & $1.648721271$ & $0.148721271$\\
+        $0.510$ & $1.510000000$ & $1.665291195$ & $0.155291195$\\
+        $0.520$ & $1.520000000$ & $1.682027650$ & $0.162027650$\\
+        $1.000$ & $2.000000000$ & $2.718281828$ & $0.718281828$\\
+        $1.100$ & $2.100000000$ & $3.004166024$ & $0.904166024$\\
+        $1.500$ & $2.500000000$ & $4.481689070$ & $1.981689070$\\
+        $2.000$ & $3.000000000$ & $7.389056099$ & $4.389056099$\\
+        \bottomrule
+      \end{tabular}
+    }
+  \end{center}
+\end{table}
+
+By examining \autoref{tab:first_order_approx_exp} it's clear that $1+x$ is a much better approximation for $\Eu{x}$ than just $1$. Of course, we can take a further step: the second derivative of a function at a point tells us how the change in the function itself changes around that point. We can take the second derivative of $\Eu{x}$ (which is by itslef $\Eu{x}$), again substitute $x=0$, get $\Eu{0}=1$, and use this with $x^{2}$ to apperoximate $\Eu{x}$ even better. In fact, let's already take this idea to its logical conclusion: we'll simply use the infinite power series in $x$, i.e. $1,x,x^{2},x^{3},\dots,x^{n},\dots$ and attach to each $x^{k}$ the value given by $\left.\od[n]{}{x}\Eu{x}\right|_{x=0}=1$, so we get
+\begin{equation}
+  \Eu{x} \approx 1+x+x^{2}+x^{3}+\dots+x^{n}+\dots = \sum\limits_{n=0}^{\infty}x^{n}.
+  \label{eq:exp_series_expansion}
+\end{equation}
+
+This, however doesn't quite work. The coefficients of each term have to be adjusted. By assuming that at the limit where $n\to\infty$ the approximation should be with zero error, we get that for each $n$,
+\begin{equation}
+  \od[n]{}{x}\Eu{x} = \od[n]{}{x}\left(1+x+x^{2}+\dots\right) \equiv s(x).
+  \label{eq:label}
+\end{equation}
+
+Calculating the general $n$-th derivative of \autoref{eq:exp_series_expansion} is rather easy. Let's examine the case for $n=3$: the first three derivatives of \autoref{eq:exp_series_expansion} are
+\begin{align*}
+  \od{}{x}s(x) &= 1 + 2x + 3x^{2} + 4x^{3} + \dots,\\
+  \od[2]{}{x}s(x) &= 2 + 6x + 12x^{2} + \dots,\\
+  \od[3]{}{x}s(x) &= 6 + 24x + \dots,
+\end{align*}
+and if we subtitute $x=0$ we get
+
+% Continue like here and note the difference: https://math.stackexchange.com/questions/209320/where-do-the-factorials-come-from-in-the-taylor-series
 
 \section{Harmonic Oscillator}
 \subsection{Simple Harmonic Oscillator}
