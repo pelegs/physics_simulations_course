@@ -33,7 +33,16 @@ def F_gravity(m1, m2, p1, p2):
 
 # --- Integrators --- #
 
+# Simple Forward-Euler
+def forward_euler(pos_arr, vel_arr, mass_arr):
+    # itertools? Numpy meshgrid?..
+    pass
+
 
 # --- Main --- #
+
 if __name__ == "__main__":
-    pass
+    xs = np.array([[0,0,0], [1,0,0], [-3,2,0]])
+    vs = np.array([[-1,1,0], [0,-1,0], [0,2,0]])
+    ms = np.array([1, 4, 0.5]).T
+    forward_euler(xs, vs, ms)
