@@ -4,7 +4,11 @@
 Text
 
 \section{Python}
+\subsection{General}
 Text
+\subsection{NumPy}
+Text
+
 \section{A Bit About Git}
 Text
 
@@ -14,44 +18,44 @@ In the context of trigonometry in mathematics and physics, we most commonly use 
 
 Degrees are defined as a measurement of \textbf{angles}. That is, for historical and practical reasons we define a full rotation as $\ang{360}$. The main problem with using angles is that they are units by themselves, i.e. they differ from lengths. This can cause some consistency issues with regards to units. Consider for example the following equation for a \textbf{centripetal force}:
 \begin{equation}
-  F = m\frac{v^{2}}{r},
-  \label{eq:centripetal_force_velocity}
+	F = m\frac{v^{2}}{r},
+	\label{eq:centripetal_force_velocity}
 \end{equation}
 where $m$ is the mass of the rotationg object, $v^{2}$ is the square of the linear velocity the object experiences in each time instance, and $r$ is the distance of the rotating object from the center of rotation (\autoref{fig:centripetal_force}).
 
 \begin{figure}
-  \begin{center}
-    \begin{tikzpicture}
-      \pgfmathsetmacro{\R}{2}
-      \pgfmathsetmacro{\th}{45}
-      \pgfmathsetmacro{\L}{0.5}
-      \coordinate (a) at ({\R*cos(\th)},{\R*sin(\th)});
-      \coordinate (v) at ($(a)+({-0.75*\R*sin(\th)},{0.75*\R*cos(\th)})$);
-      \coordinate (l) at ($(0,0)!\L!(a)$);
-      \coordinate (F) at ($(a)!0.5!(0,0)$);
-      \pic[vector={xblue}, dash pattern=on 1pt off 3pt]{carc={\th+10}:{360+\th-10}:\R};
-      \draw[very thick, xblue] (0,0) -- (-\R,0) node [midway, above] {$r$};
-      \node[point={}, minimum size=5pt] at (0,0) {};
-      \draw[vector={xorange}] (a) -- (F) node[midway, below] {$\vec{F}$};
-      \draw[vector={xpurple}] (a) -- ($(a)!1!(v)$) node[midway, above right] {$\vec{v}$};
-      \node[point={}, minimum size=10pt, xred] at (a) {};
-    \end{tikzpicture}
-  \end{center}
-  \caption{Object with mass $m$ in perfect cicular motion with distance $r$ around a central point. The force acting on the object is directed towards the center and has value $F=m\frac{v^{2}}{r}$.}
-  \label{fig:centripetal_force}
+	\begin{center}
+		\begin{tikzpicture}
+			\pgfmathsetmacro{\R}{2}
+			\pgfmathsetmacro{\th}{45}
+			\pgfmathsetmacro{\L}{0.5}
+			\coordinate (a) at ({\R*cos(\th)},{\R*sin(\th)});
+			\coordinate (v) at ($(a)+({-0.75*\R*sin(\th)},{0.75*\R*cos(\th)})$);
+			\coordinate (l) at ($(0,0)!\L!(a)$);
+			\coordinate (F) at ($(a)!0.5!(0,0)$);
+			\pic[vector={xblue}, dash pattern=on 1pt off 3pt]{carc={\th+10}:{360+\th-10}:\R};
+			\draw[very thick, xblue] (0,0) -- (-\R,0) node [midway, above] {$r$};
+			\node[point={}, minimum size=5pt] at (0,0) {};
+			\draw[vector={xorange}] (a) -- (F) node[midway, below] {$\vec{F}$};
+			\draw[vector={xpurple}] (a) -- ($(a)!1!(v)$) node[midway, above right] {$\vec{v}$};
+			\node[point={}, minimum size=10pt, xred] at (a) {};
+		\end{tikzpicture}
+	\end{center}
+	\caption{Object with mass $m$ in perfect cicular motion with distance $r$ around a central point. The force acting on the object is directed towards the center and has value $F=m\frac{v^{2}}{r}$.}
+	\label{fig:centripetal_force}
 \end{figure}
 
 In the standard SI scheme, $F$ has units of \SI{}{\newton} ("Newtons"), i.e. \SI{}{\kilo\gram\meter\per\second}. We know that $m$ has units of \SI{}{\kilo\gram}, $v$ of \SI{}{\meter\per\second} and $r$ units of \SI{}{\meter} - so both sides of the equation have the same units.
 
 However, nothing prevents us from measuring the rotation associated with $\frac{v^{2}}{r}$ directly using angular velocity $\omega$ - which can be defined as the amounth of degrees of rotation per time $T$ if the rotation is uniform:
 \begin{equation}
-  \omega = \frac{\theta}{T},
-  \label{eq:angular_velocity_constant}
+	\omega = \frac{\theta}{T},
+	\label{eq:angular_velocity_constant}
 \end{equation}
 or more generally as the time derivative of the angle,
 \begin{equation}
-  \omega = \od{\theta}{t} = \dot{\theta}.
-  \label{eq:angular_velocity_as_derivative}
+	\omega = \od{\theta}{t} = \dot{\theta}.
+	\label{eq:angular_velocity_as_derivative}
 \end{equation}
 
 If we measure the angle $\theta$ in degrees, we get that the units of angular velocity is \SI{}{\degree\per\second}. If we then want to use $\omega$ in the centripetal force equation, we must somehow cancel the degrees unit to get the proper units of \SI{}{\newton}. This obviously leads to a somewhat cumbersome equation.
@@ -59,24 +63,24 @@ If we measure the angle $\theta$ in degrees, we get that the units of angular ve
 A much better approach is to measure the \textit{ratio} between the length of an arc created by our angle at a radius $R$ and the same radius itself (\autoref{fig:radians_measure}). This gives a unitless measure which we call \textit{radians}, and can be either ignored in the unit calculation (since it is unitless), or simply denoted \SI{}{\radian}.
 
 \begin{figure}
-  \begin{center}
-    \begin{tikzpicture}
-      \pgfmathsetmacro{\R}{2}
-      \pgfmathsetmacro{\L}{0.75}
-      \pgfmathsetmacro{\th}{45}
-      \pgfmathsetmacro{\dt}{30}
-      \draw[thick, xblue, dashed, fill=xblue!10] (0,0) circle (\R);
-      \draw[very thick, dashed, xblue!75, fill=xblue!30] (0,0) -- ({\R*cos(\th-\dt)}, {\R*sin(\th-\dt)}) node[pos=0.7, below] {$R$} arc ({\th-\dt}:{\th+\dt}:\R) -- cycle node[pos=0.3, left] {$R$};
-      \pic[very thick, xblue]{carc={\th-\dt}:{\th+\dt}:\R};
-      \pic[very thick, black]{carc={\th-\dt}:{\th+\dt}:\L};
-      \pic[|-|, very thick, xdarkblue]{carc={\th-\dt}:{\th+\dt}:{1.1*\R}};
-      \node[point={}, minimum size=5pt] at (0,0) {};
-      \node at ({\L*0.6*cos(\th)},{\L*0.6*sin(\th)}) {$\theta$};
-      \node at ({\R*1.25*cos(\th)},{\R*1.25*sin(\th)}) {$S$};
-    \end{tikzpicture}
-  \end{center}
-  \caption{Measuring angles using radians. We express the length of $S$ in units of $R$, e.g. if $S=1$ then the arc length is equal to $R$, if $S=\pi$ the arc length is half that of the entire circumference of the circle, etc. The ratio $S/R$ is constant for any real positive value of $R$, and thus can be used to uniquely describe the angle $\theta$.}
-  \label{fig:radians_measure}
+	\begin{center}
+		\begin{tikzpicture}
+			\pgfmathsetmacro{\R}{2}
+			\pgfmathsetmacro{\L}{0.75}
+			\pgfmathsetmacro{\th}{45}
+			\pgfmathsetmacro{\dt}{30}
+			\draw[thick, xblue, dashed, fill=xblue!10] (0,0) circle (\R);
+			\draw[very thick, dashed, xblue!75, fill=xblue!30] (0,0) -- ({\R*cos(\th-\dt)}, {\R*sin(\th-\dt)}) node[pos=0.7, below] {$R$} arc ({\th-\dt}:{\th+\dt}:\R) -- cycle node[pos=0.3, left] {$R$};
+			\pic[very thick, xblue]{carc={\th-\dt}:{\th+\dt}:\R};
+			\pic[very thick, black]{carc={\th-\dt}:{\th+\dt}:\L};
+			\pic[|-|, very thick, xdarkblue]{carc={\th-\dt}:{\th+\dt}:{1.1*\R}};
+			\node[point={}, minimum size=5pt] at (0,0) {};
+			\node at ({\L*0.6*cos(\th)},{\L*0.6*sin(\th)}) {$\theta$};
+			\node at ({\R*1.25*cos(\th)},{\R*1.25*sin(\th)}) {$S$};
+		\end{tikzpicture}
+	\end{center}
+	\caption{Measuring angles using radians. We express the length of $S$ in units of $R$, e.g. if $S=1$ then the arc length is equal to $R$, if $S=\pi$ the arc length is half that of the entire circumference of the circle, etc. The ratio $S/R$ is constant for any real positive value of $R$, and thus can be used to uniquely describe the angle $\theta$.}
+	\label{fig:radians_measure}
 \end{figure}
 
 Another way to view radians is that they measure an arc length in units of the radius (not necessarily a unit radius). If we scale the radius by any scalar, an arc length of the same angle will scale by exactly the same scalar, and so the amount of radians we measure for the arc length won't change (the ratio stays the same, as both the numerator and denominator are scaled by the same number).
@@ -86,8 +90,8 @@ We can easily replace any measurement of angles in degrees by a corresponding me
 Now, using the radian unit to measure an angle $\theta$, we get that $\omega$ has units of \SI{}{\radian\per\second}, or simply \SI{}{\per\second}. In turn, if we raise $\omega$ to the 2nd power and multiply it by the distance $r$ between the rotating object and center of rotation, and the mass $m$ of the object, we get the units \SI{}{\kilo\gram\meter\per\second}, which is exactly the excplicit form of Newtons. Indeed, using this perspective, \autoref{eq:centripetal_force_velocity} can be written as
 
 \begin{equation}
-  F = m\omega^{2}r.
-  \label{eq:centripetal_force_angular_velocity}
+	F = m\omega^{2}r.
+	\label{eq:centripetal_force_angular_velocity}
 \end{equation}
 
 In my mind, this is simply beautiful.
@@ -95,47 +99,47 @@ In my mind, this is simply beautiful.
 Let's finish with some example correspondences between degrees and radians, which can be seen in \autoref{tab:degrees_to_radians} below.
 
 \begin{table}
-  \caption{Example correspondences between measurements in degrees and radians.}
-  \label{tab:degrees_to_radians}
-  \begin{center}
-    {
-      \renewcommand{\arraystretch}{1.2}
-      \begin{tabular}[c]{l|l}
-        \toprule
-        \SI{}{\degree} & \SI{}{\radian}\\
-        \midrule
-        0   & $0$ \\
-        30  & $\frac{\pi}{6}$ \\
-        45  & $\frac{\pi}{4}$ \\
-        60  & $\frac{\pi}{3}$ \\
-        90  & $\frac{\pi}{2}$ \\
-        120 & $\frac{2\pi}{3}$ \\
-        180 & $\pi$ \\
-        270 & $\frac{3\pi}{2}$ \\
-        360 & $2\pi$ \\
-        \bottomrule
-      \end{tabular}
-    }
-  \end{center}
+	\caption{Example correspondences between measurements in degrees and radians.}
+	\label{tab:degrees_to_radians}
+	\begin{center}
+		{
+			\renewcommand{\arraystretch}{1.2}
+			\begin{tabular}[c]{l|l}
+				\toprule
+				\SI{}{\degree} & \SI{}{\radian}   \\
+				\midrule
+				0              & $0$              \\
+				30             & $\frac{\pi}{6}$  \\
+				45             & $\frac{\pi}{4}$  \\
+				60             & $\frac{\pi}{3}$  \\
+				90             & $\frac{\pi}{2}$  \\
+				120            & $\frac{2\pi}{3}$ \\
+				180            & $\pi$            \\
+				270            & $\frac{3\pi}{2}$ \\
+				360            & $2\pi$           \\
+				\bottomrule
+			\end{tabular}
+		}
+	\end{center}
 \end{table}
 
 \subsection{Taylor Series}
 For some functions, it is rather easy to calculate their values at some point $x_{0}$: for example, given a polynomial function
 \begin{equation}
-  P(x) = a_{0} + a_{1}x + a_{2}x^{2} + a_{3}x^{3} + \dots + a_{n}x^{n},
-  \label{eq:basic_polynomial}
+	P(x) = a_{0} + a_{1}x + a_{2}x^{2} + a_{3}x^{3} + \dots + a_{n}x^{n},
+	\label{eq:basic_polynomial}
 \end{equation}
 it is rather easy to calculate its value at any real point $x$: all the operations that we need to use are addition and multiplication of real numbers, and raising real numbers to an integer power (which in principle can be implemented as repeated multiplications). Modern computers calculate such operations at the rate of billions of times a second.
 
 \begin{note}{Floating point representation}{}
-  For the sake of simplicity, I'm ignoring the entire topic of floating point numbers and relevant questions of precision.
+	For the sake of simplicity, I'm ignoring the entire topic of floating point numbers and relevant questions of precision.
 \end{note}
 
 \begin{example}{Calculating a value of a simple polynomial}{}
-  Given the polynomial $P(x)=3x^{2}-2x+7$, we can easily calculate its value at, say, $x=5$:
-  \[
-    P(x=5) = 3\cdot5^{2}-2\cdot5+7 = 3\cdot25-10+7 = 72.
-  \]
+	Given the polynomial $P(x)=3x^{2}-2x+7$, we can easily calculate its value at, say, $x=5$:
+	\[
+		P(x=5) = 3\cdot5^{2}-2\cdot5+7 = 3\cdot25-10+7 = 72.
+	\]
 \end{example}
 
 For other functions, on the other hand, it is not that easy to calculate their values at most points. For example, consider the exponential function $f(x)=\Eu{x}$. We know precisely exactly one real value of the function: at $x=0$, the function returns $1$. But for any other value of $x$, we don't really know the value of the function. That is, we know all values \textit{symbolicaly} (for example, $f(1)=\Eu{}$, $f(2)=\Eu{2}$, etc.) - but not in explicit form.
@@ -147,83 +151,83 @@ The basic idea of a Taylor series of a function $f(x)$ is that we approximate th
 We can therefore start approximating $\Eu{x}$ simply as $\Eu{0}$. This is obviously a very impercise approximation, but the important thing is that if we look at a very close neighborhood of $x=0$, the approximation is not \textit{that} bad: consider, for example $x_{0}=0.0001$. Our approximation gives $\Eu{x_{0}}\approx1$, which is not far from the more precise value $\Eu{x_{0}}=1.000100005$ (the value here is shown up to the ninth decimal). Of course, the closer we get to $a=0$, the better our approximation gets: for example, with $x_{1}=0.00001$, we get $\Eu{x_{1}}\approx1$ again, where in reality $\Eu{x_{1}}=1.000010000$ (also shown here up to the ninth decimal). On the other hand, if we as we get farther away from $x=0$, the approximation becomes worse and worse, as seen in \autoref{tab:zeroth_order_approx_exp} below.
 
 \begin{table}
-  \caption{Zero order Taylor series approximation of $\Eu{x}$.}
-  \label{tab:zeroth_order_approx_exp}
-  \begin{center}
-    {
-      \renewcommand{\arraystretch}{1.2}
-      \begin{tabular}[c]{lll}
-        \toprule
-        $x$ & $\Eu{x}$ (exact) & $\Delta$ (error) \\
-        \midrule
-        $0.000$ & $1.000000000$ & $0.000000000$\\
-        $0.001$ & $1.001000500$ & $0.001000500$\\
-        $0.010$ & $1.010050167$ & $0.010050167$\\
-        $0.100$ & $1.105170918$ & $0.105170918$\\
-        $0.500$ & $1.648721271$ & $0.648721271$\\
-        $0.510$ & $1.665291195$ & $0.665291195$\\
-        $0.520$ & $1.682027650$ & $0.682027650$\\
-        $1.000$ & $2.718281828$ & $1.718281828$\\
-        $1.100$ & $3.004166024$ & $2.004166024$\\
-        $1.500$ & $4.481689070$ & $3.481689070$\\
-        $2.000$ & $7.389056099$ & $6.389056099$\\
-        \bottomrule
-      \end{tabular}
-    }
-  \end{center}
+	\caption{Zero order Taylor series approximation of $\Eu{x}$.}
+	\label{tab:zeroth_order_approx_exp}
+	\begin{center}
+		{
+			\renewcommand{\arraystretch}{1.2}
+			\begin{tabular}[c]{lll}
+				\toprule
+				$x$     & $\Eu{x}$ (exact) & $\Delta$ (error) \\
+				\midrule
+				$0.000$ & $1.000000000$    & $0.000000000$    \\
+				$0.001$ & $1.001000500$    & $0.001000500$    \\
+				$0.010$ & $1.010050167$    & $0.010050167$    \\
+				$0.100$ & $1.105170918$    & $0.105170918$    \\
+				$0.500$ & $1.648721271$    & $0.648721271$    \\
+				$0.510$ & $1.665291195$    & $0.665291195$    \\
+				$0.520$ & $1.682027650$    & $0.682027650$    \\
+				$1.000$ & $2.718281828$    & $1.718281828$    \\
+				$1.100$ & $3.004166024$    & $2.004166024$    \\
+				$1.500$ & $4.481689070$    & $3.481689070$    \\
+				$2.000$ & $7.389056099$    & $6.389056099$    \\
+				\bottomrule
+			\end{tabular}
+		}
+	\end{center}
 \end{table}
 
 Now, let's take this a step further: since the derivative of a function at a point tells us how the functions changes close to the point, we can use this information to improve our approximation by adding the value of the first derivative of $\Eu{x}$ at $x=0$, which is also $1$. In fact, this is true for any order derivative of $\Eu{x}$, since $\od[n]{}{x}\Eu{x}=\Eu{x}$ for any $n\in\mathbb{N}$. Since the derivative changes with the value of $x$, we will multiply it by $x$ in the approximation. Thus we get
 \begin{equation}
-  \Eu{x} \approx 1 + 1\cdot x = 1+x,
-  \label{eq:first_order_approx_exp}
+	\Eu{x} \approx 1 + 1\cdot x = 1+x,
+	\label{eq:first_order_approx_exp}
 \end{equation}
 which we call the \textbf{first order} approximation of the function $\Eu{x}$. \autoref{tab:first_order_approx_exp} below shows the same values from \autoref{tab:zeroth_order_approx_exp} for $x$, but using the first order approximation for $\Eu{x}$.
 
 \begin{table}
-  \caption{First order Taylor series approximation of $\Eu{x}$.}
-  \label{tab:first_order_approx_exp}
-  \begin{center}
-    {
-      \renewcommand{\arraystretch}{1.2}
-      \begin{tabular}[c]{llll}
-        \toprule
-        $x$ & $1+x$ & $\Eu{x}$ (exact) & $\Delta$ (error) \\
-        \midrule
-        $0.000$ & $1.000000000$ & $1.000000000$ & $0.000000000$\\
-        $0.001$ & $1.001000000$ & $1.001000500$ & $0.000000500$\\
-        $0.010$ & $1.010000000$ & $1.010050167$ & $0.000050167$\\
-        $0.100$ & $1.100000000$ & $1.105170918$ & $0.005170918$\\
-        $0.500$ & $1.500000000$ & $1.648721271$ & $0.148721271$\\
-        $0.510$ & $1.510000000$ & $1.665291195$ & $0.155291195$\\
-        $0.520$ & $1.520000000$ & $1.682027650$ & $0.162027650$\\
-        $1.000$ & $2.000000000$ & $2.718281828$ & $0.718281828$\\
-        $1.100$ & $2.100000000$ & $3.004166024$ & $0.904166024$\\
-        $1.500$ & $2.500000000$ & $4.481689070$ & $1.981689070$\\
-        $2.000$ & $3.000000000$ & $7.389056099$ & $4.389056099$\\
-        \bottomrule
-      \end{tabular}
-    }
-  \end{center}
+	\caption{First order Taylor series approximation of $\Eu{x}$.}
+	\label{tab:first_order_approx_exp}
+	\begin{center}
+		{
+			\renewcommand{\arraystretch}{1.2}
+			\begin{tabular}[c]{llll}
+				\toprule
+				$x$     & $1+x$         & $\Eu{x}$ (exact) & $\Delta$ (error) \\
+				\midrule
+				$0.000$ & $1.000000000$ & $1.000000000$    & $0.000000000$    \\
+				$0.001$ & $1.001000000$ & $1.001000500$    & $0.000000500$    \\
+				$0.010$ & $1.010000000$ & $1.010050167$    & $0.000050167$    \\
+				$0.100$ & $1.100000000$ & $1.105170918$    & $0.005170918$    \\
+				$0.500$ & $1.500000000$ & $1.648721271$    & $0.148721271$    \\
+				$0.510$ & $1.510000000$ & $1.665291195$    & $0.155291195$    \\
+				$0.520$ & $1.520000000$ & $1.682027650$    & $0.162027650$    \\
+				$1.000$ & $2.000000000$ & $2.718281828$    & $0.718281828$    \\
+				$1.100$ & $2.100000000$ & $3.004166024$    & $0.904166024$    \\
+				$1.500$ & $2.500000000$ & $4.481689070$    & $1.981689070$    \\
+				$2.000$ & $3.000000000$ & $7.389056099$    & $4.389056099$    \\
+				\bottomrule
+			\end{tabular}
+		}
+	\end{center}
 \end{table}
 
 By examining \autoref{tab:first_order_approx_exp} it's clear that $1+x$ is a much better approximation for $\Eu{x}$ than just $1$. Of course, we can take a further step: the second derivative of a function at a point tells us how the change in the function itself changes around that point. We can take the second derivative of $\Eu{x}$ (which is by itslef $\Eu{x}$), again substitute $x=0$, get $\Eu{0}=1$, and use this with $x^{2}$ to apperoximate $\Eu{x}$ even better. In fact, let's already take this idea to its logical conclusion: we'll simply use the infinite power series in $x$, i.e. $1,x,x^{2},x^{3},\dots,x^{n},\dots$ and attach to each $x^{k}$ the value given by $\left.\od[n]{}{x}\Eu{x}\right|_{x=0}=1$, so we get
 \begin{equation}
-  \Eu{x} \approx 1+x+x^{2}+x^{3}+\dots+x^{n}+\dots = \sum\limits_{n=0}^{\infty}x^{n}.
-  \label{eq:exp_series_expansion}
+	\Eu{x} \approx 1+x+x^{2}+x^{3}+\dots+x^{n}+\dots = \sum\limits_{n=0}^{\infty}x^{n}.
+	\label{eq:exp_series_expansion}
 \end{equation}
 
 This, however doesn't quite work. The coefficients of each term have to be adjusted. By assuming that at the limit where $n\to\infty$ the approximation should be with zero error, we get that for each $n$,
 \begin{equation}
-  \od[n]{}{x}\Eu{x} = \od[n]{}{x}\left(1+x+x^{2}+\dots\right) \equiv s(x).
-  \label{eq:label}
+	\od[n]{}{x}\Eu{x} = \od[n]{}{x}\left(1+x+x^{2}+\dots\right) \equiv s(x).
+	\label{eq:limit_exp}
 \end{equation}
 
 Calculating the general $n$-th derivative of \autoref{eq:exp_series_expansion} is rather easy. Let's examine the case for $n=3$: the first three derivatives of \autoref{eq:exp_series_expansion} are
 \begin{align*}
-  \od{}{x}s(x) &= 1 + 2x + 3x^{2} + 4x^{3} + \dots,\\
-  \od[2]{}{x}s(x) &= 2 + 6x + 12x^{2} + \dots,\\
-  \od[3]{}{x}s(x) &= 6 + 24x + \dots,
+	\od{}{x}s(x)    & = 1 + 2x + 3x^{2} + 4x^{3} + \dots, \\
+	\od[2]{}{x}s(x) & = 2 + 6x + 12x^{2} + \dots,         \\
+	\od[3]{}{x}s(x) & = 6 + 24x + \dots,
 \end{align*}
 and if we subtitute $x=0$ we get
 
@@ -233,280 +237,280 @@ and if we subtitute $x=0$ we get
 \subsection{Simple Harmonic Oscillator}
 Many systems in physics present a simple, periodic (repeating) motion. One such system is a simple mass-less spring connected to a mass $m$ and allowed to move in a single dimension only. If we ignore the effects of gravity, the only force acting on the mass arises from the spring itself: the more we pull or push the spring, the stronger it will resist to that change. This resistant force is given by
 \begin{equation}
-  F = -kx,
-  \label{eq:spring_force}
+	F = -kx,
+	\label{eq:spring_force}
 \end{equation}
 where $k$ is the \textbf{spring constant}, and $x$ is the amount by which the spring contracts or expands relative to its rest position $x_{0}$. In \autoref{fig:simple_spring} we show three cases: when the mass is at the springs rest position, $x_{m}=x_{0}$, the spring applies no force on it. When the mass is displaced by a positive amount $\Delta x>0$, the spring applied a \textit{negative} force on it: $F=-k\Delta x<0$ (see note \autoref{note:negative_force}). And when the mass is displaced such that it contracts the spring, $\Delta x<0$ and thus the force applied by the spring is positive, $F=k\Delta x>0$.
 
 \begin{note}{Negative and positive forces}{negative_force}
-  Recall that in this context, negative force means a force in the negative $x$ direction.
+	Recall that in this context, negative force means a force in the negative $x$ direction.
 \end{note}
 
 \begin{figure}
-  \begin{center}
-    \begin{tikzpicture}
-      \coordinate (x0) at (3,1.5);
-      \draw[thick, dashed, black] (x0 |- 0,1) node [above] {$x_0$} -- ++(0,-8);
-      \draw[thick, dashed,-stealth] (-0.5, 1.7) -- ++(3,0) node [midway, above] {positive $x$ direction};
+	\begin{center}
+		\begin{tikzpicture}
+			\coordinate (x0) at (3,1.5);
+			\draw[thick, dashed, black] (x0 |- 0,1) node [above] {$x_0$} -- ++(0,-8);
+			\draw[thick, dashed,-stealth] (-0.5, 1.7) -- ++(3,0) node [midway, above] {positive $x$ direction};
 
-      \draw[line width=5mm, black!30] (-0.25,1) -- ++(0,-1.75) -- ++(6.25,0);
-      \draw[thick] (0,1) -- ++(0,-1.5) -- ++(6,0);
-      \draw[thick, fill=xred!50] (3,0) circle (0.5) node (m1) {$m$};
-      \draw[springcoil, xdarkblue] (0,0) -- ($(m1)-(0.5,0)$);
+			\draw[line width=5mm, black!30] (-0.25,1) -- ++(0,-1.75) -- ++(6.25,0);
+			\draw[thick] (0,1) -- ++(0,-1.5) -- ++(6,0);
+			\draw[thick, fill=xred!50] (3,0) circle (0.5) node (m1) {$m$};
+			\draw[springcoil, xdarkblue] (0,0) -- ($(m1)-(0.5,0)$);
 
-      \draw[line width=5mm, black!30] (-0.25,-2) -- ++(0,-1.75) -- ++(6.25,0);
-      \draw[thick] (0,-2) -- ++(0,-1.5) -- ++(6,0);
-      \draw[thick, fill=xred!50] (5,-3) circle (0.5) node (m2) {$m$};
-      \draw[springcoil, xdarkblue] (0,-3) -- ($(m2)-(0.5,0)$);
+			\draw[line width=5mm, black!30] (-0.25,-2) -- ++(0,-1.75) -- ++(6.25,0);
+			\draw[thick] (0,-2) -- ++(0,-1.5) -- ++(6,0);
+			\draw[thick, fill=xred!50] (5,-3) circle (0.5) node (m2) {$m$};
+			\draw[springcoil, xdarkblue] (0,-3) -- ($(m2)-(0.5,0)$);
 
-      \draw[line width=5mm, black!30] (-0.25,-5) -- ++(0,-1.75) -- ++(6.25,0);
-      \draw[thick] (0,-5) -- ++(0,-1.5) -- ++(6,0);
-      \draw[thick, fill=xred!50] (1.5,-6) circle (0.5) node (m3) {$m$};
-      \draw[springcoil, xdarkblue] (0,-6) -- ($(m3)-(0.5,0)$);
+			\draw[line width=5mm, black!30] (-0.25,-5) -- ++(0,-1.75) -- ++(6.25,0);
+			\draw[thick] (0,-5) -- ++(0,-1.5) -- ++(6,0);
+			\draw[thick, fill=xred!50] (1.5,-6) circle (0.5) node (m3) {$m$};
+			\draw[springcoil, xdarkblue] (0,-6) -- ($(m3)-(0.5,0)$);
 
-      \draw[xred, thick, cap=round, decorate, decoration={brace, amplitude=3pt, raise=3pt}] (m1 |- 0,-2.5) -- (m2 |- 0,-2.5) node[midway, above, yshift=5pt]{$\Delta x_{1}>0$};
-      \draw[xred, thick, cap=round, decorate, decoration={brace, amplitude=3pt, raise=3pt, mirror}] (m1 |- 0,-5.5) -- (m3 |- 0,-5.5) node[midway, above, yshift=5pt]{$\Delta x_{2}<0$};
+			\draw[xred, thick, cap=round, decorate, decoration={brace, amplitude=3pt, raise=3pt}] (m1 |- 0,-2.5) -- (m2 |- 0,-2.5) node[midway, above, yshift=5pt]{$\Delta x_{1}>0$};
+			\draw[xred, thick, cap=round, decorate, decoration={brace, amplitude=3pt, raise=3pt, mirror}] (m1 |- 0,-5.5) -- (m3 |- 0,-5.5) node[midway, above, yshift=5pt]{$\Delta x_{2}<0$};
 
-      \draw[-stealth, thick, xdarkblue] (2.5,-2) -- ++(-1,0) node[midway, above] {$F_{1}<0$};
-      \draw[-stealth, thick, xdarkblue] (0.5,-5) -- ++(0.6,0) node[midway, above] {$F_{2}>0$};
-    \end{tikzpicture}
-  \end{center}
-  \caption{A simple spring-mass system with spring constant $k$ and a mass $m$. The top figure shows the spring at rest - i.e. when the mass is located at position $x_{0}$ the spring applies no force on the mass (since $\Delta x = x_{m}-x_{0}=0$). The middle figure show the spring being at a \textit{positive} displacement $\Delta x_{1}>0$, causing the spring to pull back with a negative force $F_{1}=-k\Delta x_{1}$. The bottom picture shows the spring contracting by $\Delta x_{2}<0$, casing the spring to apply a positive force $F_{2}=-k\Delta x_{2}$ on the mass.}\label{fig:simple_spring}
+			\draw[-stealth, thick, xdarkblue] (2.5,-2) -- ++(-1,0) node[midway, above] {$F_{1}<0$};
+			\draw[-stealth, thick, xdarkblue] (0.5,-5) -- ++(0.6,0) node[midway, above] {$F_{2}>0$};
+		\end{tikzpicture}
+	\end{center}
+	\caption{A simple spring-mass system with spring constant $k$ and a mass $m$. The top figure shows the spring at rest - i.e. when the mass is located at position $x_{0}$ the spring applies no force on the mass (since $\Delta x = x_{m}-x_{0}=0$). The middle figure show the spring being at a \textit{positive} displacement $\Delta x_{1}>0$, causing the spring to pull back with a negative force $F_{1}=-k\Delta x_{1}$. The bottom picture shows the spring contracting by $\Delta x_{2}<0$, casing the spring to apply a positive force $F_{2}=-k\Delta x_{2}$ on the mass.}\label{fig:simple_spring}
 \end{figure}
 
 Using Newtons second law of motion (REF?) with $x$ being the displacement from the rest position $x_{0}$, we get the relation
 \begin{equation}
-  a = -kx,
-  \label{eq:simple_spring_newton_2nd_law}
+	a = -kx,
+	\label{eq:simple_spring_newton_2nd_law}
 \end{equation}
 but since $a = \od{v}{t} = \od[2]{x}{t}$, we can re-write \autoref{eq:simple_spring_newton_2nd_law} as
 \begin{equation}
-  \od[2]{x}{t} = -kx,
-  \label{eq:simple_spring_newton_2nd_law_as_derivative}
+	\od[2]{x}{t} = -kx,
+	\label{eq:simple_spring_newton_2nd_law_as_derivative}
 \end{equation}
 or even more succinctly as
 \begin{equation}
-  \ddot{x} = -kx.
-  \label{eq:simple_spring_newton_2nd_law_as_ddot}
+	\ddot{x} = -kx.
+	\label{eq:simple_spring_newton_2nd_law_as_ddot}
 \end{equation}
 
 \autoref{eq:simple_spring_newton_2nd_law_as_ddot} is one of the simplest possible 2nd-order \textit{ordinary} differential equations. Its solution is a combination of the two basic trigonometric equations:
 \begin{equation}
-  x(t) = c_{1}\sin\left(\alpha t\right) + c_{2}\cos\left(\beta t\right),
-  \label{eq:harmonic_solution_ode}
+	x(t) = c_{1}\sin\left(\alpha t\right) + c_{2}\cos\left(\beta t\right),
+	\label{eq:harmonic_solution_ode}
 \end{equation}
 where $c_{1}$ and $c_{2}$ are constants which we can find using the \textit{starting conditions} (see note \autoref{note:ode_start_cond}), and $\alpha,\beta$ are parameters of the motion. Since function arguments must be unitless, these two parameters also cause the total quantity inside the trigonometric functions to be unitless by having units corresponding to \SIe{1\over time}. For example, if we measure the time in \SIe{\second}, then the units of $\alpha$ and $\beta$ are \SIe{\per\second} = \SIe{\hertz}.
 
 \begin{note}{Starting conditions for solving ODEs}{ode_start_cond}
-  Recall that in order to completely solve an ordinary differential equation of order $n$ we must have $n$ starting conditions.
+	Recall that in order to completely solve an ordinary differential equation of order $n$ we must have $n$ starting conditions.
 \end{note}
 
 In the case where the initial position of the mass is $x_{0}$ and the initial velocity is $\dot{x}_{0}=0$ we get the simplified solution
 \begin{equation}
-  x(t) = x_{0}\cos(\omega t),
-  \label{eq:harmonic_normal_solution}
+	x(t) = x_{0}\cos(\omega t),
+	\label{eq:harmonic_normal_solution}
 \end{equation}
 where $\omega=\sqrt{\frac{k}{m}}$. The plot of the position $x(t)$ of the mass is given in \autoref{fig:simple_spring_plot}. Note how, when displayed side-by-side using the same time axes, the position plot is \enquote{lagging behind} the velocity plot by $\phi=\frac{\pi}{2}$: when we start the motion, the velocity is $0$ and then starts to increase in the negative direction (i.e. the mass is moving to the left). The position is at its maximum at that time, and decreases from $x_{\max}$ at $t=0$ to $x=0$ at $t=\frac{\pi}{2}$, while still staying positive. At $t=\frac{\pi}{2}$ the velocity reaches its maximum negative value, $\dot{x}=-v_{\max}$ (which is $1$ in units of $\frac{1}{v_{\max}}$), and the position becomes negative (since it is to the left of the rest position of the spring).
 
 \begin{figure}
-  \centering
-  \begin{tikzpicture}
-    \begin{axis}[
-      name=pos_vs_time,
-      graph2d,
-      width=10cm, height=4cm,
-      xmin=0, xmax=6*pi+0.5,
-      ymin=-1.1, ymax=1.1,
-      domain={0:6*pi+0.5},
-      xlabel=$\frac{t}{2\pi\omega}$,
-      ylabel=$\frac{x}{x_{0}}$,
-      xtick={2*pi,4*pi,6*pi},
-      ytick={-1,0,1},
-      xticklabels={$2\pi$,$4\pi$,$6\pi$}
-    ]
-    \addplot[function={xblue}] {cos(x)};
-    \end{axis}
-    \begin{axis}[
-      at=(pos_vs_time.below south west),
-      anchor=north west,
-      yshift=-1cm,
-      graph2d,
-      width=10cm, height=4cm,
-      xmin=0, xmax=6*pi+0.5,
-      ymin=-1.1, ymax=1.1,
-      domain={0:6*pi+0.5},
-      xlabel=$\frac{t}{2\pi\omega}$,
-      ylabel=$\frac{\dot{x}}{\dot{x}_{\max}}$,
-      xtick={2*pi,4*pi,6*pi},
-      ytick={-1,0,1},
-      xticklabels={$2\pi$,$4\pi$,$6\pi$}
-    ]
-    \addplot[function={xred}] {-sin(x)};
-  \end{axis}
-  \end{tikzpicture}
-  \caption{Simple harmonic oscillator, top (blue): position $x$ vs. time $t$. The axes units are such that a full period of the oscillation takes $\Delta t=2\pi$, and that the minimum and maximum values of the position are $\pm1$, respectively. Bottom (red): velocity vs. time on the same time axes, and a velocity axis which is scaled such that $v_{\max}=1$.}
-  \label{fig:simple_spring_plot}
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[
+				name=pos_vs_time,
+				graph2d,
+				width=10cm, height=4cm,
+				xmin=0, xmax=6*pi+0.5,
+				ymin=-1.1, ymax=1.1,
+				domain={0:6*pi+0.5},
+				xlabel=$\frac{t}{2\pi\omega}$,
+				ylabel=$\frac{x}{x_{0}}$,
+				xtick={2*pi,4*pi,6*pi},
+				ytick={-1,0,1},
+				xticklabels={$2\pi$,$4\pi$,$6\pi$}
+			]
+			\addplot[function={xblue}] {cos(x)};
+		\end{axis}
+		\begin{axis}[
+				at=(pos_vs_time.below south west),
+				anchor=north west,
+				yshift=-1cm,
+				graph2d,
+				width=10cm, height=4cm,
+				xmin=0, xmax=6*pi+0.5,
+				ymin=-1.1, ymax=1.1,
+				domain={0:6*pi+0.5},
+				xlabel=$\frac{t}{2\pi\omega}$,
+				ylabel=$\frac{\dot{x}}{\dot{x}_{\max}}$,
+				xtick={2*pi,4*pi,6*pi},
+				ytick={-1,0,1},
+				xticklabels={$2\pi$,$4\pi$,$6\pi$}
+			]
+			\addplot[function={xred}] {-sin(x)};
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Simple harmonic oscillator, top (blue): position $x$ vs. time $t$. The axes units are such that a full period of the oscillation takes $\Delta t=2\pi$, and that the minimum and maximum values of the position are $\pm1$, respectively. Bottom (red): velocity vs. time on the same time axes, and a velocity axis which is scaled such that $v_{\max}=1$.}
+	\label{fig:simple_spring_plot}
 \end{figure}
 
 It would be useful to understand how does the spring-mass system evolve given a specific combination of position and velocity. This can be done by plotting the \textbf{phase space} of the system (\autoref{fig:harmonic_oscillator_phase_space}): on the horizontal axis we specify the position $x$ of the mass, and on the vertical axis the velocity $\dot{x}$.
 
 \begin{figure}
-  \centering
-  \begin{tikzpicture}
-    \begin{axis}[
-      graph2d,
-      width=10cm, height=10cm,
-      xmin=-3, xmax=3,
-      ymin=-3, ymax=3,
-      axis equal=true,
-      domain={-3:3},
-      xlabel=$\frac{x}{X_{0}}$,
-      ylabel=$\frac{\dot{x}}{\dot{X}_{\max}}$,
-      xtick={-3,-2,...,3},
-      ytick={-3,-2,...,3},
-      samples=100,
-    ]
-    \draw[very thick, xpurple] (0,0) circle (0.5);
-    \draw[very thick, xblue] (0,0) circle (1);
-    \draw[very thick, xgreen] (0,0) circle (1.5);
-    \draw[very thick, xorange] (0,0) circle (2);
-    \draw[very thick, xred] (0,0) circle (2.5);
-    \end{axis}
-  \end{tikzpicture}
-  \caption{Phase space plot of simple harmonic oscillators with different momenta (either their masses are different, or their initial distance are different). The axes are scaled such that their units are the initial position $X_{0}$ and maximum velocity $\dot{X}_{0}$, respectively, of the second oscillator (trajectory drawn in blue).}
-  \label{fig:harmonic_oscillator_phase_space}
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[
+				graph2d,
+				width=10cm, height=10cm,
+				xmin=-3, xmax=3,
+				ymin=-3, ymax=3,
+				axis equal=true,
+				domain={-3:3},
+				xlabel=$\frac{x}{X_{0}}$,
+				ylabel=$\frac{\dot{x}}{\dot{X}_{\max}}$,
+				xtick={-3,-2,...,3},
+				ytick={-3,-2,...,3},
+				samples=100,
+			]
+			\draw[very thick, xpurple] (0,0) circle (0.5);
+			\draw[very thick, xblue] (0,0) circle (1);
+			\draw[very thick, xgreen] (0,0) circle (1.5);
+			\draw[very thick, xorange] (0,0) circle (2);
+			\draw[very thick, xred] (0,0) circle (2.5);
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Phase space plot of simple harmonic oscillators with different momenta (either their masses are different, or their initial distance are different). The axes are scaled such that their units are the initial position $X_{0}$ and maximum velocity $\dot{X}_{0}$, respectively, of the second oscillator (trajectory drawn in blue).}
+	\label{fig:harmonic_oscillator_phase_space}
 \end{figure}
 
 In the case of a simple harmonic oscialltor, the evolution of the system is shown on the phase space plot as ellipses - and when we use normalized coordinates ($\tilde{x}=\frac{x}{x_{0}}$ and $\tilde{x}=\frac{\dot{x}}{\dot{X}_{\max}}$), the ellipses turn into perfect circles - just like we see in \autoref{fig:harmonic_oscillator_phase_space}. These circles or ellipses are \underline{paths of constant energy}: this can be seen when we \enquote{translate} the plot to have the potential energy and kinetric energy as horizontal and vertical axes, respectively.
 
 Recall that for close mechanical systems, the total energy $E$ is given by the sum of the sum of the \textit{kinetic energy} $K$ and the \textit{potential energy} $U$:
 \begin{equation}
-  E = K + U.
-  \label{eq:total_energy}
+	E = K + U.
+	\label{eq:total_energy}
 \end{equation}
 The kinetic energy is a function of the velocity $v=\dot{x}$:
 \begin{equation}
-  K = \frac{1}{2}\dot{x}^{2} = \frac{p^{2}}{2m},
-  \label{eq:kinetric_energy}
+	K = \frac{1}{2}\dot{x}^{2} = \frac{p^{2}}{2m},
+	\label{eq:kinetric_energy}
 \end{equation}
 and the potential energy is a function of the position $x$ via the force $F$:
 \begin{equation}
-  F = -\od{U}{x}.
-  \label{eq:force_from_potential}
+	F = -\od{U}{x}.
+	\label{eq:force_from_potential}
 \end{equation}
 In the case of an harmonic oscillator $F=-kx$, and therefore
 \begin{equation}
-  U = \int\displaystyle F \dif x = -k\int\displaystyle x \dif x = -\frac{1}{2}kx^{2} + c.
-  \label{eq:potential_energy_harmonic_oscillator}
+	U = \int\displaystyle F \dif x = -k\int\displaystyle x \dif x = -\frac{1}{2}kx^{2} + c.
+	\label{eq:potential_energy_harmonic_oscillator}
 \end{equation}
 Since we can add to the potential any constant with no change to the force derived from it (remember that the derivative of a constant is zero), we can simply set the potential at $x=0$ to $U\left(x=0\right)=0$, meaning that the integral constant is $c=0$. Altogether, we get the following system energy:
 \begin{equation}
-  E = \frac{p}{2m} - \frac{1}{2}kx^{2},
-  \label{eq:total_energy_harmonic_oscillator}
+	E = \frac{p}{2m} - \frac{1}{2}kx^{2},
+	\label{eq:total_energy_harmonic_oscillator}
 \end{equation}
 Essentially, this is equal to applying the following transformations to the phase space plot:
 \begin{align}
-  x &\to -\frac{1}{2}kx^{2},\\
-  \dot{x} &\to \frac{p^{2}}{2m} = \frac{1}{2m}{m^{2}\dot{x}^{2}} = \frac{1}{2}m\dot{x}^{2}.
+	x       & \to -\frac{1}{2}kx^{2},                                                          \\
+	\dot{x} & \to \frac{p^{2}}{2m} = \frac{1}{2m}{m^{2}\dot{x}^{2}} = \frac{1}{2}m\dot{x}^{2}.
 \end{align}
 Since the transformation \enquote{streches} both axes by the same power (up to the constants $m$ and $k$), the shapes remain the same as in the original plot.
 
 The total energy of the system can then be extracted from the radius of each circle path:
 \begin{equation}
-  E = \sqrt{K^{2}+U^{2}} = \sqrt{\frac{p^{2}}{4m^{2}} + \frac{k^{2}x^{4}}{4}} = \frac{1}{2}\left(\frac{p^{2}}{m^{2}}+k^{2}x^{4}\right).
-  \label{eq:label}
+	E = \sqrt{K^{2}+U^{2}} = \sqrt{\frac{p^{2}}{4m^{2}} + \frac{k^{2}x^{4}}{4}} = \frac{1}{2}\left(\frac{p^{2}}{m^{2}}+k^{2}x^{4}\right).
+	\label{eq:label}
 \end{equation}
 When $K=0$ (i.e. $p=0$) the entire energy is stored as potential energy:
 \begin{equation}
-  E = \frac{1}{2}\sqrt{k^{2}x^{4}} = \frac{1}{2}kx^{2}.
-  \label{eq:label}
+	E = \frac{1}{2}\sqrt{k^{2}x^{4}} = \frac{1}{2}kx^{2}.
+	\label{eq:label}
 \end{equation}
 And when $U=0$ (i.e. $x=0$) the entire energy is stored as kinetic energy:
 \begin{equation}
-  E = \frac{1}{2}\sqrt{\frac{p^{2}}{m^{2}}} = \frac{p}{2m} = \frac{1}{2}m\dot{x}^{2}.
-  \label{eq:label}
+	E = \frac{1}{2}\sqrt{\frac{p^{2}}{m^{2}}} = \frac{p}{2m} = \frac{1}{2}m\dot{x}^{2}.
+	\label{eq:label}
 \end{equation}
 
 \subsection{Damped Harmonic Oscillator}
 We can make the harmonic oscillator model a bit more realistic if we add a damping force proportional to the velocity of the mass. This corresponds e.g. to introducing friction into the model. The form of the damping force is $F_{\text{damp}}(t)=-cv(t)=-c\dot{x}$, for some real damping coefficient $c\geq0$ (in the case where $c=0$ we get back the simple harmonic oscillator model). Thus, the overall Newton 2nd law equation of the system has the following form:
 \begin{equation}
-  m\ddot{x} = -c\dot{x}-kx.
-  \label{eq:damped_harmonic_oscillator}
+	m\ddot{x} = -c\dot{x}-kx.
+	\label{eq:damped_harmonic_oscillator}
 \end{equation}
 
 The term $-c\dot{x}$ always acts in the opposite direction to the velocity due to the minus sign. Re-arranging \autoref{eq:damped_harmonic_oscillator} we get the more \enquote{canonical} form
 \begin{equation}
-  m\ddot{x} + c\dot{x} + kx = 0,
-  \label{eq:damped_harmonic_oscillator_different_form}
+	m\ddot{x} + c\dot{x} + kx = 0,
+	\label{eq:damped_harmonic_oscillator_different_form}
 \end{equation}
 We then use the solution $x(t)=\Eu{\lambda t}$, subtituting it into \autoref{eq:damped_harmonic_oscillator_different_form}:
 \begin{align}
-  F_{\text{total}}(t) &= \lambda^{2}m\Eu{\lambda t} + c\Eu{\lambda t} + k\Eu{\lambda t}\\
-  &= \Eu{\lambda t}\left(m\lambda^{2}+c\lambda+k\right)\\
-  &= 0.
-  \label{eq:2nd_order_ODE_polynomial}
+	F_{\text{total}}(t) & = \lambda^{2}m\Eu{\lambda t} + c\Eu{\lambda t} + k\Eu{\lambda t} \\
+	                    & = \Eu{\lambda t}\left(m\lambda^{2}+c\lambda+k\right)             \\
+	                    & = 0.
+	\label{eq:2nd_order_ODE_polynomial}
 \end{align}
 
 Since \autoref{eq:2nd_order_ODE_polynomial} is true for all $t$ (and in any case $\Eu{\lambda t}\neq 0$ for all $t$), for the equation to be true it must be that the quadratic eqaution in $\lambda$ equals zero. Using the quadratic formula we get that
 \begin{equation}
-  \lambda_{1,2} = \frac{-c\pm\sqrt{c^{2}-4km}}{2m}.
-  \label{eq:2nd_order_ODE_polynomial_solution}
+	\lambda_{1,2} = \frac{-c\pm\sqrt{c^{2}-4km}}{2m}.
+	\label{eq:2nd_order_ODE_polynomial_solution}
 \end{equation}
 For the solutions to $\lambda$ to be real numbers, $c^{2}\geq4km$ - otherwise the term in the square root is negative. When $c^{2}>4km$ we call the system \textbf{overdamped}, and the case where $c^{2}=4km$ is the \textbf{critical damping} value. MORE TEXT.
 
 The overall position vs. time relationship of the underdamped system is given by
 \begin{equation}
-  x(t) = x_{0}\Eu{-\frac{c}{2m}t}\cos\left(\omega t\right),
-  \label{eq:underdampled_oscillation}
+	x(t) = x_{0}\Eu{-\frac{c}{2m}t}\cos\left(\omega t\right),
+	\label{eq:underdampled_oscillation}
 \end{equation}
 where as before $\omega=\sqrt{\frac{k}{m}}$ (see \autoref{fig:underdamped_oscillation}).
 
 \begin{figure}
-  \centering
-  \begin{tikzpicture}
-    \begin{axis}[
-      name=pos_vs_time,
-      graph2d,
-      width=10cm, height=4cm,
-      xmin=0, xmax=6*pi+0.5,
-      ymin=-1.25, ymax=1.25,
-      domain={0:6*pi+0.5},
-      xlabel=$\frac{t}{2\pi\omega}$,
-      ylabel=$\frac{x}{x_{0}}\mid\frac{\dot{x}}{\dot{x}_{0}}$,
-      xtick={2*pi,4*pi,6*pi},
-      ytick={-1,...,1},
-      xticklabels={$2\pi$,$4\pi$,$6\pi$}
-    ]
-    \addplot[function={xblue}] {exp(-0.25*x)*cos(x)};
-    \addplot[function={xred}] {-exp(-0.25*x)*(sin(x)+cos(x))};
-    \end{axis}
-  \end{tikzpicture}
-  \caption{Underdamped harmonic oscillation\ldots}
-  \label{fig:underdamped_oscillation}
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[
+				name=pos_vs_time,
+				graph2d,
+				width=10cm, height=4cm,
+				xmin=0, xmax=6*pi+0.5,
+				ymin=-1.25, ymax=1.25,
+				domain={0:6*pi+0.5},
+				xlabel=$\frac{t}{2\pi\omega}$,
+				ylabel=$\frac{x}{x_{0}}\mid\frac{\dot{x}}{\dot{x}_{0}}$,
+				xtick={2*pi,4*pi,6*pi},
+				ytick={-1,...,1},
+				xticklabels={$2\pi$,$4\pi$,$6\pi$}
+			]
+			\addplot[function={xblue}] {exp(-0.25*x)*cos(x)};
+			\addplot[function={xred}] {-exp(-0.25*x)*(sin(x)+cos(x))};
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Underdamped harmonic oscillation\ldots}
+	\label{fig:underdamped_oscillation}
 \end{figure}
 
 The phase space plot of the damped system shows\ldots
 
 \begin{figure}
-  \centering
-  \begin{tikzpicture}
-    \begin{axis}[
-      graph2d,
-      width=10cm, height=10cm,
-      xmin=-1.1, xmax=1.1,
-      ymin=-1.1, ymax=1.1,
-      axis equal=true,
-      xlabel=$x$,
-      ylabel=$\dot{x}$,
-      xtick={-1,...,1},
-      ytick={-1,...,1},
-      samples=250,
-    ]
-    \addplot[domain=0:10*pi, function={xpurple}, variable=\t] ({exp(-0.1*t)*cos(t)},{exp(-0.1*t)*sin(t)});
-  \end{axis}
-  \end{tikzpicture}
-  \caption{Phase space plot of an underdamped harmonic oscillator\ldots}
-  \label{fig:underdamped_harmonic_oscillator_phase_space}
+	\centering
+	\begin{tikzpicture}
+		\begin{axis}[
+				graph2d,
+				width=10cm, height=10cm,
+				xmin=-1.1, xmax=1.1,
+				ymin=-1.1, ymax=1.1,
+				axis equal=true,
+				xlabel=$x$,
+				ylabel=$\dot{x}$,
+				xtick={-1,...,1},
+				ytick={-1,...,1},
+				samples=250,
+			]
+			\addplot[domain=0:10*pi, function={xpurple}, variable=\t] ({exp(-0.1*t)*cos(t)},{exp(-0.1*t)*sin(t)});
+		\end{axis}
+	\end{tikzpicture}
+	\caption{Phase space plot of an underdamped harmonic oscillator\ldots}
+	\label{fig:underdamped_harmonic_oscillator_phase_space}
 \end{figure}
 
 
