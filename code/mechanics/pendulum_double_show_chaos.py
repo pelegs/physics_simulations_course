@@ -16,7 +16,7 @@ m1 = 1.0  # [kg]
 m2 = 1.0  # [kg]
 
 # Parameters
-t_max = 0.5  # [s]
+t_max = 50.0  # [s]
 dt = 0.01  # [s]
 
 # Variables
@@ -29,7 +29,7 @@ th_vel = np.zeros((2, num_objects, num_steps))
 th_acc = np.zeros((2, num_objects, num_steps))
 
 # Initial conditions
-th0_mean = np.random.uniform(-np.pi, np.pi, 2)
+th0_mean = np.random.uniform(-np.pi / 4, np.pi / 4, 2)
 th0_dev = 0.1
 th[:, :, 0] = np.random.uniform(
     low=np.repeat(th0_mean - th0_dev, num_objects).reshape(2, num_objects),
@@ -60,6 +60,7 @@ ax_vis.get_yaxis().set_ticks([])
 ax_walk.set_title("random walk?")
 ax_walk.set_xlabel(r"$\theta_{1}$")
 ax_walk.set_ylabel(r"$\theta_{2}$")
+colors = plt.color_sequences.get("Set1")
 
 # Phase space th1
 ax_ps_th1.set_title(r"Phase space, $\theta_{1}$")
@@ -123,8 +124,8 @@ def get_th2_acc(t):
 for i, time in enumerate(time_series[1:], start=1):
     th_acc[0, :, i] = get_th1_acc(i)
     th_acc[1, :, i] = get_th2_acc(i)
-    th_vel[0, :, i] = th_vel[0, :, i - 1] + th_acc[0, :, i] * dt
-    th[0, :, i] = th[0, :, i - 1] + th_vel[0, :, i] * dt
+    th_vel[:, :, i] = th_vel[:, :, i - 1] + th_acc[:, :, i] * dt
+    th[:, :, i] = th[:, :, i - 1] + th_vel[:, :, i] * dt
 
 bob1x = L1 * np.sin(th[0])
 bob1y = -L1 * np.cos(th[0])
@@ -174,11 +175,21 @@ for i, time in enumerate(
         color="darkturquoise",
         zorder=100,
     )
-    (walk_plt,) = ax_walk.plot(th[0, 0, :k], th[1, 0, :k], "red")
-    (ps_th1,) = ax_ps_th1.plot(th[0, :, :k], th_vel[0, :, :k], "purple")
-    (ps_th2,) = ax_ps_th2.plot(th[1, :, :k], th_vel[1, :, :k], "orange")
+    walk_plt = [
+        ax_walk.plot(th[0, i, :k], th[1, i, :k], colors[i])[0]
+        for i in range(num_objects)
+    ]
+    ps_th1 = [
+        ax_ps_th1.plot(th[0, i, :k], th_vel[0, i, :k], colors[i])[0]
+        for i in range(num_objects)
+    ]
+    ps_th2 = [
+        ax_ps_th1.plot(th[1, i, :k], th_vel[1, i, :k], colors[i])[0]
+        for i in range(num_objects)
+    ]
+    new_frame = [ln1, ln2, bob1, bob2] + walk_plt + ps_th1 + ps_th2
+    imgs.append(new_frame)
 
-    imgs.append([ln1, ln2, bob1, bob2, walk_plt, ps_th1, ps_th2])
 
 ani = animation.ArtistAnimation(fig, imgs, interval=1)
 writervideo = animation.FFMpegWriter(fps=30)
