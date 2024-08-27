@@ -16,7 +16,7 @@ m1 = 1.0  # [kg]
 m2 = 1.0  # [kg]
 
 # Parameters
-t_max = 25.0  # [s]
+t_max = 0.5  # [s]
 dt = 0.01  # [s]
 
 # Variables
@@ -79,40 +79,39 @@ ax_ps_th2.set_ylabel(r"$\dot{\theta}_{2}$\ [rad/s]")
 
 def get_th1_acc(t):
     M1 = -g * (2 * m1 + m2) * np.sin(th[0, :, t - 1])
-    M2 = -m2 * g * np.sin(th[0, :, t - 1] - 2 * th[1, t - 1])
+    M2 = -m2 * g * np.sin(th[0, :, t - 1] - 2 * th[1, :, t - 1])
     interaction = (
         -2
-        * np.sin(th[0, :, t - 1] - th[1, t - 1])
+        * np.sin(th[0, :, t - 1] - th[1, :, t - 1])
         * m2
         * np.cos(
             th_vel[1, :, t - 1] ** 2 * L2
             + th_vel[0, :, t - 1] ** 2
             * L1
-            * np.cos(th[0, :, t - 1] - th[1, t - 1])
+            * np.cos(th[0, :, t - 1] - th[1, :, t - 1])
         )
     )
     normalization = L1 * (
         2 * m1 + m2 - m2 * np.cos(2 * th[0, :, t - 1] - 2 * th[1, :, t - 1])
     )
-    print(M1)
-    print(M2)
-    print(interaction)
-    print(normalization)
     return (M1 + M2 + interaction) / normalization
 
 
 def get_th2_acc(t):
     system = (
         2
-        * np.sin(th1[t - 1] - th2[t - 1])
+        * np.sin(th[0, :, t - 1] - th[1, :, t - 1])
         * (
-            th1_d[t - 1] ** 2 * L1 * (m1 + m2)
-            + g * (m1 + m2) * np.cos(th1[t - 1])
-            + th2_d[t - 1] ** 2 * L2 * m2 * np.cos(th1[t - 1] - th2[t - 1])
+            th_vel[0, :, t - 1] ** 2 * L1 * (m1 + m2)
+            + g * (m1 + m2) * np.cos(th[0, :, t - 1])
+            + th_vel[1, :, t - 1] ** 2
+            * L2
+            * m2
+            * np.cos(th[0, :, t - 1] - th[1, :, t - 1])
         )
     )
     normalization = L1 * (
-        2 * m1 + m2 - m2 * np.cos(2 * th1[t - 1] - 2 * th2[t - 1])
+        2 * m1 + m2 - m2 * np.cos(2 * th[0, :, t - 1] - 2 * th[1, :, t - 1])
     )
     return system / normalization
 
@@ -122,20 +121,18 @@ def get_th2_acc(t):
 ##########################
 
 for i, time in enumerate(time_series[1:], start=1):
-    th1_dd[i] = get_th1_acc(i)
-    th2_dd[i] = get_th2_acc(i)
-    th1_d[i] = th1_d[i - 1] + th1_dd[i] * dt
-    th2_d[i] = th2_d[i - 1] + th2_dd[i] * dt
-    th1[i] = th1[i - 1] + th1_d[i] * dt
-    th2[i] = th2[i - 1] + th2_d[i] * dt
+    th_acc[0, :, i] = get_th1_acc(i)
+    th_acc[1, :, i] = get_th2_acc(i)
+    th_vel[0, :, i] = th_vel[0, :, i - 1] + th_acc[0, :, i] * dt
+    th[0, :, i] = th[0, :, i - 1] + th_vel[0, :, i] * dt
 
-bob1x = L1 * np.sin(th1)
-bob1y = -L1 * np.cos(th1)
-bob2x = bob1x + L2 * np.sin(th2)
-bob2y = bob1y - L2 * np.cos(th2)
+bob1x = L1 * np.sin(th[0])
+bob1y = -L1 * np.cos(th[0])
+bob2x = bob1x + L2 * np.sin(th[1])
+bob2y = bob1y - L2 * np.cos(th[1])
 
-ax_walk.set_xlim(min(th1), max(th1))
-ax_walk.set_ylim(min(th2), max(th2))
+# ax_walk.set_xlim(min(th1), max(th1))
+# ax_walk.set_ylim(min(th2), max(th2))
 
 
 #########################
@@ -150,36 +147,36 @@ for i, time in enumerate(
 ):
     k = i * anim_interval
     (ln1,) = ax_vis.plot(
-        [0, bob1x[k]],
-        [0, bob1y[k]],
+        [0, bob1x[0, k]],
+        [0, bob1y[0, k]],
         color="black",
         lw=3,
     )
     (ln2,) = ax_vis.plot(
-        [bob1x[k], bob2x[k]],
-        [bob1y[k], bob2y[k]],
+        [bob1x[0, k], bob2x[0, k]],
+        [bob1y[0, k], bob2y[0, k]],
         color="black",
         lw=3,
     )
     (bob1,) = ax_vis.plot(
-        bob1x[k],
-        bob1y[k],
+        bob1x[0, k],
+        bob1y[0, k],
         "o",
         markersize=22,
         color="darkturquoise",
         zorder=100,
     )
     (bob2,) = ax_vis.plot(
-        bob2x[k],
-        bob2y[k],
+        bob2x[0, k],
+        bob2y[0, k],
         "o",
         markersize=22,
         color="darkturquoise",
         zorder=100,
     )
-    (walk_plt,) = ax_walk.plot(th1[:k], th2[:k], "red")
-    (ps_th1,) = ax_ps_th1.plot(th1[:k], th1_d[:k], "purple")
-    (ps_th2,) = ax_ps_th2.plot(th2[:k], th2_d[:k], "orange")
+    (walk_plt,) = ax_walk.plot(th[0, 0, :k], th[1, 0, :k], "red")
+    (ps_th1,) = ax_ps_th1.plot(th[0, :, :k], th_vel[0, :, :k], "purple")
+    (ps_th2,) = ax_ps_th2.plot(th[1, :, :k], th_vel[1, :, :k], "orange")
 
     imgs.append([ln1, ln2, bob1, bob2, walk_plt, ps_th1, ps_th2])
 
