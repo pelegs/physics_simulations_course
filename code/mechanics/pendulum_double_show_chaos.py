@@ -24,22 +24,18 @@ time_series = np.arange(0, t_max, dt)
 num_steps = time_series.shape[0]
 num_objects = 5
 
-th1 = np.zeros((num_objects, num_steps))
-th2 = np.zeros((num_objects, num_steps))
-th1_d = np.zeros((num_objects, num_steps))
-th2_d = np.zeros((num_objects, num_steps))
-th1_dd = np.zeros((num_objects, num_steps))
-th2_dd = np.zeros((num_objects, num_steps))
+th = np.zeros((2, num_objects, num_steps))
+th_vel = np.zeros((2, num_objects, num_steps))
+th_acc = np.zeros((2, num_objects, num_steps))
 
 # Initial conditions
-range_th = 0.01
-th_0 = np.random.uniform(-np.pi, np.pi, size=2)
-th1[:, 0], th2[:, 0] = np.random.uniform(
-    th_0 - range_th, th_0 + range_th, size=(2, num_objects)
+th0_mean = np.random.uniform(-np.pi, np.pi, 2)
+th0_dev = 0.1
+th[:, :, 0] = np.random.uniform(
+    low=np.repeat(th0_mean - th0_dev, num_objects).reshape(2, num_objects),
+    high=np.repeat(th0_mean + th0_dev, num_objects).reshape(2, num_objects),
+    size=(2, num_objects),
 )
-print(th1[:, 0])
-print(th2[:, 0])
-exit()
 
 
 ##########################
@@ -82,20 +78,26 @@ ax_ps_th2.set_ylabel(r"$\dot{\theta}_{2}$\ [rad/s]")
 
 
 def get_th1_acc(t):
-    M1 = -g * (2 * m1 + m2) * np.sin(th1[t - 1])
-    M2 = -m2 * g * np.sin(th1[t - 1] - 2 * th2[t - 1])
+    M1 = -g * (2 * m1 + m2) * np.sin(th[0, :, t - 1])
+    M2 = -m2 * g * np.sin(th[0, :, t - 1] - 2 * th[1, t - 1])
     interaction = (
         -2
-        * np.sin(th1[t - 1] - th2[t - 1])
+        * np.sin(th[0, :, t - 1] - th[1, t - 1])
         * m2
         * np.cos(
-            th2_d[t - 1] ** 2 * L2
-            + th1_d[t - 1] ** 2 * L1 * np.cos(th1[t - 1] - th2[t - 1])
+            th_vel[1, :, t - 1] ** 2 * L2
+            + th_vel[0, :, t - 1] ** 2
+            * L1
+            * np.cos(th[0, :, t - 1] - th[1, t - 1])
         )
     )
     normalization = L1 * (
-        2 * m1 + m2 - m2 * np.cos(2 * th1[t - 1] - 2 * th2[t - 1])
+        2 * m1 + m2 - m2 * np.cos(2 * th[0, :, t - 1] - 2 * th[1, :, t - 1])
     )
+    print(M1)
+    print(M2)
+    print(interaction)
+    print(normalization)
     return (M1 + M2 + interaction) / normalization
 
 
