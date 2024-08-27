@@ -22,16 +22,24 @@ dt = 0.01  # [s]
 # Variables
 time_series = np.arange(0, t_max, dt)
 num_steps = time_series.shape[0]
-th1 = np.zeros(num_steps)
-th2 = np.zeros(num_steps)
-th1_d = np.zeros(num_steps)
-th2_d = np.zeros(num_steps)
-th1_dd = np.zeros(num_steps)
-th2_dd = np.zeros(num_steps)
+num_objects = 5
+
+th1 = np.zeros((num_objects, num_steps))
+th2 = np.zeros((num_objects, num_steps))
+th1_d = np.zeros((num_objects, num_steps))
+th2_d = np.zeros((num_objects, num_steps))
+th1_dd = np.zeros((num_objects, num_steps))
+th2_dd = np.zeros((num_objects, num_steps))
 
 # Initial conditions
-th1[0] = np.random.uniform(-np.pi, np.pi)
-th2[0] = np.random.uniform(-np.pi, np.pi)
+range_th = 0.01
+th_0 = np.random.uniform(-np.pi, np.pi, size=2)
+th1[:, 0], th2[:, 0] = np.random.uniform(
+    th_0 - range_th, th_0 + range_th, size=(2, num_objects)
+)
+print(th1[:, 0])
+print(th2[:, 0])
+exit()
 
 
 ##########################
@@ -176,7 +184,7 @@ for i, time in enumerate(
 ani = animation.ArtistAnimation(fig, imgs, interval=1)
 writervideo = animation.FFMpegWriter(fps=30)
 # ani.save("double_pendulum_test.mp4", writer=writervideo)
-update_func = lambda _i, _n: progress_bar.update(1)
+update_func = lambda _i, _: progress_bar.update(1)
 with tqdm(
     total=int(num_steps / anim_interval), desc="Saving video"
 ) as progress_bar:
