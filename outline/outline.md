@@ -15,6 +15,12 @@
 
 # Newtonian mechanics
 ## Pendulum
+### Simple pendulum
+### Small-angle approximation
+### Numerical solution
+### Damped oscillation
+### Double pendulum
+
 ## Gravity
 ### Gravitational force
 ### Conic sections

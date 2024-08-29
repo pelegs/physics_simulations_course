@@ -306,17 +306,17 @@
 \maketitle
 
 % For tests
-\ifdefined\testcode
-  \chapter{Tests}
-  This is a test: a reference to some code: \autoref{lst:code1}.
-  \input{code/maths}
-\else
-\fi
+% \ifdefined\testcode
+%   \chapter{Tests}
+%   This is a test: a reference to some code: \autoref{lst:code1}.
+%   \input{code/maths}
+% \else
+% \fi
 
 % Content
 \makeatletter
 \def\input@path{{./chapters/}}
-\input{intro}
+% \input{intro}
 \input{mechanics}
 % \input{waves}
 % \input{thermodynamics}
