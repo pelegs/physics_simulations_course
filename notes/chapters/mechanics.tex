@@ -4,6 +4,10 @@ Text text text
 
 \section{Pendulum}
 \subsection{Simple pendulum}
+Text text text.
+
+\def\centerarc[#1](#2)(#3:#4:#5)% Syntax: [draw options] (center) (initial angle:final angle:radius)
+{ \draw[#1] ($(#2)+({#5*cos(#3)},{#5*sin(#3)})$) arc (#3:#4:#5); }
 
 \begin{figure}
 	\begin{center}
@@ -12,19 +16,85 @@ Text text text
 			\pgfmathsetmacro{\L}{4}
 			\coordinate (origin) at (0,0);
 			\coordinate (bob) at ({\L*sin(\th)},{-\L*cos(\th)});
+			\draw[stealth-stealth, thick, xblue, dashed] ($(origin)+({4*cos(210)},{4*sin(210)})$) arc (210:330:\L) node [midway, below] {trajectory};
 			\draw[thick, fill=black!50] (-1,0) rectangle (1,0.5);
-			\draw[thick] (origin) -- (bob);
-			\draw[thick, fill=xblue!25] (bob) circle (0.4);
-			\draw[thick, xred, dashed] (origin) -- (0,-2);
+			\draw[thick] (origin) -- (bob) node [midway, above right] {$L$};
+			\draw[thick, fill=xgreen!25] (bob) circle (0.5) node {\enquote{bob}};
+			\draw[thick, xred, dashed] (origin) -- (0,-3);
 			\draw[filledangle={xred}] (origin) -- (0,-1) arc (-90:-\th:1) node [above, pos=0.4] {$\theta$};
-			\draw[vector, xpurple] (bob) -- ++(0,-1.5) node [midway, right] {$\vec{F}_{g}$};
-			\draw[vector, xblue] (bob) -- ($(bob)!0.3!(origin)$) node [midway, above right] {$\vec{T}$};
 		\end{tikzpicture}
 	\end{center}
-	\caption{A simple pendulum with forces acting on the bob.}
+	\caption{A simple pendulum. TBD: add more info.}
 	\label{fig:simple_pendulum}
 \end{figure}
 
+Using force analysis we can derive an equation of motion for the bob (see \autoref{fig:simple_pendulum_forces}): since the rod can't change its length (it's always $L$), the only variable quantity is the angle $\theta$, and the bob's trajectory is a circle. Any force acting in a radial direction to the trajectory must be counter-balanced (otherwise there will be some acceleration - and therefore motion - in that direction). We are therefore left with only a tangental force, with magnitude
+\begin{equation}
+	F = -mg\sin(\theta),
+	\label{eq:simple_pendulum_tangental_force}
+\end{equation}
+the minus sign here is chosen to represent that gravity acts in the negative $y$ direction (i.e. \enquote{down}).
+
+\begin{figure}
+	\begin{center}
+		\begin{tikzpicture}
+			\pgfmathsetmacro{\th}{45}
+			\pgfmathsetmacro{\L}{4}
+			\coordinate (origin) at (0,0);
+			\coordinate (bob) at ({\L*sin(\th)},{-\L*cos(\th)});
+			\draw[stealth-stealth, thick, xblue, dashed] ($(origin)+({4*cos(210)},{4*sin(210)})$) arc (210:330:\L);
+			\draw[thick, fill=black!50] (-1,0) rectangle (1,0.5);
+			\draw[thick] (origin) -- (bob) node [midway, above right] {$L$};
+			\draw[thick, fill=xgreen!25] (bob) circle (0.5);
+			\draw[vector, xpurple] (bob) -- ++(0,-1.5) node [midway, right] {$\vec{F}_{g}$};
+			\draw[vector, xred] (bob) -- ($(bob)!0.3!(origin)$) node [midway, above right] {$\vec{T}$};
+			\draw[thick, xred, dashed] (origin) -- (0,-2);
+			\draw[filledangle={xred}] (origin) -- (0,-1) arc (-90:-\th:1) node [above, pos=0.4] {$\theta$};
+		\end{tikzpicture}
+	\end{center}
+	\caption{Forces acting on a simple pendulum. TBD: Force compnents.}
+	\label{fig:simple_pendulum_forces}
+\end{figure}
+
+Applying Newton's second law we get that
+\begin{equation}
+	F = ma = -mg\sin(\theta),
+	\label{eq:simple_pendulum_newton_second_law}
+\end{equation}
+i.e.
+\begin{equation}
+	a = -g\sin(\theta).
+	\label{eq:simple_pendulum_acceleration}
+\end{equation}
+
+Now we see that the minus sign also makes sense physically, as it shows that the acceleration is always in the opposite direction to the angle (which is negative to the left and positive to the right).
+
+The tangental position $s$ of the bob can be calculated from the angle $\theta$ by
+\begin{equation}
+	s = L\theta
+	\label{eq:simple_pendulum_tangental_position}
+\end{equation}
+(recall that $\theta$ is given in radians), and therefore the tangental velocity is
+\begin{equation}
+	v = \dot{s} = L\dot{\theta},
+	\label{eq:simple_pendulum_tangental_velovity}
+\end{equation}
+and the acceleration is therefore
+\begin{equation}
+	a = \dot{v} = \ddot{s} = L\ddot{\theta}.
+	\label{eq:simple_pendulum_tangental_acceleration}
+\end{equation}
+Since we know that $a=-g\sin(\theta)$, we get
+\begin{equation}
+	L\ddot{\theta} = -g\sin(\theta),
+\end{equation}
+and by moving the rhs term to the left and divide by $l$ we get
+\begin{equation}
+	\ddot{\theta} + \frac{g}{L}\sin(\theta) = 0.
+	\label{eq:simple_pendulum_differential_equation}
+\end{equation}
+
+This is a differential equation without analytical solution. We will therefore take two approaches: (1) use an approximation to yield an analytical solution, and (2) solve the equation numerically.
 
 \subsection{Small-angle approximation}
 \subsection{Numerical solution}
