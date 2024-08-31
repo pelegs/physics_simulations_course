@@ -119,7 +119,67 @@ for which we have an exact solution:
 \end{equation}
 where $\omega=\sqrt{\frac{g}{L}}$. The parameters $A$ and $\phi$ depend on the initial conditions (i.e. angle and tangental velocity).
 
-\subsection{Numerical solution}
+TBW: how it looks like (+phase space), python plot?
+
+\subsection{Numerical integratiob}
+Another approach to solve \autoref{eq:simple_pendulum_differential_equation} is doing so numerically, i.e. essentially running a computer simulation. While computers can carry out many calculations per second (in the order of billions, in fact) - they are limited to performing descrete calculations. That is to say, a numerical calculation is also an approximation. However, unlike the small-angle approximation, in principle we can improve the approximation indefinitely, although in practice this is of course impossible.
+
+Let us use a rather naive approach to numerically approximating \autoref{eq:simple_pendulum_differential_equation}: instead of viewing $\theta$ as a continuous function of time $t$, we instead define $t$ to only have equally spaced discrete values $t_{0},t_{1},t_{2},\dots$ such that
+\begin{equation}
+	t_{n} = t_{0} + n\Delta t,
+\end{equation}
+or phrased differently: we look at the values $t_{i}$ of $t$ at intervals $\Delta t$ starting from $t_{0}$ (see \autoref{fig:discrete_time}).
+
+\begin{figure}
+	\begin{center}
+		\begin{tikzpicture}
+			\draw[stealth-stealth, thick] (-1,0) -- (7,0) node [right] {$t$};
+			\foreach \k in {0,1,...,6} {
+					\draw[thick] (\k,0.1) -- (\k,-0.1) node [below] {$t_{\k}$};
+				}
+			\draw[xblue, thick, decorate, decoration={brace, amplitude=3pt, raise=-3pt}]
+			(0,0.25) -- ++(1,0) node[midway, above, yshift=0pt]{$\Delta t$};
+		\end{tikzpicture}
+	\end{center}
+	\caption{Discrete time steps.}
+	\label{fig:discrete_time}
+\end{figure}
+
+In this discrete view, a function of $t$ can also only be evaulated at discrete points. For example, the angle $\theta$ of the bob as a function of time is a discrete function taking the values $\theta_{0},\theta_{1},\theta_{2},\dots$, where each $\theta_{i}$ corresponds to the time $t_{i}$.
+
+How does the discrete angular velocity look like in this scheme? It's worth looking at the definition of angular velocity in the continuous case:
+\begin{equation}
+	\omega(t) = \dot{\theta}(t) = \od{\theta(t)}{t} = \lim\limits_{\Delta t\to0}\frac{\theta\left(t+\Delta t\right)-\theta(t)}{\Delta t}.
+	\label{eq:label}
+\end{equation}
+To descritize, we can replace $\theta(t)$ with $\theta_{t_{i}}=\theta_{i}$, and therefore $\theta\left(t+\Delta t\right)$ with $\theta_{t_{i}+\Delta t}=\theta_{i+1}$. The limit $\lim\limits_{\Delta t\to 0}$ is pretty meaningless, since the smallest $\Delta t$ possible in the discrete case is the $\Delta t$ we chose to discretize out time steps. Therefore, we get that the discrete version of $\omega(t)$ is
+\begin{equation}
+	\omega_{i} = \frac{\theta_{i+1}-\theta_{i}}{\Delta t},
+	\label{eq:discrete_velocity}
+\end{equation}
+which is nothing more than saying that the angular velocity at time $t_{i}$ is simply the difference between the angle at time $t_{i+1}$ and the angle at time $t_{i}$, divided by the time difference $\Delta t$.
+
+\autoref{eq:discrete_velocity} gives us a powerful tool: if we only know the current angle $\theta_{i}$ of the bob and its current velocity $\omega_{i}$, then its next position $\theta_{i+1}$ is a simple rearrangement of the equation:
+\begin{equation}
+	\theta_{i+1} = \theta_{i} + \omega_{i}\Delta t.
+	\label{eq:next_position_from_velocity}
+\end{equation}
+
+The same logic can be applied to the angular acceleration $\alpha(t)$: in the continuous version its given by
+\begin{equation}
+	\alpha(t) = \dot{\omega(t)} = \od{\omega(t)}{t} = \lim\limits_{\Delta t\to 0}\frac{\omega\left(t+\Delta t\right)-\omega(t)}{\Delta t},
+\end{equation}
+and thus the discrete version is
+\begin{equation}
+	\alpha_{i} = \frac{\omega_{i+1}-\omega_{i}}{\Delta t},
+\end{equation}
+and recovering the angular velocity $\omega_{i+1}$ from the angular velocity $\omega_{i}$ and the angular acceleration $\alpha_{i}$ is done by
+\begin{equation}
+	\omega_{i+1} = \omega_{i}+\alpha_{i}\Delta t.
+	\label{eq:next_velocity_from_acceleration}
+\end{equation}
+
+
 \subsection{Damped oscillation}
 \subsection{Double pendulum}
 
