@@ -179,6 +179,17 @@ and recovering the angular velocity $\omega_{i+1}$ from the angular velocity $\o
 	\label{eq:next_velocity_from_acceleration}
 \end{equation}
 
+Since we use the inverse of the differentiation operation (in the discrete sense) to recover the quantity we're after, this scheme is known as a \textbf{numerical integration}. Specifically, this kind of numerical integration is called the \textbf{Forward-Euler} method, and it is generally considered unfavourable due to the fast rate with which it gains errors, and is rarely used in practice.
+
+However, for the sake of simplicity of writing our first simulations, we will not discuss these issues now, nor will we generalize the method and present better ones - both of which we will do later in the course. Instead, for now we will continue with using this method to devise a numerical integration scheme for a simple pendulum.
+
+In the case of the pendulum, recall that the acceleration at time $t$ is $\ddot{\theta}(t)=-\frac{g}{L}\sin(\theta)$ (\autoref{eq:simple_pendulum_differential_equation}), and therefore we can discretize it as
+\begin{equation}
+	\alpha_{i+1} = -\frac{g}{L}\sin\left(\theta_{i}\right).
+	\label{eq:pendulum_discrete_acceleration}
+\end{equation}
+%%% !!! TBW: why alpha_{i+1} instead of alpha_{i} !!! %%%
+We then use the forward Euler method to get the angular velocity and angle, as seen in \autoref{eq:next_velocity_from_acceleration} and \autoref{eq:next_position_from_velocity}, respectively.
 
 \subsection{Damped oscillation}
 \subsection{Double pendulum}
