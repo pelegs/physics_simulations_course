@@ -119,7 +119,7 @@ for which we have an exact solution:
 \end{equation}
 where $\omega=\sqrt{\frac{g}{L}}$. The parameters $A$ and $\phi$ depend on the initial conditions (i.e. angle and tangental velocity).
 
-TBW: how it looks like (+phase space), python plot?
+TBW: resonance freq, how it looks like (+phase space), python plot?
 
 \subsection{Numerical integratiob}
 Another approach to solve \autoref{eq:simple_pendulum_differential_equation} is doing so numerically, i.e. essentially running a computer simulation. While computers can carry out many calculations per second (in the order of billions, in fact) - they are limited to performing descrete calculations. That is to say, a numerical calculation is also an approximation. However, unlike the small-angle approximation, in principle we can improve the approximation indefinitely, although in practice this is of course impossible.
@@ -190,8 +190,53 @@ In the case of the pendulum, recall that the acceleration at time $t$ is $\ddot{
 \end{equation}
 %%% !!! TBW: why alpha_{i+1} instead of alpha_{i} !!! %%%
 We then use the forward Euler method to get the angular velocity and angle, as seen in \autoref{eq:next_velocity_from_acceleration} and \autoref{eq:next_position_from_velocity}, respectively.
+%%% Add code example redirection, maybe a nice tcolorbox?
 
 \subsection{Damped oscillation}
+A slightly more realistic model of a pendulum also considers the way the pendulum loses energy over time (e.g. via friction). This can be modelled by adding a force which resists the angular velocity (see also \autoref{fig:pendulum_damping_force}):
+\begin{equation}
+	F_{d} = -bL\dot{\theta},
+	\label{eq:damping_force}
+\end{equation}
+where $b$ is simply a parameter which adjusts how strong the damping is.
+
+\begin{figure}
+	\begin{center}
+		\begin{tikzpicture}
+			\pgfmathsetmacro{\th}{25}
+			\pgfmathsetmacro{\L}{4}
+			\coordinate (origin) at (0,0);
+			\coordinate (bob) at ({\L*sin(\th)},{-\L*cos(\th)});
+			\draw[stealth-stealth, thick, xblue, dashed, opacity=0.25] ($(origin)+({4*cos(210)},{4*sin(210)})$) arc (210:330:\L);
+			\draw[thick, fill=black!50] (-1,0) rectangle (1,0.5);
+			\draw[thick] (origin) -- (bob) node [midway, above right] {$L$};
+			\draw[thick, fill=xgreen!25] (bob) circle (0.5);
+			\draw[vector, xpurple] (bob) -- ++(0,-1.5) node [midway, right] {$\vec{F}_{g}$};
+			\draw[vector, xred] (bob) -- ($(bob)!0.3!(origin)$) node [midway, above right] {$\vec{T}$};
+			\draw[thick, xred, dashed] (origin) -- (0,-2);
+			\draw[filledangle={xred}] (origin) -- (0,-1) arc (-90:{-90+\th}:1) node [above, pos=0.4] {$\theta$};
+			\draw[vector, xblue] (bob) -- ++({-1.5*cos(\th)},{-1.5*sin(\th)}) node [pos=1.2] {$\vec{v}$};
+			\draw[vector, xorange] (bob) -- ++({1*cos(\th)},{1*sin(\th)}) node [pos=1.2] {$\vec{F}_{d}$};
+		\end{tikzpicture}
+	\end{center}
+	\caption{Forces on a pendulum including a damping force.}
+	\label{fig:pendulum_damping_force}
+\end{figure}
+
+Using Newton's second law, recalling that $a=L\ddot{\theta}$ (\autoref{eq:simple_pendulum_tangental_acceleration}), we get
+\begin{equation}
+	mL\ddot{\theta} = F_{g} + F_{d} = -mg\sin(\theta) - bL\dot{\theta}.
+	\label{eq:damped_pendulum_differential_equation}
+\end{equation}
+
+It's common to use $\beta=\frac{b}{2m}$ and of course $\omega_{0}=\sqrt{\frac{g}{L}}$, which together with some rearrangement gives us
+\begin{equation}
+	\ddot{\theta} = -2\beta\dot{\theta} -\omega_{0}^{2}\sin(\theta).
+	\label{eq:damped_pendulum_differential_equation_2}
+\end{equation}
+
+%%% TBW: under/over/critical-damping, etc.
+
 \subsection{Double pendulum}
 
 % \section{Orbital Mechanics}
