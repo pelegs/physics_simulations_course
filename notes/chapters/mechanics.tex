@@ -238,6 +238,7 @@ It's common to use $\beta=\frac{b}{2m}$ and of course $\omega_{0}=\sqrt{\frac{g}
 %%% TBW: under/over/critical-damping, etc.
 
 \subsection{Double pendulum}
+An interesting system arises when we take a simple pendulum and attach another simple pendulum to it (as seen in \autoref{fig:double_pendulum}): unlike a simple pendulum, this system exhibits very complex dynamics which is sensitive to the initial conditions - i.e. it is \textbf{chaotic}, meaning that small changes in the initial conditions evolve into big differences in the dynamics of the system.
 
 \begin{figure}
 	\begin{center}
@@ -263,6 +264,20 @@ It's common to use $\beta=\frac{b}{2m}$ and of course $\omega_{0}=\sqrt{\frac{g}
 	\caption{A double pendulum. TBW: add more info.}
 	\label{fig:double_pendulum}
 \end{figure}
+
+To analyze the behaviour of the system we again seek to find a differntial equation which will describe the system completely. Unfortunately, this differential equation is rather complicated and is composed of two coupled differential equations. We will only present the equation here but not how to derive it - this will be added in an appendix.
+
+The differential equations governing the dynamics of the system are:
+\begin{equation}
+	\begin{aligned}
+		0 & = \left(m_{1}+m_{2}\right)L_{1}\ddot{\theta}_{1} + m_{2}L_{2}\ddot{\theta}_{2}\cos\left(\theta_{1}-\theta_{2}\right) + m_{2}L_{2}\dot{\theta}_{2}^{2}\sin\left(\theta_{1}-\theta_{2}\right) \\
+		  & + \left(m_{1}+m_{2}\right)g\sin\left(\theta_{1}\right),
+	\end{aligned}
+\end{equation}
+and
+\begin{equation}
+	0 = L_{2}\ddot{\theta}_{2}+L_{1}\ddot{\theta}_{1}\cos\left(\theta_{1}-\theta_{2}\right) - L_{1}\dot{\theta}_{1}^{2}\sin\left(\theta_{1}-\theta_{2}\right) + g\sin\left(\theta_{2}\right).
+\end{equation}
 
 % \section{Orbital Mechanics}
 % \subsection{Classic Gravitational Force}
