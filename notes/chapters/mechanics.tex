@@ -280,22 +280,16 @@ and
 \end{equation}
 
 To help us get excplicit expressions for $\ddot{\theta}_{1}$ and $\ddot{\theta}_{2}$ we can define the following quantities:
+\begin{equation}
+	\alpha = \frac{m_{2}}{m_{1}},\quad \beta = \frac{L_{2}}{L_{1}},\quad \gamma = \frac{g}{L_{1}},\quad \Delta\theta = \theta_{1}-\theta_{2}.
+\end{equation}
+we then get the following \enquote{beautiful} expressions for $\ddot{\theta}_{1}$ and $\ddot{\theta}_{2}$:
 \begin{align}
-	\Delta\theta &= \theta_{1}-\theta_{2},\nonumber\\
-	K &= 2m_{1}+m_{2},\nonumber\\
-	\mu &= m_{1}+m_{2},\nonumber\\
-	M_{1} & = -gK\sin\left(\theta_{1}\right),\nonumber                                                                                                  \\
-	M_{2} & = -gm_{2}\sin\left(\theta_{1}-2\theta_{2}\right),\nonumber                                                                                                          \\
-	I     & = -2m_{2}\sin\left(\Delta\theta\right)\cos\left(L_{2}\dot{\theta}_{2}^{2}+L_{1}\dot{\theta}_{2}^{2}\cos\left(\Delta\theta\right)\right),\nonumber \\
-	N &= L_{1}\left[K-m_{2}\cos\left(2\Delta\theta\right)\right],\nonumber\\
-	S &= 2\sin\left(\Delta\theta\right)\left(L_{1}\mu\dot{\theta}_{1}^{2} + g\mu\cos\left(\theta_{1}\right) + L_{2}m_{2}\dot{\theta}_{2}^{2}\cos\left(\Delta\theta\right)\right)\nonumber\\
+	\ddot{\theta}_{1} & = -\frac{\left(1+\alpha\right)\gamma\sin\left(\theta_{1}\right) + \alpha\beta\dot{\theta}_{2}^{2}\sin(\Delta\theta)+\alpha\cos\left(\Delta\theta\right)\left[\dot{\theta}_{1}^{2}\sin\left(\Delta\theta\right)-\gamma\sin\left(\theta_{2}\right)\right]}{1+\alpha\sin^{2}\left(\Delta\theta\right)},                                                       \\
+	\ddot{\theta}_{2} & = \frac{\left(1+\alpha\right)\left(\dot{\theta}_{1}^{2}\sin\left(\Delta\theta\right)-\gamma\sin\left(\theta_{2}\right)+\cos\left(\Delta\theta\right)\left[\left(1+\alpha\right)\gamma\sin\left(\theta_{1}\right)+\alpha\beta\dot{\theta}^{2}_{2}\sin\left(\Delta\theta\right)\right]\right)}{\beta\left[1+\alpha\sin^{2}\left(\Delta\theta\right)\right]}.
 \end{align}
 
-The explicit expressions for $\ddot{\theta}_{1}$ and $\ddot{\theta}_{2}$ are then
-\begin{align}
-	\ddot{\theta}_{1} &= \frac{M_{1}+M_{2}+I}{N},\\
-	\ddot{\theta}_{2} &= \frac{S}{N}.
-\end{align}
+
 
 % Isolating $\ddot{\theta}_{1}$ and $\ddot{\theta}_{2}$ gives the following explicit equations:
 % \begin{align}
