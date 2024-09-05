@@ -282,26 +282,33 @@ and
 To help us get excplicit expressions for $\ddot{\theta}_{1}$ and $\ddot{\theta}_{2}$ we can define the following quantities:
 \begin{equation}
 	\alpha = \frac{m_{2}}{m_{1}},\quad \beta = \frac{L_{2}}{L_{1}},\quad \gamma = \frac{g}{L_{1}},\quad \Delta\theta = \theta_{1}-\theta_{2}.
+	\label{eq:double_pendulum_helper_defs}
 \end{equation}
 we then get the following \enquote{beautiful} expressions for $\ddot{\theta}_{1}$ and $\ddot{\theta}_{2}$:
 \begin{align}
-	\ddot{\theta}_{1} & = -\frac{\left(1+\alpha\right)\gamma\sin\left(\theta_{1}\right) + \alpha\beta\dot{\theta}_{2}^{2}\sin(\Delta\theta)+\alpha\cos\left(\Delta\theta\right)\left[\dot{\theta}_{1}^{2}\sin\left(\Delta\theta\right)-\gamma\sin\left(\theta_{2}\right)\right]}{1+\alpha\sin^{2}\left(\Delta\theta\right)},                                                       \\
-	\ddot{\theta}_{2} & = \frac{\left(1+\alpha\right)\left(\dot{\theta}_{1}^{2}\sin\left(\Delta\theta\right)-\gamma\sin\left(\theta_{2}\right)+\cos\left(\Delta\theta\right)\left[\left(1+\alpha\right)\gamma\sin\left(\theta_{1}\right)+\alpha\beta\dot{\theta}^{2}_{2}\sin\left(\Delta\theta\right)\right]\right)}{\beta\left[1+\alpha\sin^{2}\left(\Delta\theta\right)\right]}.
+	\begin{split}
+		\ddot{\theta}_{1} & = -\frac{\left(1+\alpha\right)\gamma\sin\left(\theta_{1}\right) + \alpha\beta\dot{\theta}_{2}^{2}\sin(\Delta\theta)+\alpha\cos\left(\Delta\theta\right)\left[\dot{\theta}_{1}^{2}\sin\left(\Delta\theta\right)-\gamma\sin\left(\theta_{2}\right)\right]}{1+\alpha\sin^{2}\left(\Delta\theta\right)},                                                       \\
+		\ddot{\theta}_{2} & = \frac{\left(1+\alpha\right)\left(\dot{\theta}_{1}^{2}\sin\left(\Delta\theta\right)-\gamma\sin\left(\theta_{2}\right)+\cos\left(\Delta\theta\right)\left[\left(1+\alpha\right)\gamma\sin\left(\theta_{1}\right)+\alpha\beta\dot{\theta}^{2}_{2}\sin\left(\Delta\theta\right)\right]\right)}{\beta\left[1+\alpha\sin^{2}\left(\Delta\theta\right)\right]}.
+	\end{split}
+	\label{eq:double_pendulum_accelerations}
 \end{align}
 
-Discretizing \autoref{}
-
-
-
-% Isolating $\ddot{\theta}_{1}$ and $\ddot{\theta}_{2}$ gives the following explicit equations:
-% \begin{align}
-% 	\ddot{\theta}_{1} = \frac{ - gm_{2}}
-%
-%
-% 	{}
-%
-% 	\label{eq:label}
-% \end{align}
+\newcommand{\Si}{\text{S}}
+\newcommand{\Co}{\text{C}}
+Discretizing \autoref{eq:double_pendulum_accelerations} can then be done as following: first,
+\begin{enumerate}
+	\item $\alpha,\ \beta$ and $\gamma$ are defined as in \autoref{eq:double_pendulum_helper_defs}.
+	\item Set $\Delta\theta_{k} = \theta_{1,k} - \theta_{2,k}$.
+	\item For compactness, we set $N_{k} = 1+\alpha\sin^{2}\left(\Delta\theta_{k}\right)$, $\Si(x)=\sin(x)$, $\Co(x)=\cos(x)$ and $A=1+\alpha$.
+\end{enumerate}
+Then, we get
+\begin{align}
+	\begin{split}
+		\ddot{\theta}_{1,i} & = -\frac{A\gamma\Si(\theta_{1,i-1})+\alpha\beta\dot{\theta}_{2,i-1}^{2}\Si\left(\Delta\theta_{i-1}\right) + \alpha\Co\left(\Delta\theta_{i-1}\right)\left[\dot{\theta}_{1,i-1}^{2}\Si\left(\Delta\theta_{i-1}\right)-\gamma\Si\left(\theta_{2,i-1}\right)\right]}{N_{i-1}},                       \\
+		\ddot{\theta}_{2,i} & = \frac{A\left(\dot{\theta}_{1,i-1}^{2}\Si\left(\Delta\theta_{i-1}\right)-\gamma\Si\left(\theta_{2,i-1}\right)+\Co\left(\Delta\theta_{i-1}\right)\left[A\gamma\Si\left(\theta_{1,i-1}\right)+\alpha\beta\dot{\theta}_{2,i-1}^{2}\Si\left(\Delta\theta_{i-1}\right)\right]\right)}{\beta N_{i-1}}.
+	\end{split}
+\end{align}
+(lovely, isn't it?)
 
 % \section{Orbital Mechanics}
 % \subsection{Classic Gravitational Force}
