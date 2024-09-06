@@ -164,13 +164,13 @@ if __name__ == "__main__":
     w: float = 500.0
     h: float = 500.0
     container: Container = Container(width=w, height=h)
-    num_particles: int = 10
+    num_particles: int = 20
     particles: list[Particle] = [
         Particle(
             id=id,
             pos=np.random.uniform((50, 50), (w - 50, h - 50), size=2),
             vel=np.random.uniform(-400, 400, size=2),
-            rad=5,
+            rad=10,
             container=container,
         )
         for id in range(num_particles)
@@ -205,7 +205,7 @@ if __name__ == "__main__":
     ax.set_ylim(0, h)
     frame_count_label = ax.annotate(
         f"Frame: 0/{num_steps}",
-        xy=(w / 2, h - 10),
+        xy=(w / 2, h - 15),
     )
     scat = ax.scatter(
         pos_matrix[0, :, X], pos_matrix[0, :, Y], s=rad_list, c="#0000ff"
