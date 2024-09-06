@@ -1,3 +1,5 @@
+from typing import Self
+
 import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
@@ -19,7 +21,17 @@ UR: int = 1
 # Simulation constants
 # dt: float = 0.01
 
+
 # Helper functions?
+def normalize(v: npdarr) -> npdarr:
+    n: np.float64 = np.linalg.norm(v)
+    if n == 0.0:
+        raise ValueError("Can't normalize zero vector")
+    return v / n
+
+
+def dist_sqr(v1: npdarr, v2: npdarr) -> float:
+    return np.dot(v1 - v2, v1 - v2)
 
 
 class Container:
@@ -55,6 +67,8 @@ class Particle:
         bbox: Bounding box of the particle. Represented as a 2x2 ndarray where the first row
             is the coordinates of the lower left corner of the bbox, and the second row is the
             coordinates of the upper right corner of the bbox.
+        overlaps: List of all references to all particles which have overlapping bboxes to
+            this particle.
     """
 
     def __init__(
@@ -74,6 +88,7 @@ class Particle:
         self.mass: float = mass
         self.bbox: npdarr = np.zeros((2, 2))
         self.set_bbox()
+        self.overlaps: set[Particle] = set()
 
     def __repr__(self) -> str:
         return (
@@ -108,25 +123,57 @@ class Particle:
         self.set_bbox()
         self.resolve_wall_collisions()
 
+    def reset_overlaps(self):
+        self.overlaps = set()
 
-def animate(t: int):
+    def add_overlap(self, particle: Self):
+        self.overlaps.add(particle)
+
+
+def elastic_collision(p1: Particle, p2: Particle) -> npdarr:
+    vels_after: npdarr = np.zeros((2, 2))
+
+    m1: float = p1.mass
+    m2: float = p2.mass
+    M: float = 2 / (m1 + m2)
+
+    x1: npdarr = p1.pos
+    x2: npdarr = p2.pos
+    dx: npdarr = x1 - x2
+    dx_2: float = np.dot(dx, dx)
+
+    v1: npdarr = p1.vel
+    v2: npdarr = p2.vel
+    dv: npdarr = v1 - v2
+
+    K: npdarr = M * np.dot(dv, dx) / dx_2 * dx
+
+    vels_after[0] = v1 - K * m2
+    vels_after[1] = v2 + K * m1
+
+    return vels_after
+
+
+def animate(t: int = 0):
+    frame_count_label.set_text(f"Frame: {t}/{num_steps}")
     scat.set_offsets(pos_matrix[t])
-    return [scat]
+    return [scat, frame_count_label]
 
 
 if __name__ == "__main__":
-    w: float = 1000.0
-    h: float = 1000.0
+    w: float = 500.0
+    h: float = 500.0
     container: Container = Container(width=w, height=h)
-    num_particles: int = 50
+    num_particles: int = 10
     particles: list[Particle] = [
         Particle(
-            pos=np.random.uniform((20, 20), (w - 20, h - 20), size=2),
-            vel=np.random.uniform(-1000, 1000, size=2),
-            rad=np.random.uniform(5, 10),
+            id=id,
+            pos=np.random.uniform((50, 50), (w - 50, h - 50), size=2),
+            vel=np.random.uniform(-400, 400, size=2),
+            rad=5,
             container=container,
         )
-        for _ in range(num_particles)
+        for id in range(num_particles)
     ]
 
     dt: float = 0.01
@@ -141,6 +188,12 @@ if __name__ == "__main__":
         for p, particle in enumerate(particles):
             particle.move(dt)
             pos_matrix[t, p] = particle.pos
+            for p2 in particles[p + 1 : -1]:
+                if (
+                    dist_sqr(particle.pos, p2.pos)
+                    <= (particle.rad + p2.rad) ** 2
+                ):
+                    particle.vel, p2.vel = elastic_collision(particle, p2)
 
     ##########################
     #        Graphics        #
@@ -150,6 +203,10 @@ if __name__ == "__main__":
     ax.set_aspect("equal", "box")
     ax.set_xlim(0, w)
     ax.set_ylim(0, h)
+    frame_count_label = ax.annotate(
+        f"Frame: 0/{num_steps}",
+        xy=(w / 2, h - 10),
+    )
     scat = ax.scatter(
         pos_matrix[0, :, X], pos_matrix[0, :, Y], s=rad_list, c="#0000ff"
     )
