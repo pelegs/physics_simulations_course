@@ -82,19 +82,19 @@ class Particle:
         )
 
     def set_bbox(self):
-        self.bbox[X] = self.pos - self.rad
-        self.bbox[Y] = self.pos + self.rad
+        self.bbox[LL] = self.pos - self.rad
+        self.bbox[UR] = self.pos + self.rad
 
     def bounce_wall(self, direction: int) -> None:
         self.vel[direction] *= -1.0
 
     def resolve_wall_collisions(self) -> None:
-        if (self.bbox[LL, X] <= 0.0) or (
-            self.bbox[UR, X] >= self.container.width
+        if (self.bbox[LL, X] < 0.0) or (
+            self.bbox[UR, X] > self.container.width
         ):
             self.bounce_wall(X)
-        if (self.bbox[LL, Y] <= 0.0) or (
-            self.bbox[UR, Y] >= self.container.height
+        if (self.bbox[LL, Y] < 0.0) or (
+            self.bbox[UR, Y] > self.container.height
         ):
             self.bounce_wall(Y)
 
@@ -105,8 +105,8 @@ class Particle:
         Lastly, we reset its bbox so it moves with the particle.
         """
         self.pos += self.vel * dt
-        self.resolve_wall_collisions()
         self.set_bbox()
+        self.resolve_wall_collisions()
 
 
 def animate(t: int):
@@ -115,13 +115,15 @@ def animate(t: int):
 
 
 if __name__ == "__main__":
-    container: Container = Container()
-    num_particles: int = 10
+    w: float = 1000.0
+    h: float = 1000.0
+    container: Container = Container(width=w, height=h)
+    num_particles: int = 50
     particles: list[Particle] = [
         Particle(
-            pos=np.random.uniform(0, 1000, size=2),
+            pos=np.random.uniform((20, 20), (w - 20, h - 20), size=2),
             vel=np.random.uniform(-1000, 1000, size=2),
-            rad=np.random.uniform(0.1, 10),
+            rad=np.random.uniform(5, 10),
             container=container,
         )
         for _ in range(num_particles)
@@ -146,8 +148,8 @@ if __name__ == "__main__":
 
     fig, ax = plt.subplots()
     ax.set_aspect("equal", "box")
-    ax.set_xlim(0, 1000)
-    ax.set_ylim(0, 1000)
+    ax.set_xlim(0, w)
+    ax.set_ylim(0, h)
     scat = ax.scatter(
         pos_matrix[0, :, X], pos_matrix[0, :, Y], s=rad_list, c="#0000ff"
     )
