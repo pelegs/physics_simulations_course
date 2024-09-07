@@ -1,1 +1,40 @@
-\section{Waves}
+\chapter{Thermodynamics}
+
+\section{Preface}
+Text text text
+
+\section{Ideal gas}
+\subsection{Model: perfectly elastic spheres}
+Text text text
+
+\begin{figure}
+	\begin{center}
+		\begin{tikzpicture}
+			\coordinate (xA) at (0, 0);
+			\pgfmathsetmacro{\rA}{2}
+			\pgfmathsetmacro{\rB}{1.5}
+			\pgfmathsetmacro{\th}{45}
+			\coordinate (xB) at ({(\rA+\rB)*cos(\th)},{(\rA+\rB)*sin(\th)});
+			\coordinate (uAB) at ({\rA*cos(\th)},{\rA*sin(\th)});
+
+			\tikzset{
+				sphere/.style={thick, fill=#1, fill opacity=0.3},
+				radius/.style={thick, dashed, draw=#1},
+			}
+			\draw[sphere={xblue}]  (xA) circle (\rA);
+			\draw[sphere={xgreen}] (xB) circle (\rB);
+			\fill (xA) circle (0.05) node [below] {$m_{1}$};
+			\fill (xB) circle (0.05) node [above] {$m_{2}$};
+			\draw[radius={xblue!75}] (xA) -- ++({\rA*cos(120)},{\rA*sin(120)}) node [xblue!75, midway, right] {$r_{1}$};
+			\draw[radius={xdarkgreen!75}] (xB) -- ++({\rB*cos(300)},{\rB*sin(300)}) node [xdarkgreen!75, midway, right]  {$r_{2}$};
+
+			\draw[vector={xblue}] (xA) -- ++(3,-0.5) node [pos=1.1] {$\vec{v}_{1}$};
+			\draw[vector={xdarkgreen}] (xB) -- ++(-2,1.0) node [pos=1.1] {$\vec{v}_{2}$};
+
+			\draw[vector={xred}] (uAB) -- ++({cos(\th)},{sin(\th)}) node [midway, above left] {$\hat{n}$};
+			\draw[vector={xred}] (uAB) -- ++({cos(\th+90)},{sin(\th+90)}) node [pos=1.1] {$\hat{t}$};
+		\end{tikzpicture}
+	\end{center}
+	\caption{Text text text}
+	\label{fig:elastic_collision}
+\end{figure}
