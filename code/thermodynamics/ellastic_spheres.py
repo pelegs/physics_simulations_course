@@ -79,13 +79,18 @@ class Particle:
         vel: npdarr = ZERO_VEC,
         rad: float = 1.0,
         mass: float = 1.0,
+        color: str = "blue",
     ) -> None:
+        # Setting argument variables
         self.id: int = id
         self.container: Container = container
         self.pos: npdarr = pos
         self.vel: npdarr = vel
         self.rad: float = rad
         self.mass: float = mass
+        self.color = color
+
+        # Setting non-argument variables
         self.bbox: npdarr = np.zeros((2, 2))
         self.set_bbox()
         self.overlaps: set[Particle] = set()
@@ -93,7 +98,8 @@ class Particle:
     def __repr__(self) -> str:
         return (
             f"id: {self.id}, position: {self.pos}, velocity: {self.vel}, "
-            f"radius: {self.rad}, mass: {self.mass}, bbox: {self.bbox}"
+            f"radius: {self.rad}, mass: {self.mass}, color: {self.color}, "
+            f"bbox: {self.bbox}"
         )
 
     def set_bbox(self):
@@ -130,6 +136,54 @@ class Particle:
         self.overlaps.add(particle)
 
 
+class Simulation:
+    """docstring for Simulation."""
+
+    def __init__(
+        self,
+        container: Container,
+        particle_list: list[Particle],
+        dt: float = 0.01,
+        max_t: float = 100.0,
+    ) -> None:
+        # Setting argument variables
+        self.container: Container = container
+        self.particle_list: list[Particle] = particle_list
+        self.dt: float = dt
+        self.max_t: float = max_t
+
+        # Setting non-argument variables
+        self.time_series: np.ndarray = np.arange(0, max_t, dt)
+        self.num_steps: int = len(self.time_series)
+        self.num_particles: int = len(self.particle_list)
+        self.sorted_bboxes: npdarr = np.zeros((2, num_particles))
+        self.pos_matrix: npdarr = np.zeros(
+            (self.num_steps, self.num_particles, 2)
+        )
+        self.rad_list: npdarr = np.array(
+            [4 * p.rad**2 for p in self.particle_list]
+        )
+        self.colors_list = [p.color for p in self.particle_list]
+
+    def check_elastic_collisions(self, p_idx: int) -> None:
+        particle: Particle = self.particle_list[p_idx]
+        for p2 in self.particle_list[p_idx + 1 : -1]:
+            if dist_sqr(particle.pos, p2.pos) <= (particle.rad + p2.rad) ** 2:
+                particle.vel, p2.vel = elastic_collision(particle, p2)
+
+    def advance_step(self, t: int) -> None:
+        for p, particle in enumerate(self.particle_list):
+            particle.move(self.dt)
+            self.pos_matrix[t, p] = particle.pos
+            self.check_elastic_collisions(p)
+
+    def run(self):
+        for t, _ in enumerate(
+            tqdm(self.time_series, desc="Running simulation")
+        ):
+            self.advance_step(t)
+
+
 def elastic_collision(p1: Particle, p2: Particle) -> npdarr:
     vels_after: npdarr = np.zeros((2, 2))
 
@@ -155,8 +209,8 @@ def elastic_collision(p1: Particle, p2: Particle) -> npdarr:
 
 
 def animate(t: int = 0):
-    frame_count_label.set_text(f"Frame: {t}/{num_steps}")
-    scat.set_offsets(pos_matrix[t])
+    frame_count_label.set_text(f"Frame: {t}/{simulation.num_steps}")
+    scat.set_offsets(simulation.pos_matrix[t])
     return [scat, frame_count_label]
 
 
@@ -175,25 +229,12 @@ if __name__ == "__main__":
         )
         for id in range(num_particles)
     ]
+    particles[0].color = "red"
 
-    dt: float = 0.01
-    max_t: float = 100.0
-    time_series = np.arange(0.0, max_t, dt)
-    num_steps = time_series.shape[0]
+    simulation = Simulation(container, particles, dt=0.01, max_t=100.0)
 
-    pos_matrix: npdarr = np.zeros((num_steps, num_particles, 2))
-    rad_list: npdarr = np.array([p.rad**2 for p in particles])
-
-    for t, time in enumerate(tqdm(time_series)):
-        for p, particle in enumerate(particles):
-            particle.move(dt)
-            pos_matrix[t, p] = particle.pos
-            for p2 in particles[p + 1 : -1]:
-                if (
-                    dist_sqr(particle.pos, p2.pos)
-                    <= (particle.rad + p2.rad) ** 2
-                ):
-                    particle.vel, p2.vel = elastic_collision(particle, p2)
+    # Main simulation run
+    simulation.run()
 
     ##########################
     #        Graphics        #
@@ -204,14 +245,17 @@ if __name__ == "__main__":
     ax.set_xlim(0, w)
     ax.set_ylim(0, h)
     frame_count_label = ax.annotate(
-        f"Frame: 0/{num_steps}",
+        f"Frame: 0/{simulation.num_steps}",
         xy=(w / 2, h - 15),
     )
     scat = ax.scatter(
-        pos_matrix[0, :, X], pos_matrix[0, :, Y], s=rad_list, c="#0000ff"
+        simulation.pos_matrix[0, :, X],
+        simulation.pos_matrix[0, :, Y],
+        s=simulation.rad_list,
+        c=simulation.colors_list,
     )
 
     anim = FuncAnimation(
-        fig, animate, frames=num_steps, interval=20, blit=True
+        fig, animate, frames=simulation.num_steps, interval=20, blit=True
     )
     plt.show()
