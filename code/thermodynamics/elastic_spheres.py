@@ -1,3 +1,4 @@
+from random import choice
 from typing import Self
 
 import matplotlib.pyplot as plt
@@ -17,6 +18,19 @@ X_DIR: npdarr = np.array([1, 0])
 Y_DIR: npdarr = np.array([0, 1])
 LL: int = 0
 UR: int = 1
+
+# Useful variables
+colors = [
+    "red",
+    "green",
+    "blue",
+    "purple",
+    "orange",
+    "black",
+    "grey",
+    "pink",
+    "cyan",
+]
 
 # Simulation constants
 # dt: float = 0.01
@@ -218,20 +232,21 @@ if __name__ == "__main__":
     w: float = 500.0
     h: float = 500.0
     container: Container = Container(width=w, height=h)
-    num_particles: int = 20
+    num_particles: int = 15
     particles: list[Particle] = [
         Particle(
             id=id,
             pos=np.random.uniform((50, 50), (w - 50, h - 50), size=2),
             vel=np.random.uniform(-400, 400, size=2),
-            rad=10,
+            rad=15,
             container=container,
+            # color=choice(colors),
         )
         for id in range(num_particles)
     ]
     particles[0].color = "red"
 
-    simulation = Simulation(container, particles, dt=0.01, max_t=100.0)
+    simulation = Simulation(container, particles, dt=0.005, max_t=10.0)
 
     # Main simulation run
     simulation.run()
@@ -246,7 +261,7 @@ if __name__ == "__main__":
     ax.set_ylim(0, h)
     frame_count_label = ax.annotate(
         f"Frame: 0/{simulation.num_steps}",
-        xy=(w / 2, h - 15),
+        xy=(10, h - 15),
     )
     scat = ax.scatter(
         simulation.pos_matrix[0, :, X],
@@ -256,6 +271,6 @@ if __name__ == "__main__":
     )
 
     anim = FuncAnimation(
-        fig, animate, frames=simulation.num_steps, interval=20, blit=True
+        fig, animate, frames=simulation.num_steps, interval=0, blit=True
     )
     plt.show()
