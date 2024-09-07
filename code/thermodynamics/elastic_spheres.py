@@ -19,6 +19,8 @@ X_DIR: npdarr = np.array([1, 0])
 Y_DIR: npdarr = np.array([0, 1])
 LL: int = 0
 UR: int = 1
+POINTS_WHOLE_AX: float = 5 * 0.8 * 72
+
 
 # Useful variables
 colors = [
@@ -45,8 +47,12 @@ def normalize(v: npdarr) -> npdarr:
     return v / n
 
 
-def dist_sqr(v1: npdarr, v2: npdarr) -> float:
-    return np.dot(v1 - v2, v1 - v2)
+def dist_sqr(vec1: npdarr, vec2: npdarr) -> float:
+    return np.dot(vec1 - vec2, vec1 - vec2)
+
+
+def distance(vec1, vec2) -> float:
+    return np.linalg.norm(vec1 - vec2)
 
 
 class Container:
@@ -108,7 +114,8 @@ class Particle:
         # Setting non-argument variables
         self.bbox: npdarr = np.zeros((2, 2))
         self.set_bbox()
-        self.overlaps: set[Particle] = set()
+        self.axis_overlaps: list[set[Particle]] = [set(), set()]
+        self.full_overlaps: set[Particle] = set()
 
     def __repr__(self) -> str:
         return (
@@ -134,6 +141,12 @@ class Particle:
         ):
             self.bounce_wall(Y)
 
+    def resolve_elastic_collisions(self):
+        for p2 in self.full_overlaps:
+            if distance(self.pos, p2.pos) <= self.rad + p2.rad:
+                pass
+                # self.vel, p2.vel = ZERO_VEC, ZERO_VEC
+
     def move(self, dt: float) -> None:
         """
         Advances the particle by its velocity in the given time step.
@@ -142,13 +155,18 @@ class Particle:
         """
         self.pos += self.vel * dt
         self.set_bbox()
-        self.resolve_wall_collisions()
 
     def reset_overlaps(self):
-        self.overlaps = set()
+        self.axis_overlaps = [set(), set()]
+        self.full_overlaps = set()
 
-    def add_overlap(self, particle: Self):
-        self.overlaps.add(particle)
+    def add_axis_overlap(self, axis: int, particle: Self):
+        self.axis_overlaps[axis].add(particle)
+
+    def set_full_overlaps(self):
+        self.full_overlaps = set(
+            p for p in self.axis_overlaps[X] if p in self.axis_overlaps[Y]
+        )
 
 
 class Simulation:
@@ -178,10 +196,6 @@ class Simulation:
         self.pos_matrix: npdarr = np.zeros(
             (self.num_steps, self.num_particles, 2)
         )
-        self.rad_list: npdarr = np.array(
-            [4 * p.rad**2 for p in self.particle_list]
-        )
-        self.colors_list = [p.color for p in self.particle_list]
 
     def sort_particles(self):
         def order_x(particle: Particle):
@@ -193,23 +207,46 @@ class Simulation:
         self.sorted_by_bboxes[X] = sorted(self.particle_list, key=order_x)
         self.sorted_by_bboxes[Y] = sorted(self.particle_list, key=order_y)
 
-    def check_elastic_collisions(self, p_idx: int) -> None:
-        particle: Particle = self.particle_list[p_idx]
-        for p2 in self.particle_list[p_idx + 1 : -1]:
-            if dist_sqr(particle.pos, p2.pos) <= (particle.rad + p2.rad) ** 2:
-                particle.vel, p2.vel = elastic_collision(particle, p2)
+    def check_axis_overlaps(self, axis: int) -> None:
+        for p1_idx, p1 in enumerate(self.sorted_by_bboxes[axis]):
+            for p2 in self.sorted_by_bboxes[axis][p1_idx + 1 :]:
+                if p1.bbox[UR, axis] >= p2.bbox[LL, axis]:
+                    p1.add_axis_overlap(axis, p2)
+                else:
+                    break
+
+    def set_full_overlaps(self):
+        for particle in self.particle_list:
+            particle.set_full_overlaps()
+
+    def reset_overlaps(self):
+        for particle in self.particle_list:
+            particle.reset_overlaps()
+
+    def resolve_elastic_collisions(self):
+        for particle in self.particle_list:
+            particle.resolve_elastic_collisions()
+
+    def resolve_wall_collisions(self):
+        for particle in self.particle_list:
+            particle.resolve_wall_collisions()
 
     def advance_step(self, t: int) -> None:
         for p, particle in enumerate(self.particle_list):
             particle.move(self.dt)
             self.pos_matrix[t, p] = particle.pos
-            self.check_elastic_collisions(p)
 
     def run(self):
         for t, _ in enumerate(
             tqdm(self.time_series, desc="Running simulation")
         ):
+            self.reset_overlaps()
             self.sort_particles()
+            self.check_axis_overlaps(axis=X)
+            self.check_axis_overlaps(axis=Y)
+            self.set_full_overlaps()
+            self.resolve_elastic_collisions()
+            self.resolve_wall_collisions()
             self.advance_step(t)
 
 
@@ -238,22 +275,32 @@ def elastic_collision(p1: Particle, p2: Particle) -> npdarr:
 
 
 def animate(t: int = 0):
+    for patch in ax.patches:
+        patch.remove()
     frame_count_label.set_text(f"Frame: {t}/{simulation.num_steps}")
-    scat.set_offsets(simulation.pos_matrix[t])
-    return [scat, frame_count_label]
+    circles = [
+        plt.Circle(p.pos, p.rad, color=p.color)
+        for p in simulation.particle_list
+    ]
+    for circle in circles:
+        ax.add_patch(circle)
+    # scat.set_offsets(simulation.pos_matrix[t])
+    return [frame_count_label]
 
 
 if __name__ == "__main__":
-    w: float = 500.0
-    h: float = 500.0
+    w: float = 200.0
+    h: float = 100.0
     container: Container = Container(width=w, height=h)
-    num_particles: int = 15
+    num_particles: int = 20
     particles: list[Particle] = [
         Particle(
             id=id,
             pos=np.random.uniform((50, 50), (w - 50, h - 50), size=2),
-            vel=np.random.uniform(-400, 400, size=2),
-            rad=15,
+            # vel=np.random.uniform(-400, 400, size=2),
+            # pos=np.array([w + 0.5, h + 0.5]) / 2.0,
+            vel=np.array([100, 100]),
+            rad=0.5,
             container=container,
             # color=choice(colors),
         )
@@ -261,7 +308,7 @@ if __name__ == "__main__":
     ]
     particles[0].color = "red"
 
-    simulation = Simulation(container, particles, dt=0.005, max_t=10.0)
+    simulation = Simulation(container, particles, dt=0.005, max_t=5.0)
 
     # Main simulation run
     simulation.run()
@@ -274,18 +321,21 @@ if __name__ == "__main__":
     ax.set_aspect("equal", "box")
     ax.set_xlim(0, w)
     ax.set_ylim(0, h)
+    ax.set_xticks([])
+    ax.set_yticks([])
+    # ax.grid()
     frame_count_label = ax.annotate(
         f"Frame: 0/{simulation.num_steps}",
         xy=(10, h - 15),
     )
-    scat = ax.scatter(
-        simulation.pos_matrix[0, :, X],
-        simulation.pos_matrix[0, :, Y],
-        s=simulation.rad_list,
-        c=simulation.colors_list,
-    )
+    # scat = ax.scatter(
+    #     simulation.pos_matrix[0, :, X],
+    #     simulation.pos_matrix[0, :, Y],
+    #     s=marker_size_list,
+    #     c=colors_list,
+    # )
 
     anim = FuncAnimation(
-        fig, animate, frames=simulation.num_steps, interval=0, blit=True
+        fig, animate, frames=simulation.num_steps, interval=0, blit=False
     )
     plt.show()
