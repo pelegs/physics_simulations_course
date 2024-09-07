@@ -1,3 +1,4 @@
+from copy import deepcopy
 from random import choice
 from typing import Self
 
@@ -170,7 +171,10 @@ class Simulation:
         self.time_series: np.ndarray = np.arange(0, max_t, dt)
         self.num_steps: int = len(self.time_series)
         self.num_particles: int = len(self.particle_list)
-        self.sorted_bboxes: npdarr = np.zeros((2, num_particles))
+        self.sorted_by_bboxes: list[list[Particle]] = [
+            deepcopy(self.particle_list),
+            deepcopy(self.particle_list),
+        ]
         self.pos_matrix: npdarr = np.zeros(
             (self.num_steps, self.num_particles, 2)
         )
@@ -178,6 +182,16 @@ class Simulation:
             [4 * p.rad**2 for p in self.particle_list]
         )
         self.colors_list = [p.color for p in self.particle_list]
+
+    def sort_particles(self):
+        def order_x(particle: Particle):
+            return particle.bbox[LL, X]
+
+        def order_y(particle: Particle):
+            return particle.bbox[LL, Y]
+
+        self.sorted_by_bboxes[X] = sorted(self.particle_list, key=order_x)
+        self.sorted_by_bboxes[Y] = sorted(self.particle_list, key=order_y)
 
     def check_elastic_collisions(self, p_idx: int) -> None:
         particle: Particle = self.particle_list[p_idx]
@@ -195,6 +209,7 @@ class Simulation:
         for t, _ in enumerate(
             tqdm(self.time_series, desc="Running simulation")
         ):
+            self.sort_particles()
             self.advance_step(t)
 
 
