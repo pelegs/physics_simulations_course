@@ -195,7 +195,6 @@ class Simulation:
         self.pos_matrix: npdarr = np.zeros(
             (self.num_steps, self.num_particles, 2)
         )
-        self.energy_list: npdarr = np.zeros(self.num_steps)
 
     def sort_particles(self):
         def order_x(particle: Particle):
@@ -236,14 +235,6 @@ class Simulation:
             particle.move(self.dt)
             self.pos_matrix[t, p] = particle.pos
 
-    def calc_total_energy(self, i: int):
-        self.energy_list[i] = 0.5 * np.sum(
-            [
-                particle.mass * np.dot(particle.vel, particle.vel)
-                for particle in self.particle_list
-            ]
-        )
-
     def run(self):
         for i, _ in enumerate(
             tqdm(self.time_series, desc="Running simulation")
@@ -256,16 +247,13 @@ class Simulation:
             self.resolve_elastic_collisions()
             self.resolve_wall_collisions()
             self.advance_step(i)
-            self.calc_total_energy(i)
 
 
 def elastic_collision(p1: Particle, p2: Particle) -> npdarr:
     m1: float = p1.mass
     m2: float = p2.mass
 
-    x1: npdarr = p1.pos
-    x2: npdarr = p2.pos
-    n: npdarr = normalize(x1 - x2)
+    n: npdarr = normalize(p1.pos - p2.pos)
 
     v1: npdarr = p1.vel
     v2: npdarr = p2.vel
@@ -287,19 +275,16 @@ def init_plot():
 
 def animate(frame: int = 0):
     frame_count_label.set_text(f"Frame: {frame:5d}")
-    total_energy_label.set_text(
-        f"Energy: {simulation.energy_list[frame]:0.3f}"
-    )
     for p in range(num_particles):
         patches[p].center = simulation.pos_matrix[frame, p]
-    return patches + [frame_count_label, total_energy_label]
+    return patches + [frame_count_label]
 
 
 if __name__ == "__main__":
-    w: float = 1000.0
-    h: float = 1000.0
+    w: float = 200.0
+    h: float = 200.0
     container: Container = Container(width=w, height=h)
-    num_particles: int = 100
+    num_particles: int = 2
     particles: list[Particle] = [
         Particle(
             id=id,
@@ -307,13 +292,20 @@ if __name__ == "__main__":
             vel=np.random.uniform(-400, 400, size=2),
             # pos=np.array([w + 0.5, h + 0.5]) / 2.0,
             # vel=np.array([100, 100]),
-            rad=5.0,
+            rad=10.0,
             container=container,
             # color=choice(colors),
         )
         for id in range(num_particles)
     ]
     particles[0].color = "red"
+    particles[1].color = "green"
+    particles[0].rad = 15.0
+    particles[1].rad = 10.0
+    particles[0].pos = np.array([20, h / 2])
+    particles[1].pos = np.array([w - 20, h / 2])
+    particles[0].vel = np.array([-100, 0])
+    particles[1].vel = np.array([200, 1000])
     patches = [
         Circle(particle.pos.tolist(), particle.rad, fc=particle.color)
         for particle in particles
@@ -339,19 +331,13 @@ if __name__ == "__main__":
         f"Frame: {0:5d}",
         xy=(10, h - 20),
     )
-    total_energy_label = ax.annotate(
-        f"Energy: {0:0.3f}",
-        xy=(10, h - 40),
-    )
 
     anim = FuncAnimation(
         fig,
         animate,
         init_func=init_plot,
         frames=simulation.num_steps,
-        interval=10,
+        interval=20,
         blit=False,
     )
     plt.show()
-
-    print(simulation.pos_matrix.shape)
