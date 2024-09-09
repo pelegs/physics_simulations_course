@@ -7,6 +7,8 @@ Text text text
 \subsection{Model: perfectly elastic spheres}
 Text text text
 
+Consider two solid spheres which have a single point of contact $\bm{A}$. Let $m_{1}, r_{1}, \vec{x}_{1}$ and $\vec{v}_{1}$ be the mass, radius, position and velocity of the first sphere, and $m_{2}, r_{2}, \vec{x}_{2}$ and $\vec{v}_{2}$ the respective quantities for the second sphere (\autoref{fig:elastic_collision}). The line connecting the centers of the two spheres is in the direction $\hat{n}$ (without loss of generality let us assume that the normal vector $\hat{n}$ points from $\vec{x}_{1}$ towards $\vec{x}_{2}$). The unit vector $\hat{t}$ is orthogonal to $\hat{n}$ (and without loss of generality we will assume that it is oriented counter-clockwise from $\hat{n}$).
+
 \begin{figure}
 	\begin{center}
 		\begin{tikzpicture}
@@ -16,6 +18,7 @@ Text text text
 			\pgfmathsetmacro{\th}{45}
 			\coordinate (xB) at ({(\rA+\rB)*cos(\th)},{(\rA+\rB)*sin(\th)});
 			\coordinate (uAB) at ({\rA*cos(\th)},{\rA*sin(\th)});
+			\draw[thick, dashed, black!50] (xA) -- (xB);
 
 			\tikzset{
 				sphere/.style={thick, fill=#1, fill opacity=0.3},
@@ -23,10 +26,10 @@ Text text text
 			}
 			\draw[sphere={xblue}]  (xA) circle (\rA);
 			\draw[sphere={xgreen}] (xB) circle (\rB);
-			\fill (xA) circle (0.05) node [below] {$m_{1}$};
-			\fill (xB) circle (0.05) node [above] {$m_{2}$};
-			\draw[radius={xblue!75}] (xA) -- ++({\rA*cos(120)},{\rA*sin(120)}) node [xblue!75, midway, right] {$r_{1}$};
-			\draw[radius={xdarkgreen!75}] (xB) -- ++({\rB*cos(300)},{\rB*sin(300)}) node [xdarkgreen!75, midway, right]  {$r_{2}$};
+			\fill (xA) circle (0.05) node [above left]  {$m_{1}$};
+			\fill (xB) circle (0.05) node [above right] {$m_{2}$};
+			\draw[radius={xblue!75}] (xA) -- ++(0,-\rA) node [xblue!75, midway, right] {$r_{1}$};
+			\draw[radius={xdarkgreen!75}] (xB) -- ++(0,-\rB) node [xdarkgreen!75, midway, right]  {$r_{2}$};
 
 			\draw[vector={xblue}] (xA) -- ++(3,-0.5) node [pos=1.1] {$\vec{v}_{1}$};
 			\draw[vector={xdarkgreen}] (xB) -- ++(-2,1.0) node [pos=1.1] {$\vec{v}_{2}$};
@@ -38,3 +41,52 @@ Text text text
 	\caption{Text text text}
 	\label{fig:elastic_collision}
 \end{figure}
+
+Note that we did not define a coordinate system, nor the number of dimensions $d$ for the problem. The only restriction is that $d\geq2$.
+
+Conservation of momentum means that the velocities of the spheres following the collision, $\vec{u}_{1},\vec{u}_2$, are related to their velocities before the collision by
+\begin{equation}
+	\begin{aligned}
+		                 & m_{1}\vec{v}_{1} + m_{2}\vec{v}_{2} = m_{1}\vec{u}_{1} + m_{2}\vec{u}_{2}                   \\
+		\Rightarrow\quad & m_{1}\left(\vec{v}_{1} - \vec{u}_{1}\right)  = m_{2}\left(\vec{u}_{2} - \vec{v}_{2}\right).
+	\end{aligned}
+	\label{eq:elastic_collision_coservation_of_momentum}
+\end{equation}
+
+Conservation of energy means that the velocities are also related by
+\begin{equation}
+	\begin{aligned}
+		                 & \frac{1}{2}m_{1}\norm{\vec{v}_{1}}^{2} + \frac{1}{2}m_{2}\norm{\vec{v}_{2}}^{2} = \frac{1}{2}m_{1}\norm{\vec{u}_{1}}^{2} + \frac{1}{2}m_{2}\norm{\vec{u}_{2}}^{2} \\
+		\Rightarrow\quad & m_{1}\left(\norm{\vec{v}_{1}}^{2} - \norm{\vec{u}_{1}}^{2}\right) = m_{2}\left(\norm{\vec{u}_{2}}^{2} - \norm{\vec{v}_{2}}^{2}\right).
+	\end{aligned}
+	\label{eq:elastic_collision_coservation_of_energy}
+\end{equation}
+
+However, the forces involved in the collision can not have a component in the $\hat{t}$ direction, and are limited to only point in the $\hat{n}$ direction. Therefore, we can reduce the problem to this direction only by projecting all velocities involved in the problem on $\hat{n}$, i.e. \autoref{eq:elastic_collision_coservation_of_momentum} becomes
+\begin{equation}
+	m_{1}\innerproduct{\vec{v}_{1}}{\hat{n}} + m_{2}\innerproduct{\vec{v}_{2}}{\hat{n}} = m_{1}\innerproduct{\vec{u}_{1}}{\hat{n}} + m_{2}\innerproduct{\vec{u}_{2}}{\hat{n}}.
+	\label{eq:elastic_collision_coservation_of_momentum_projection}
+\end{equation}
+
+TEXT TEXT TEXT
+
+\begin{equation}
+	\begin{aligned}
+		\vec{u}_{1} & = \vec{v}_{1} - \frac{2m_{2}}{m_{1}+m_{2}}\innerproduct{\vec{v}_{1}-\vec{v}_{2}}{\hat{n}}\hat{n}, \\
+		\vec{u}_{2} & = \vec{v}_{2} + \frac{2m_{1}}{m_{1}+m_{2}}\innerproduct{\vec{v}_{1}-\vec{v}_{2}}{\hat{n}}\hat{n}.
+	\end{aligned}
+\end{equation}
+
+To avoid reduntant calculations, we can factor out the common quantity of both velocities:
+\begin{equation}
+	K = \frac{2}{m_{1}+m_{2}}\innerproduct{\vec{v}_{1}-\vec{v}_{2}}{\hat{n}}\hat{n},
+	\label{eq:elastic_collision_common_quantity}
+\end{equation}
+yielding
+\begin{equation}
+	\begin{aligned}
+		\vec{u}_{1} & = \vec{v}_{1}-Km_{2}, \\
+		\vec{u}_{2} & = \vec{v}_{2}+Km_{1}.
+	\end{aligned}
+	\label{eq:elastic_collision_final_equation}
+\end{equation}

@@ -51,7 +51,7 @@ def dist_sqr(vec1: npdarr, vec2: npdarr) -> float:
     return np.dot(vec1 - vec2, vec1 - vec2)
 
 
-def distance(vec1, vec2) -> float:
+def distance(vec1: npdarr, vec2: npdarr) -> float:
     return np.linalg.norm(vec1 - vec2)
 
 
