@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
 from matplotlib.animation import FuncAnimation
+from matplotlib.patches import Circle
 from tqdm import tqdm
 
 # Types (for hints)
@@ -109,7 +110,7 @@ class Particle:
         self.vel: npdarr = vel
         self.rad: float = rad
         self.mass: float = mass
-        self.color = color
+        self.color: str = color
 
         # Setting non-argument variables
         self.bbox: npdarr = np.zeros((2, 2))
@@ -142,10 +143,10 @@ class Particle:
             self.bounce_wall(Y)
 
     def resolve_elastic_collisions(self):
-        for p2 in self.full_overlaps:
-            if distance(self.pos, p2.pos) <= self.rad + p2.rad:
-                pass
-                # self.vel, p2.vel = ZERO_VEC, ZERO_VEC
+        pass
+        # for p2 in self.full_overlaps:
+        #     if distance(self.pos, p2.pos) <= self.rad + p2.rad:
+        #         self.vel, p2.vel = ZERO_VEC, ZERO_VEC
 
     def move(self, dt: float) -> None:
         """
@@ -240,52 +241,48 @@ class Simulation:
         for t, _ in enumerate(
             tqdm(self.time_series, desc="Running simulation")
         ):
-            self.reset_overlaps()
-            self.sort_particles()
-            self.check_axis_overlaps(axis=X)
-            self.check_axis_overlaps(axis=Y)
-            self.set_full_overlaps()
-            self.resolve_elastic_collisions()
+            # self.reset_overlaps()
+            # self.sort_particles()
+            # self.check_axis_overlaps(axis=X)
+            # self.check_axis_overlaps(axis=Y)
+            # self.set_full_overlaps()
+            # self.resolve_elastic_collisions()
             self.resolve_wall_collisions()
             self.advance_step(t)
 
 
 def elastic_collision(p1: Particle, p2: Particle) -> npdarr:
-    vels_after: npdarr = np.zeros((2, 2))
-
     m1: float = p1.mass
     m2: float = p2.mass
-    M: float = 2 / (m1 + m2)
 
     x1: npdarr = p1.pos
     x2: npdarr = p2.pos
-    dx: npdarr = x1 - x2
-    dx_2: float = np.dot(dx, dx)
+    n: npdarr = normalize(x1 - x2)
 
     v1: npdarr = p1.vel
     v2: npdarr = p2.vel
-    dv: npdarr = v1 - v2
 
-    K: npdarr = M * np.dot(dv, dx) / dx_2 * dx
+    K: npdarr = 2 / (m1 + m2) * np.dot(v1 - v2, n) * n
 
+    vels_after: npdarr = np.zeros((2, 2))
     vels_after[0] = v1 - K * m2
     vels_after[1] = v2 + K * m1
 
     return vels_after
 
 
+def init_plot():
+    frame_count_label.set_text(f"Frame: {0:5d}")
+    for patch in patches:
+        ax.add_patch(patch)
+    return patches
+
+
 def animate(t: int = 0):
-    for patch in ax.patches:
-        patch.remove()
-    frame_count_label.set_text(f"Frame: {t}/{simulation.num_steps}")
-    circles = [
-        plt.Circle(p.pos, p.rad, color=p.color)
-        for p in simulation.particle_list
-    ]
-    for circle in circles:
-        ax.add_patch(circle)
-    # scat.set_offsets(simulation.pos_matrix[t])
-    return [frame_count_label]
+    frame_count_label.set_text(f"Frame: {t:5d}")
+    for i in range(num_particles):
+        patches[i].center = simulation.pos_matrix[t, i]
+    return [frame_count_label] + patches
 
 
 if __name__ == "__main__":
@@ -297,16 +294,20 @@ if __name__ == "__main__":
         Particle(
             id=id,
             pos=np.random.uniform((50, 50), (w - 50, h - 50), size=2),
-            # vel=np.random.uniform(-400, 400, size=2),
+            vel=np.random.uniform(-400, 400, size=2),
             # pos=np.array([w + 0.5, h + 0.5]) / 2.0,
-            vel=np.array([100, 100]),
-            rad=0.5,
+            # vel=np.array([100, 100]),
+            rad=5.0,
             container=container,
             # color=choice(colors),
         )
         for id in range(num_particles)
     ]
     particles[0].color = "red"
+    patches = [
+        Circle(particle.pos.tolist(), particle.rad, fc=particle.color)
+        for particle in particles
+    ]
 
     simulation = Simulation(container, particles, dt=0.005, max_t=5.0)
 
@@ -325,17 +326,16 @@ if __name__ == "__main__":
     ax.set_yticks([])
     # ax.grid()
     frame_count_label = ax.annotate(
-        f"Frame: 0/{simulation.num_steps}",
+        f"Frame: {0:5d}",
         xy=(10, h - 15),
     )
-    # scat = ax.scatter(
-    #     simulation.pos_matrix[0, :, X],
-    #     simulation.pos_matrix[0, :, Y],
-    #     s=marker_size_list,
-    #     c=colors_list,
-    # )
 
     anim = FuncAnimation(
-        fig, animate, frames=simulation.num_steps, interval=0, blit=False
+        fig,
+        animate,
+        init_func=init_plot,
+        frames=simulation.num_steps,
+        interval=0,
+        blit=True,
     )
     plt.show()
