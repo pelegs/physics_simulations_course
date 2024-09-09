@@ -1,5 +1,4 @@
 from copy import deepcopy
-from random import choice
 from typing import Self
 
 import matplotlib.pyplot as plt
@@ -48,11 +47,11 @@ def normalize(v: npdarr) -> npdarr:
     return v / n
 
 
-def dist_sqr(vec1: npdarr, vec2: npdarr) -> float:
+def dist_sqr(vec1: npdarr, vec2: npdarr) -> np.float64:
     return np.dot(vec1 - vec2, vec1 - vec2)
 
 
-def distance(vec1: npdarr, vec2: npdarr) -> float:
+def distance(vec1: npdarr, vec2: npdarr) -> np.float64:
     return np.linalg.norm(vec1 - vec2)
 
 
@@ -143,10 +142,9 @@ class Particle:
             self.bounce_wall(Y)
 
     def resolve_elastic_collisions(self):
-        pass
-        # for p2 in self.full_overlaps:
-        #     if distance(self.pos, p2.pos) <= self.rad + p2.rad:
-        #         self.vel, p2.vel = ZERO_VEC, ZERO_VEC
+        for p2 in self.full_overlaps:
+            if distance(self.pos, p2.pos) <= self.rad + p2.rad:
+                self.vel, p2.vel = elastic_collision(self, p2)
 
     def move(self, dt: float) -> None:
         """
@@ -197,6 +195,7 @@ class Simulation:
         self.pos_matrix: npdarr = np.zeros(
             (self.num_steps, self.num_particles, 2)
         )
+        self.energy_list: npdarr = np.zeros(self.num_steps)
 
     def sort_particles(self):
         def order_x(particle: Particle):
@@ -237,18 +236,27 @@ class Simulation:
             particle.move(self.dt)
             self.pos_matrix[t, p] = particle.pos
 
+    def calc_total_energy(self, i: int):
+        self.energy_list[i] = 0.5 * np.sum(
+            [
+                particle.mass * np.dot(particle.vel, particle.vel)
+                for particle in self.particle_list
+            ]
+        )
+
     def run(self):
-        for t, _ in enumerate(
+        for i, _ in enumerate(
             tqdm(self.time_series, desc="Running simulation")
         ):
-            # self.reset_overlaps()
-            # self.sort_particles()
-            # self.check_axis_overlaps(axis=X)
-            # self.check_axis_overlaps(axis=Y)
-            # self.set_full_overlaps()
-            # self.resolve_elastic_collisions()
+            self.reset_overlaps()
+            self.sort_particles()
+            self.check_axis_overlaps(axis=X)
+            self.check_axis_overlaps(axis=Y)
+            self.set_full_overlaps()
+            self.resolve_elastic_collisions()
             self.resolve_wall_collisions()
-            self.advance_step(t)
+            self.advance_step(i)
+            self.calc_total_energy(i)
 
 
 def elastic_collision(p1: Particle, p2: Particle) -> npdarr:
@@ -272,24 +280,26 @@ def elastic_collision(p1: Particle, p2: Particle) -> npdarr:
 
 
 def init_plot():
-    frame_count_label.set_text(f"Frame: {0:5d}")
     for patch in patches:
         ax.add_patch(patch)
     return patches
 
 
-def animate(t: int = 0):
-    frame_count_label.set_text(f"Frame: {t:5d}")
-    for i in range(num_particles):
-        patches[i].center = simulation.pos_matrix[t, i]
-    return [frame_count_label] + patches
+def animate(frame: int = 0):
+    frame_count_label.set_text(f"Frame: {frame:5d}")
+    total_energy_label.set_text(
+        f"Energy: {simulation.energy_list[frame]:0.3f}"
+    )
+    for p in range(num_particles):
+        patches[p].center = simulation.pos_matrix[frame, p]
+    return patches + [frame_count_label, total_energy_label]
 
 
 if __name__ == "__main__":
-    w: float = 200.0
-    h: float = 100.0
+    w: float = 1000.0
+    h: float = 1000.0
     container: Container = Container(width=w, height=h)
-    num_particles: int = 20
+    num_particles: int = 100
     particles: list[Particle] = [
         Particle(
             id=id,
@@ -327,7 +337,11 @@ if __name__ == "__main__":
     # ax.grid()
     frame_count_label = ax.annotate(
         f"Frame: {0:5d}",
-        xy=(10, h - 15),
+        xy=(10, h - 20),
+    )
+    total_energy_label = ax.annotate(
+        f"Energy: {0:0.3f}",
+        xy=(10, h - 40),
     )
 
     anim = FuncAnimation(
@@ -335,7 +349,9 @@ if __name__ == "__main__":
         animate,
         init_func=init_plot,
         frames=simulation.num_steps,
-        interval=0,
-        blit=True,
+        interval=10,
+        blit=False,
     )
     plt.show()
+
+    print(simulation.pos_matrix.shape)
