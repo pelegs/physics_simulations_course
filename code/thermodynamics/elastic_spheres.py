@@ -100,7 +100,7 @@ class Particle:
         vel: npdarr = ZERO_VEC,
         rad: float = 1.0,
         mass: float = 1.0,
-        color: str = "blue",
+        color: str = "#aaaaaa",
     ) -> None:
         # Setting argument variables
         self.id: int = id
@@ -143,8 +143,9 @@ class Particle:
 
     def resolve_elastic_collisions(self):
         for p2 in self.full_overlaps:
-            if distance(self.pos, p2.pos) <= self.rad + p2.rad:
+            if distance(self.pos, p2.pos) <= 100.0:
                 self.vel, p2.vel = elastic_collision(self, p2)
+                # self.vel, p2.vel = ZERO_VEC, ZERO_VEC
 
     def move(self, dt: float) -> None:
         """
@@ -156,8 +157,9 @@ class Particle:
         self.set_bbox()
 
     def reset_overlaps(self):
-        self.axis_overlaps = [set(), set()]
-        self.full_overlaps = set()
+        self.axis_overlaps[X].clear()
+        self.axis_overlaps[Y].clear()
+        self.full_overlaps.clear()
 
     def add_axis_overlap(self, axis: int, particle: Self):
         self.axis_overlaps[axis].add(particle)
@@ -196,20 +198,22 @@ class Simulation:
             (self.num_steps, self.num_particles, 2)
         )
 
+    @staticmethod
+    def order_x(particle: Particle):
+        return particle.bbox[LL, X]
+
+    @staticmethod
+    def order_y(particle: Particle):
+        return particle.bbox[LL, Y]
+
     def sort_particles(self):
-        def order_x(particle: Particle):
-            return particle.bbox[LL, X]
-
-        def order_y(particle: Particle):
-            return particle.bbox[LL, Y]
-
-        self.sorted_by_bboxes[X] = sorted(self.particle_list, key=order_x)
-        self.sorted_by_bboxes[Y] = sorted(self.particle_list, key=order_y)
+        self.sorted_by_bboxes[X] = sorted(self.particle_list, key=self.order_x)
+        self.sorted_by_bboxes[Y] = sorted(self.particle_list, key=self.order_y)
 
     def check_axis_overlaps(self, axis: int) -> None:
         for p1_idx, p1 in enumerate(self.sorted_by_bboxes[axis]):
             for p2 in self.sorted_by_bboxes[axis][p1_idx + 1 :]:
-                if p1.bbox[UR, axis] >= p2.bbox[LL, axis]:
+                if p2.bbox[LL, axis] <= p1.bbox[UR, axis]:
                     p1.add_axis_overlap(axis, p2)
                 else:
                     break
@@ -244,7 +248,11 @@ class Simulation:
             self.check_axis_overlaps(axis=X)
             self.check_axis_overlaps(axis=Y)
             self.set_full_overlaps()
-            self.resolve_elastic_collisions()
+            # self.resolve_elastic_collisions()
+            # for pidx, p1 in enumerate(self.particle_list):
+            #     for p2 in self.particle_list[pidx + 1 :]:
+            #         if distance(p1.pos, p2.pos) <= p1.rad + p2.rad:
+            #             p1.vel, p2.vel = elastic_collision(p1, p2)
             self.resolve_wall_collisions()
             self.advance_step(i)
 
@@ -275,43 +283,36 @@ def init_plot():
 
 def animate(frame: int = 0):
     frame_count_label.set_text(f"Frame: {frame:5d}")
-    for p in range(num_particles):
-        patches[p].center = simulation.pos_matrix[frame, p]
-    return patches + [frame_count_label]
+    for i, (patch, label) in enumerate(zip(patches, labels)):
+        patch.center = simulation.pos_matrix[frame, i]
+        label.set_position(patch.center)
+    return patches + labels + [frame_count_label]
 
 
 if __name__ == "__main__":
-    w: float = 200.0
-    h: float = 200.0
+    w: float = 500.0
+    h: float = 500.0
     container: Container = Container(width=w, height=h)
-    num_particles: int = 2
+    num_particles: int = 10
     particles: list[Particle] = [
         Particle(
             id=id,
             pos=np.random.uniform((50, 50), (w - 50, h - 50), size=2),
-            vel=np.random.uniform(-400, 400, size=2),
+            vel=np.random.uniform(-500, 500, size=2),
             # pos=np.array([w + 0.5, h + 0.5]) / 2.0,
             # vel=np.array([100, 100]),
-            rad=10.0,
+            rad=20.0,
             container=container,
             # color=choice(colors),
         )
         for id in range(num_particles)
     ]
-    particles[0].color = "red"
-    particles[1].color = "green"
-    particles[0].rad = 15.0
-    particles[1].rad = 10.0
-    particles[0].pos = np.array([20, h / 2])
-    particles[1].pos = np.array([w - 20, h / 2])
-    particles[0].vel = np.array([-100, 0])
-    particles[1].vel = np.array([200, 1000])
     patches = [
         Circle(particle.pos.tolist(), particle.rad, fc=particle.color)
         for particle in particles
     ]
 
-    simulation = Simulation(container, particles, dt=0.005, max_t=5.0)
+    simulation = Simulation(container, particles, dt=0.005, max_t=50.0)
 
     # Main simulation run
     simulation.run()
@@ -326,6 +327,7 @@ if __name__ == "__main__":
     ax.set_ylim(0, h)
     ax.set_xticks([])
     ax.set_yticks([])
+    labels = [ax.annotate(f"{p.id}", xy=p.pos.astype(int)) for p in particles]
     # ax.grid()
     frame_count_label = ax.annotate(
         f"Frame: {0:5d}",
@@ -337,7 +339,7 @@ if __name__ == "__main__":
         animate,
         init_func=init_plot,
         frames=simulation.num_steps,
-        interval=20,
+        interval=0,
         blit=False,
     )
     plt.show()
