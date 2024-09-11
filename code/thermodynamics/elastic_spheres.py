@@ -5,11 +5,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
 from matplotlib.animation import FuncAnimation
-from matplotlib.patches import Circle
+from matplotlib.patches import Circle, Rectangle
 from tqdm import tqdm
 
 # Types (for hints)
 npdarr = npt.NDArray[np.float64]
+npiarr = npt.NDArray[np.int8]
 
 # Useful constants
 X: int = 0
@@ -19,7 +20,6 @@ X_DIR: npdarr = np.array([1, 0])
 Y_DIR: npdarr = np.array([0, 1])
 LL: int = 0
 UR: int = 1
-POINTS_WHOLE_AX: float = 5 * 0.8 * 72
 
 
 # Useful variables
@@ -35,11 +35,11 @@ colors = [
     "cyan",
 ]
 
-# Simulation constants
-# dt: float = 0.01
+# For pausing
+pause = False
 
 
-# Helper functions?
+# Helper functions
 def normalize(v: npdarr) -> npdarr:
     n: np.float64 = np.linalg.norm(v)
     if n == 0.0:
@@ -114,8 +114,6 @@ class Particle:
         # Setting non-argument variables
         self.bbox: npdarr = np.zeros((2, 2))
         self.set_bbox()
-        self.axis_overlaps: list[set[Particle]] = [set(), set()]
-        self.full_overlaps: set[Particle] = set()
 
     def __repr__(self) -> str:
         return (
@@ -141,12 +139,6 @@ class Particle:
         ):
             self.bounce_wall(Y)
 
-    def resolve_elastic_collisions(self):
-        for p2 in self.full_overlaps:
-            if distance(self.pos, p2.pos) <= 100.0:
-                self.vel, p2.vel = elastic_collision(self, p2)
-                # self.vel, p2.vel = ZERO_VEC, ZERO_VEC
-
     def move(self, dt: float) -> None:
         """
         Advances the particle by its velocity in the given time step.
@@ -155,19 +147,6 @@ class Particle:
         """
         self.pos += self.vel * dt
         self.set_bbox()
-
-    def reset_overlaps(self):
-        self.axis_overlaps[X].clear()
-        self.axis_overlaps[Y].clear()
-        self.full_overlaps.clear()
-
-    def add_axis_overlap(self, axis: int, particle: Self):
-        self.axis_overlaps[axis].add(particle)
-
-    def set_full_overlaps(self):
-        self.full_overlaps = set(
-            p for p in self.axis_overlaps[X] if p in self.axis_overlaps[Y]
-        )
 
 
 class Simulation:
@@ -194,9 +173,14 @@ class Simulation:
             deepcopy(self.particle_list),
             deepcopy(self.particle_list),
         ]
+        self.axis_overlap_list: list[list[list[Particle]]] = list(
+            [list(), list()]
+        )
+        self.full_overlap_list: list[list[Particle]] = list()
         self.pos_matrix: npdarr = np.zeros(
             (self.num_steps, self.num_particles, 2)
         )
+        self.reset_overlaps()
 
     @staticmethod
     def order_x(particle: Particle):
@@ -214,21 +198,50 @@ class Simulation:
         for p1_idx, p1 in enumerate(self.sorted_by_bboxes[axis]):
             for p2 in self.sorted_by_bboxes[axis][p1_idx + 1 :]:
                 if p2.bbox[LL, axis] <= p1.bbox[UR, axis]:
-                    p1.add_axis_overlap(axis, p2)
+                    # self.axis_overlap_list[axis].append([p1, p2])
+                    # self.axis_overlap_list[axis].append([p2, p1])
+                    self.axis_overlap_matrix[axis, p1.id, p2.id] = 1
+                    self.axis_overlap_matrix[axis, p2.id, p1.id] = 1
                 else:
                     break
 
     def set_full_overlaps(self):
-        for particle in self.particle_list:
-            particle.set_full_overlaps()
+        overlaps.append(list())
+        self.full_overlap_matrix = np.triu(
+            np.logical_and(
+                self.axis_overlap_matrix[X], self.axis_overlap_matrix[Y]
+            )
+        )
+        self.overlap_ids = np.vstack(np.where(self.full_overlap_matrix)).T
+        # self.full_overlap_list = set(
+        #     [
+        #         frozenset(particle_pair)
+        #         for particle_pair in self.axis_overlap_list[X]
+        #         if particle_pair in self.axis_overlap_list[Y]
+        #     ]
+        # )
 
     def reset_overlaps(self):
-        for particle in self.particle_list:
-            particle.reset_overlaps()
+        # self.axis_overlap_list[X].clear()
+        # self.axis_overlap_list[Y].clear()
+        # self.full_overlap_list.clear()
+        self.axis_overlap_matrix: npiarr = np.zeros(
+            (2, self.num_particles, self.num_particles), dtype=bool
+        )
+        self.full_overlap_matrix: npiarr = np.zeros(
+            (self.num_particles, self.num_particles), dtype=bool
+        )
+        # self.overlap_ids: npiarr = np.zeros((self.num_particles, 2), dtype=int)
 
     def resolve_elastic_collisions(self):
-        for particle in self.particle_list:
-            particle.resolve_elastic_collisions()
+        # print(len(self.full_overlap_list))
+        # for p1, p2 in self.full_overlap_list:
+        #     if distance(p1.pos, p2.pos) <= p1.rad + p2.rad:
+        #         p1.vel, p2.vel = elastic_collision(p1, p2)
+        for i, j in self.overlap_ids:
+            p1, p2 = self.particle_list[i], self.particle_list[j]
+            if distance(p1.pos, p2.pos) <= p1.rad + p2.rad:
+                p1.vel, p2.vel = elastic_collision(p1, p2)
 
     def resolve_wall_collisions(self):
         for particle in self.particle_list:
@@ -248,7 +261,7 @@ class Simulation:
             self.check_axis_overlaps(axis=X)
             self.check_axis_overlaps(axis=Y)
             self.set_full_overlaps()
-            # self.resolve_elastic_collisions()
+            self.resolve_elastic_collisions()
             # for pidx, p1 in enumerate(self.particle_list):
             #     for p2 in self.particle_list[pidx + 1 :]:
             #         if distance(p1.pos, p2.pos) <= p1.rad + p2.rad:
@@ -283,17 +296,31 @@ def init_plot():
 
 def animate(frame: int = 0):
     frame_count_label.set_text(f"Frame: {frame:5d}")
-    for i, (patch, label) in enumerate(zip(patches, labels)):
+    # overlaps_text.set_text("\n".join([f"({x})" for x in overlaps[frame]]))
+    for i, patch in enumerate(patches):
         patch.center = simulation.pos_matrix[frame, i]
-        label.set_position(patch.center)
-    return patches + labels + [frame_count_label]
+    # for i, (patch, label) in enumerate(zip(patches, labels)):
+    # patch.center = simulation.pos_matrix[frame, i]
+    # patch.set_xy(simulation.pos_matrix[frame, i] - particles[i].rad)
+    # label.set_position(patch.get_xy())
+    # return patches + labels + [frame_count_label]
+    return patches + [frame_count_label]
+
+
+def onClick(event):
+    global pause
+    pause = not pause
+    if pause:
+        anim.pause()
+    else:
+        anim.resume()
 
 
 if __name__ == "__main__":
     w: float = 500.0
     h: float = 500.0
     container: Container = Container(width=w, height=h)
-    num_particles: int = 10
+    num_particles: int = 300
     particles: list[Particle] = [
         Particle(
             id=id,
@@ -301,7 +328,7 @@ if __name__ == "__main__":
             vel=np.random.uniform(-500, 500, size=2),
             # pos=np.array([w + 0.5, h + 0.5]) / 2.0,
             # vel=np.array([100, 100]),
-            rad=20.0,
+            rad=1.5,
             container=container,
             # color=choice(colors),
         )
@@ -311,8 +338,15 @@ if __name__ == "__main__":
         Circle(particle.pos.tolist(), particle.rad, fc=particle.color)
         for particle in particles
     ]
+    # patches = [
+    #     Rectangle(
+    #         particle.pos.tolist(), 2 * particle.rad, 2 * particle.rad, fc=particle.color
+    #     )
+    #     for particle in particles
+    # ]
 
-    simulation = Simulation(container, particles, dt=0.005, max_t=50.0)
+    simulation = Simulation(container, particles, dt=0.01, max_t=10.0)
+    overlaps = list()
 
     # Main simulation run
     simulation.run()
@@ -327,19 +361,21 @@ if __name__ == "__main__":
     ax.set_ylim(0, h)
     ax.set_xticks([])
     ax.set_yticks([])
-    labels = [ax.annotate(f"{p.id}", xy=p.pos.astype(int)) for p in particles]
+    # labels = [ax.annotate(f"{p.id}", xy=p.pos.astype(int)) for p in particles]
     # ax.grid()
     frame_count_label = ax.annotate(
         f"Frame: {0:5d}",
         xy=(10, h - 20),
     )
+    # overlaps_text = ax.annotate("", xy=(10, h - 80))
 
+    fig.canvas.mpl_connect("button_press_event", onClick)
     anim = FuncAnimation(
         fig,
         animate,
         init_func=init_plot,
         frames=simulation.num_steps,
         interval=0,
-        blit=False,
+        blit=True,
     )
     plt.show()
