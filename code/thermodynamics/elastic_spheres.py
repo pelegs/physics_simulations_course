@@ -320,19 +320,19 @@ if __name__ == "__main__":
     w: float = 500.0
     h: float = 500.0
     container: Container = Container(width=w, height=h)
-    num_particles: int = 300
+    N: int = 10
+    num_particles: int = N**2
+    radius: float = w / N * 0.25
     particles: list[Particle] = [
         Particle(
-            id=id,
-            pos=np.random.uniform((50, 50), (w - 50, h - 50), size=2),
-            vel=np.random.uniform(-500, 500, size=2),
-            # pos=np.array([w + 0.5, h + 0.5]) / 2.0,
-            # vel=np.array([100, 100]),
-            rad=1.5,
+            id=i * N + j,
+            pos=np.array([w / N * (i + 0.5), h / N * (j + 0.5)]),
+            vel=np.random.uniform(-100, 100, size=2),
+            rad=radius,
             container=container,
-            # color=choice(colors),
         )
-        for id in range(num_particles)
+        for i in range(N)
+        for j in range(N)
     ]
     patches = [
         Circle(particle.pos.tolist(), particle.rad, fc=particle.color)
