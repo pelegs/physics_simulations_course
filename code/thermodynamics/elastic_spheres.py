@@ -7,6 +7,7 @@ import numpy as np
 import numpy.typing as npt
 from matplotlib.animation import FuncAnimation
 from matplotlib.patches import Circle, Rectangle
+from scipy.stats import maxwell
 from tqdm import tqdm
 
 # Types (for hints)
@@ -326,8 +327,11 @@ def elastic_collision(p1: Particle, p2: Particle) -> npdarr:
 def animate_histograms(frame: int, bar_container):
     for count, rect in zip(histograms[frame], bar_container.patches):
         rect.set_height(count)
+    mx = maxwell.pdf(hist_bins, *mb_params[frame])
+    mb_plot.set_ydata(mx)
+    # print(mx)
 
-    return bar_container.patches
+    return bar_container.patches + [mb_plot]
 
 
 if __name__ == "__main__":
@@ -359,16 +363,18 @@ if __name__ == "__main__":
     #        Analysis        #
     ##########################
 
-    num_bins: int = 100
+    num_bins: int = 50
     speeds: npdarr = np.linalg.norm(simulation.vel_matrix, axis=2)
     max_speed: np.float64 = np.max(speeds)
     hist_bins = np.linspace(0, max_speed, num_bins)
 
     histograms: npdarr = np.zeros((simulation.num_steps, num_bins - 1))
+    mb_params: npdarr = np.zeros((simulation.num_steps, 2))
     for frame, _ in enumerate(simulation.pos_matrix):
         histograms[frame], _ = np.histogram(
             speeds[frame], hist_bins, density=True
         )
+        mb_params[frame] = maxwell.fit(speeds[frame], floc=0)
     max_freq: np.float64 = np.max(histograms)
 
     ##########################
@@ -417,8 +423,16 @@ if __name__ == "__main__":
     _, _, bar_container = ax.hist(
         speeds[0], hist_bins, lw=1, ec="yellow", fc="green", alpha=0.5
     )
+    (mb_plot,) = ax.plot(
+        hist_bins, maxwell.pdf(hist_bins, *mb_params[0]), lw=3, c="red"
+    )
     anim = functools.partial(animate_histograms, bar_container=bar_container)
     ani = FuncAnimation(
-        fig, anim, simulation.num_steps, interval=0, repeat=False, blit=True
+        fig,
+        anim,
+        simulation.num_steps,
+        interval=0,
+        repeat=False,
+        blit=True,
     )
     plt.show()
