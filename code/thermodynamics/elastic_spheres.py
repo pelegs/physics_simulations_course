@@ -1,3 +1,4 @@
+import functools
 from copy import deepcopy
 from typing import Self
 
@@ -173,14 +174,15 @@ class Simulation:
             deepcopy(self.particle_list),
             deepcopy(self.particle_list),
         ]
-        self.axis_overlap_list: list[list[list[Particle]]] = list(
-            [list(), list()]
-        )
-        self.full_overlap_list: list[list[Particle]] = list()
+        self.reset_overlaps()
+
+        # Data matrices
         self.pos_matrix: npdarr = np.zeros(
             (self.num_steps, self.num_particles, 2)
         )
-        self.reset_overlaps()
+        self.vel_matrix: npdarr = np.zeros(
+            (self.num_steps, self.num_particles, 2)
+        )
 
     @staticmethod
     def order_x(particle: Particle):
@@ -247,13 +249,17 @@ class Simulation:
         for particle in self.particle_list:
             particle.resolve_wall_collisions()
 
-    def advance_step(self, t: int) -> None:
+    def advance_step(self, time: int) -> None:
         for p, particle in enumerate(self.particle_list):
             particle.move(self.dt)
-            self.pos_matrix[t, p] = particle.pos
+
+    def update_data_matrices(self, time: int) -> None:
+        for pidx, particle in enumerate(self.particle_list):
+            self.pos_matrix[time, pidx] = particle.pos
+            self.vel_matrix[time, pidx] = particle.vel
 
     def run(self):
-        for i, _ in enumerate(
+        for time, _ in enumerate(
             tqdm(self.time_series, desc="Running simulation")
         ):
             self.reset_overlaps()
@@ -267,7 +273,8 @@ class Simulation:
             #         if distance(p1.pos, p2.pos) <= p1.rad + p2.rad:
             #             p1.vel, p2.vel = elastic_collision(p1, p2)
             self.resolve_wall_collisions()
-            self.advance_step(i)
+            self.advance_step(time)
+            self.update_data_matrices(time)
 
 
 def elastic_collision(p1: Particle, p2: Particle) -> npdarr:
@@ -288,39 +295,46 @@ def elastic_collision(p1: Particle, p2: Particle) -> npdarr:
     return vels_after
 
 
-def init_plot():
-    for patch in patches:
-        ax.add_patch(patch)
-    return patches
+# def init_spheres_animation():
+#     for patch in patches:
+#         ax.add_patch(patch)
+#     return patches
 
 
-def animate(frame: int = 0):
-    frame_count_label.set_text(f"Frame: {frame:5d}")
-    # overlaps_text.set_text("\n".join([f"({x})" for x in overlaps[frame]]))
-    for i, patch in enumerate(patches):
-        patch.center = simulation.pos_matrix[frame, i]
-    # for i, (patch, label) in enumerate(zip(patches, labels)):
-    # patch.center = simulation.pos_matrix[frame, i]
-    # patch.set_xy(simulation.pos_matrix[frame, i] - particles[i].rad)
-    # label.set_position(patch.get_xy())
-    # return patches + labels + [frame_count_label]
-    return patches + [frame_count_label]
+# def animate_spheres(frame: int = 0):
+#     frame_count_label.set_text(f"Frame: {frame:5d}")
+#     # overlaps_text.set_text("\n".join([f"({x})" for x in overlaps[frame]]))
+#     for i, patch in enumerate(patches):
+#         patch.center = simulation.pos_matrix[frame, i]
+#     # for i, (patch, label) in enumerate(zip(patches, labels)):
+#     # patch.center = simulation.pos_matrix[frame, i]
+#     # patch.set_xy(simulation.pos_matrix[frame, i] - particles[i].rad)
+#     # label.set_position(patch.get_xy())
+#     # return patches + labels + [frame_count_label]
+#     return patches + [frame_count_label]
 
 
-def onClick(event):
-    global pause
-    pause = not pause
-    if pause:
-        anim.pause()
-    else:
-        anim.resume()
+# def onClick(event):
+#     global pause
+#     pause = not pause
+#     if pause:
+#         anim.pause()
+#     else:
+#         anim.resume()
+
+
+def animate_histograms(frame: int, bar_container):
+    for count, rect in zip(histograms[frame], bar_container.patches):
+        rect.set_height(count)
+
+    return bar_container.patches
 
 
 if __name__ == "__main__":
-    w: float = 500.0
-    h: float = 500.0
+    w: float = 1000.0
+    h: float = 1000.0
     container: Container = Container(width=w, height=h)
-    N: int = 10
+    N: int = 30
     num_particles: int = N**2
     radius: float = w / N * 0.25
     particles: list[Particle] = [
@@ -334,16 +348,6 @@ if __name__ == "__main__":
         for i in range(N)
         for j in range(N)
     ]
-    patches = [
-        Circle(particle.pos.tolist(), particle.rad, fc=particle.color)
-        for particle in particles
-    ]
-    # patches = [
-    #     Rectangle(
-    #         particle.pos.tolist(), 2 * particle.rad, 2 * particle.rad, fc=particle.color
-    #     )
-    #     for particle in particles
-    # ]
 
     simulation = Simulation(container, particles, dt=0.01, max_t=10.0)
     overlaps = list()
@@ -352,30 +356,69 @@ if __name__ == "__main__":
     simulation.run()
 
     ##########################
+    #        Analysis        #
+    ##########################
+
+    num_bins: int = 100
+    speeds: npdarr = np.linalg.norm(simulation.vel_matrix, axis=2)
+    max_speed: np.float64 = np.max(speeds)
+    hist_bins = np.linspace(0, max_speed, num_bins)
+
+    histograms: npdarr = np.zeros((simulation.num_steps, num_bins - 1))
+    for frame, _ in enumerate(simulation.pos_matrix):
+        histograms[frame], _ = np.histogram(
+            speeds[frame], hist_bins, density=True
+        )
+    max_freq: np.float64 = np.max(histograms)
+
+    ##########################
     #        Graphics        #
     ##########################
 
-    fig, ax = plt.subplots()
-    ax.set_aspect("equal", "box")
-    ax.set_xlim(0, w)
-    ax.set_ylim(0, h)
-    ax.set_xticks([])
-    ax.set_yticks([])
-    # labels = [ax.annotate(f"{p.id}", xy=p.pos.astype(int)) for p in particles]
-    # ax.grid()
-    frame_count_label = ax.annotate(
-        f"Frame: {0:5d}",
-        xy=(10, h - 20),
-    )
-    # overlaps_text = ax.annotate("", xy=(10, h - 80))
+    # Visual animation
 
-    fig.canvas.mpl_connect("button_press_event", onClick)
-    anim = FuncAnimation(
-        fig,
-        animate,
-        init_func=init_plot,
-        frames=simulation.num_steps,
-        interval=0,
-        blit=True,
+    # patches = [
+    #     Circle(particle.pos.tolist(), particle.rad, fc=particle.color)
+    #     for particle in particles
+    # ]
+    #
+    # fig, ax = plt.subplots()
+    # ax.set_aspect("equal", "box")
+    # ax.set_xlim(0, w)
+    # ax.set_ylim(0, h)
+    # ax.set_xticks([])
+    # ax.set_yticks([])
+    # # labels = [ax.annotate(f"{p.id}", xy=p.pos.astype(int)) for p in particles]
+    # # ax.grid()
+    # frame_count_label = ax.annotate(
+    #     f"Frame: {0:5d}",
+    #     xy=(10, h - 20),
+    # )
+    # # overlaps_text = ax.annotate("", xy=(10, h - 80))
+    #
+    # fig.canvas.mpl_connect("button_press_event", onClick)
+    # anim = FuncAnimation(
+    #     fig,
+    #     animate,
+    #     init_func=init_plot,
+    #     frames=simulation.num_steps,
+    #     interval=0,
+    #     blit=True,
+    # )
+    # plt.show()
+
+    # Velocity histogram
+    fig, ax = plt.subplots()
+    ax.set_xlim(0, max_speed * 1.1)
+    ax.set_ylim(0, max_freq * 1.1)
+    ax.set_xlabel("Speeds")
+    ax.set_ylabel("Frequency")
+    ax.set_title("Speed histograms")
+    _, _, bar_container = ax.hist(
+        speeds[0], hist_bins, lw=1, ec="yellow", fc="green", alpha=0.5
+    )
+    anim = functools.partial(animate_histograms, bar_container=bar_container)
+    ani = FuncAnimation(
+        fig, anim, simulation.num_steps, interval=0, repeat=False, blit=True
     )
     plt.show()
