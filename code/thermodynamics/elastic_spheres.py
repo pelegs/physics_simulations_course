@@ -250,7 +250,7 @@ class Simulation:
         for particle in self.particle_list:
             particle.resolve_wall_collisions()
 
-    def advance_step(self, time: int) -> None:
+    def advance_step(self) -> None:
         for p, particle in enumerate(self.particle_list):
             particle.move(self.dt)
 
@@ -274,7 +274,7 @@ class Simulation:
             #         if distance(p1.pos, p2.pos) <= p1.rad + p2.rad:
             #             p1.vel, p2.vel = elastic_collision(p1, p2)
             self.resolve_wall_collisions()
-            self.advance_step(time)
+            self.advance_step()
             self.update_data_matrices(time)
 
 
