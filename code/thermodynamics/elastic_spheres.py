@@ -111,6 +111,8 @@ class Particle:
         self.rad: float = rad
         self.mass: float = mass
         self.color: str = color
+        self.current_free_path: float = 0.0
+        self.free_paths_list: list[float] = list()
 
         # Setting non-argument variables
         self.bbox: npdarr = np.zeros((2, 2))
@@ -148,6 +150,11 @@ class Particle:
         """
         self.pos += self.vel * dt
         self.set_bbox()
+        self.current_free_path += float(np.linalg.norm(self.vel) * dt)
+
+    def reset_free_path(self) -> None:
+        self.free_paths_list.append(self.current_free_path)
+        self.current_free_path = 0.0
 
 
 class Simulation:
@@ -200,28 +207,19 @@ class Simulation:
         for p1_idx, p1 in enumerate(self.sorted_by_bboxes[axis]):
             for p2 in self.sorted_by_bboxes[axis][p1_idx + 1 :]:
                 if p2.bbox[LL, axis] <= p1.bbox[UR, axis]:
-                    # self.axis_overlap_list[axis].append([p1, p2])
-                    # self.axis_overlap_list[axis].append([p2, p1])
                     self.axis_overlap_matrix[axis, p1.id, p2.id] = 1
                     self.axis_overlap_matrix[axis, p2.id, p1.id] = 1
                 else:
                     break
 
     def set_full_overlaps(self):
-        overlaps.append(list())
+        # overlaps.append(list())
         self.full_overlap_matrix = np.triu(
             np.logical_and(
                 self.axis_overlap_matrix[X], self.axis_overlap_matrix[Y]
             )
         )
         self.overlap_ids = np.vstack(np.where(self.full_overlap_matrix)).T
-        # self.full_overlap_list = set(
-        #     [
-        #         frozenset(particle_pair)
-        #         for particle_pair in self.axis_overlap_list[X]
-        #         if particle_pair in self.axis_overlap_list[Y]
-        #     ]
-        # )
 
     def reset_overlaps(self):
         self.axis_overlap_matrix: npiarr = np.zeros(
@@ -236,13 +234,15 @@ class Simulation:
             p1, p2 = self.particle_list[i], self.particle_list[j]
             if distance(p1.pos, p2.pos) <= p1.rad + p2.rad:
                 p1.vel, p2.vel = elastic_collision(p1, p2)
+                p1.reset_free_path()
+                p2.reset_free_path()
 
     def resolve_wall_collisions(self):
         for particle in self.particle_list:
             particle.resolve_wall_collisions()
 
     def advance_step(self) -> None:
-        for p, particle in enumerate(self.particle_list):
+        for particle in self.particle_list:
             particle.move(self.dt)
 
     def update_data_matrices(self, time: int) -> None:
@@ -260,10 +260,6 @@ class Simulation:
             self.check_axis_overlaps(axis=Y)
             self.set_full_overlaps()
             self.resolve_elastic_collisions()
-            # for pidx, p1 in enumerate(self.particle_list):
-            #     for p2 in self.particle_list[pidx + 1 :]:
-            #         if distance(p1.pos, p2.pos) <= p1.rad + p2.rad:
-            #             p1.vel, p2.vel = elastic_collision(p1, p2)
             self.resolve_wall_collisions()
             self.advance_step()
             self.update_data_matrices(time)
@@ -327,12 +323,13 @@ def animate_histograms(frame: int, bar_container):
 
 
 if __name__ == "__main__":
-    w: float = 1000.0
-    h: float = 1000.0
+    w: float = 400.0
+    h: float = 400.0
     container: Container = Container(width=w, height=h)
-    N: int = 30
+    N: int = 20
     num_particles: int = N**2
-    radius: float = w / N * 0.25
+    # radius: float = w / N * 0.25
+    radius: float = 5.0
     particles: list[Particle] = [
         Particle(
             id=i * N + j,
@@ -345,8 +342,8 @@ if __name__ == "__main__":
         for j in range(N)
     ]
 
-    simulation = Simulation(container, particles, dt=0.01, max_t=10.0)
-    overlaps = list()
+    simulation = Simulation(container, particles, dt=0.001, max_t=1.0)
+    # overlaps = list()
 
     # Main simulation run
     simulation.run()
@@ -355,19 +352,33 @@ if __name__ == "__main__":
     #        Analysis        #
     ##########################
 
-    num_bins: int = 100
-    speeds: npdarr = np.linalg.norm(simulation.vel_matrix, axis=2)
-    max_speed: float = float(np.max(speeds))
-    hist_bins = np.linspace(0, max_speed, num_bins)
+    # Histograms
+    # num_bins: int = 100
+    # speeds_matrix: npdarr = np.linalg.norm(simulation.vel_matrix, axis=2)
+    # max_speed: float = float(np.max(speeds))
+    # hist_bins = np.linspace(0, max_speed, num_bins)
+    #
+    # histograms: npdarr = np.zeros((simulation.num_steps, num_bins - 1))
+    # mb_params: npdarr = np.zeros((simulation.num_steps, 2))
+    # for frame, _ in enumerate(simulation.pos_matrix):
+    #     histograms[frame], _ = np.histogram(
+    #         speeds[frame], hist_bins, density=True
+    #     )
+    #     mb_params[frame] = maxwell.fit(speeds[frame], floc=0)
+    # max_freq: float = float(np.max(histograms[900:]))
 
-    histograms: npdarr = np.zeros((simulation.num_steps, num_bins - 1))
-    mb_params: npdarr = np.zeros((simulation.num_steps, 2))
-    for frame, _ in enumerate(simulation.pos_matrix):
-        histograms[frame], _ = np.histogram(
-            speeds[frame], hist_bins, density=True
-        )
-        mb_params[frame] = maxwell.fit(speeds[frame], floc=0)
-    max_freq: float = float(np.max(histograms[900:]))
+    # Mean free path
+    mean_free_path_calculated: float = (
+        simulation.container.height
+        * simulation.container.width
+        / (np.sqrt(8) * simulation.num_particles * 2 * radius)
+    )
+    print("Mean free path (calculated):", mean_free_path_calculated)
+
+    free_paths_list: list[float] = list()
+    for particle in simulation.particle_list:
+        free_paths_list += particle.free_paths_list
+    print("Mean free path (simulated):", np.mean(free_paths_list))
 
     ##########################
     #        Graphics        #
@@ -406,29 +417,29 @@ if __name__ == "__main__":
     # plt.show()
 
     # Velocity histogram
-    fig, ax = plt.subplots()
-    ax.set_xlim(0, max_speed * 1.1)
-    ax.set_ylim(0, max_freq * 1.1)
-    ax.set_xlabel("Speeds")
-    ax.set_ylabel("Frequency")
-    ax.set_title("Speed histograms")
-    _, _, bar_container = ax.hist(
-        speeds[0], hist_bins, lw=1, fc="#9ecae1", ec="#3182bd", alpha=0.5
-    )
-    frame_count_label = ax.annotate(
-        f"Frame: {0:5d}/{simulation.num_steps:05d}",
-        xy=(10.0, max_freq * 0.99),
-    )
-    # (mb_plot,) = ax.plot(
-    #     hist_bins, maxwell.pdf(hist_bins, *mb_params[0]), lw=3, c="red"
+    # fig, ax = plt.subplots()
+    # ax.set_xlim(0, max_speed * 1.1)
+    # ax.set_ylim(0, max_freq * 1.1)
+    # ax.set_xlabel("Speeds")
+    # ax.set_ylabel("Frequency")
+    # ax.set_title("Speed histograms")
+    # _, _, bar_container = ax.hist(
+    #     speeds[0], hist_bins, lw=1, fc="#9ecae1", ec="#3182bd", alpha=0.5
     # )
-    anim = functools.partial(animate_histograms, bar_container=bar_container)
-    ani = FuncAnimation(
-        fig,
-        anim,
-        simulation.num_steps,
-        interval=0,
-        repeat=False,
-        blit=True,
-    )
-    plt.show()
+    # frame_count_label = ax.annotate(
+    #     f"Frame: {0:5d}/{simulation.num_steps:05d}",
+    #     xy=(10.0, max_freq * 0.99),
+    # )
+    # # (mb_plot,) = ax.plot(
+    # #     hist_bins, maxwell.pdf(hist_bins, *mb_params[0]), lw=3, c="red"
+    # # )
+    # anim = functools.partial(animate_histograms, bar_container=bar_container)
+    # ani = FuncAnimation(
+    #     fig,
+    #     anim,
+    #     simulation.num_steps,
+    #     interval=0,
+    #     repeat=False,
+    #     blit=True,
+    # )
+    # plt.show()
