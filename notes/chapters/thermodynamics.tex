@@ -4,8 +4,26 @@
 Text text text
 
 \section{Ideal gas}
-\subsection{Model: perfectly elastic spheres}
-Text text text
+There are several commonly used models for the behaviour of gasses. A very simple yet powerful one is the \textbf{ideal gas} model: it describes gas particles as being perfect spheres which move around in an enclosed container and undergo elastic collisions with other particles and the walls of the container. In common conditions such as atmospheric pressure and temperatures around $\SI{300}{\kelvin}$, gasses such as helium (\ce{He}), argon (\ce{Ar}), nitrogen (\ce{N2}), oxygen (\ce{O2}) and carbon dioxide (\ce{CO2}) behave like ideal gasses (assuming no chemical reations take place). However, the ideal gas model fails under high pressures, low temperatures, chemical interactions and some physical processes such as adsorption or multipolar interactions.
+
+The principle equation describing an ideal gas is the \textbf{ideal gas law}:
+\begin{equation}
+	PV = nRT,
+	\label{eq:ideal_gas_law}
+\end{equation}
+where (SI units in parentheses):
+\begin{itemize}
+	\item $P$ is the pressure of the gas ($\si{\pascal}$),
+	\item $V$ is the volume of the container ($\si{\cubic\metre}$),
+	\item $n$ is the amount of gas ($\si{\mol}$),
+	\item $R$ is the \textbf{gas constant}, $R=\SI{8.314}{\joule\per\kelvin\per\mol}$, and
+	\item $T$ is the temperature of the gas ($\si{\kelvin}$).
+\end{itemize}
+
+\subsection{Perfectly elastic spheres}
+
+
+
 
 Consider two solid spheres which have a single point of contact $\bm{A}$. Let $m_{1}, r_{1}, \vec{x}_{1}$ and $\vec{v}_{1}$ be the mass, radius, position and velocity of the first sphere, and $m_{2}, r_{2}, \vec{x}_{2}$ and $\vec{v}_{2}$ the respective quantities for the second sphere (\autoref{fig:elastic_collision}). The line connecting the centers of the two spheres is in the direction $\hat{n}$ (without loss of generality let us assume that the normal vector $\hat{n}$ points from $\vec{x}_{1}$ towards $\vec{x}_{2}$). The unit vector $\hat{t}$ is orthogonal to $\hat{n}$ (and without loss of generality we will assume that it is oriented counter-clockwise from $\hat{n}$).
 

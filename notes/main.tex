@@ -91,6 +91,9 @@
 \renewcommand{\SI}[3][]{\mbox{$\num[#1]{#2}\,\left[\si{#3}\right]$}}
 \newcommand{\SIe}[1]{\SI{}{#1}}
 
+% Chemistry
+\usepackage{mhchem}
+
 % Graphics
 \usepackage{tikz}
 \usetikzlibrary{calc, positioning, intersections, through, arrows.meta, decorations.pathmorphing, decorations.text, decorations.pathreplacing, patterns, external}
@@ -317,7 +320,7 @@
 \makeatletter
 \def\input@path{{./chapters/}}
 \input{intro}
-\input{mechanics}
+% \input{mechanics}
 % \input{waves}
 \input{thermodynamics}
 \makeatother
