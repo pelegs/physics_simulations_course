@@ -111,8 +111,8 @@ class Particle:
         self.rad: float = rad
         self.mass: float = mass
         self.color: str = color
-        self.current_free_path: float = 0.0
-        self.free_paths_list: list[float] = list()
+        self.pos_save: npdarr = np.zeros(2)
+        self.free_paths_list: list[np.float64] = list()
 
         # Setting non-argument variables
         self.bbox: npdarr = np.zeros((2, 2))
@@ -150,11 +150,10 @@ class Particle:
         """
         self.pos += self.vel * dt
         self.set_bbox()
-        self.current_free_path += float(np.linalg.norm(self.vel) * dt)
 
-    def reset_free_path(self) -> None:
-        self.free_paths_list.append(self.current_free_path)
-        self.current_free_path = 0.0
+    def add_free_path(self) -> None:
+        self.free_paths_list.append(distance(self.pos, self.pos_save))
+        self.pos_save = np.zeros(2)
 
 
 class Simulation:
@@ -234,8 +233,8 @@ class Simulation:
             p1, p2 = self.particle_list[i], self.particle_list[j]
             if distance(p1.pos, p2.pos) <= p1.rad + p2.rad:
                 p1.vel, p2.vel = elastic_collision(p1, p2)
-                p1.reset_free_path()
-                p2.reset_free_path()
+                p1.add_free_path()
+                p2.add_free_path()
 
     def resolve_wall_collisions(self):
         for particle in self.particle_list:
@@ -375,10 +374,11 @@ if __name__ == "__main__":
     )
     print("Mean free path (calculated):", mean_free_path_calculated)
 
-    free_paths_list: list[float] = list()
+    free_paths_list: list[np.float64] = list()
     for particle in simulation.particle_list:
         free_paths_list += particle.free_paths_list
-    print("Mean free path (simulated):", np.mean(free_paths_list))
+    free_paths_list_np = np.array(free_paths_list)
+    print("Mean free path (simulated):", np.mean(free_paths_list_np))
 
     ##########################
     #        Graphics        #
