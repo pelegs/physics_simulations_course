@@ -17,11 +17,12 @@ npiarr = npt.NDArray[np.int8]
 X: int = 0
 Y: int = 1
 Z: int = 2
+AXES: list[int] = [X, Y, Z]
 ZERO_VEC: npdarr = np.zeros(3)
 X_DIR: npdarr = np.array([1, 0, 0])
 Y_DIR: npdarr = np.array([0, 1, 0])
 Z_DIR: npdarr = np.array([0, 0, 1])
-LLB: int = 0
+BLB: int = 0
 URF: int = 1
 
 
@@ -61,29 +62,22 @@ def distance(vec1: npdarr, vec2: npdarr) -> np.float64:
 class Container:
     """
     A container holding all the particles in the simulation.
-    It has a width and a height, and it is assumed that its bottom-left corner
-    is at (0,0).
+    It has 3 dimensions (in the x-, y- and z-directions).
+    It is assumed that one of its corners (Bottom-Left-Back, BLB) is at (0,0,0)
+    and the other (Upper-Right-Front, URF) is at (Lx, Ly, Lz).
 
     Attributes:
-        width: Width of the container.
-        height: Height of the container.
+        dimensions: the dimensions of the container in the x, y and z
+        directions.
     """
 
     def __init__(
-        self,
-        width: float = 1000.0,
-        height: float = 1000.0,
-        length: float = 1000.0,
+        self, dimensions: npdarr = np.array([100.0, 100.0, 100.0])
     ) -> None:
-        self.width: float = width
-        self.height: float = height
-        self.length: float = length
+        self.dimensions: npdarr = dimensions
 
     def __repr__(self) -> str:
-        return (
-            f"width: {self.width}, height: {self.height}, "
-            "length: {self.length}"
-        )
+        return f"{self.dimensions}"
 
 
 class Particle:
@@ -93,8 +87,8 @@ class Particle:
     Attributes:
         id: Particle's unique identification number.
         container: A reference to the container in which the particle exists.
-        pos: Position of the particle in (x,y) format (numpt ndarr, double).
-        vel: Velocity of the particle in (x,y) format (numpt ndarr, double).
+        pos: Position of the particle in (x,y,z) format (numpt ndarr, double).
+        vel: Velocity of the particle in (x,y,z) format (numpt ndarr, double).
         rad: Radius of the particle.
         mass: Mass of the particle.
         bbox: Bounding box of the particle. Represented as a 2x2 ndarray
@@ -121,11 +115,9 @@ class Particle:
         self.rad: float = rad
         self.mass: float = mass
         self.color: str = color
-        self.pos_save: npdarr = np.zeros(2)
-        self.free_paths_list: list[np.float64] = list()
 
         # Setting non-argument variables
-        self.bbox: npdarr = np.zeros((2, 2))
+        self.bbox: npdarr = np.zeros((2, 3))
         self.set_bbox()
 
     def __repr__(self) -> str:
@@ -136,27 +128,18 @@ class Particle:
         )
 
     def set_bbox(self):
-        self.bbox[LLB] = self.pos - self.rad
+        self.bbox[BLB] = self.pos - self.rad
         self.bbox[URF] = self.pos + self.rad
 
     def bounce_wall(self, direction: int) -> None:
         self.vel[direction] *= -1.0
 
     def resolve_wall_collisions(self) -> None:
-        if (self.bbox[LLB, X] < 0.0) or (
-            self.bbox[URF, X] > self.container.width
-        ):
-            self.bounce_wall(X)
-
-        if (self.bbox[LLB, Y] < 0.0) or (
-            self.bbox[URF, Y] > self.container.height
-        ):
-            self.bounce_wall(Y)
-
-        if (self.bbox[LLB, Z] < 0.0) or (
-            self.bbox[URF, Z] > self.container.length
-        ):
-            self.bounce_wall(Z)
+        for axis in AXES:
+            if (self.bbox[BLB, axis] < 0.0) or (
+                self.bbox[URF, axis] > self.container.dimensions[axis]
+            ):
+                self.bounce_wall(axis)
 
     def move(self, dt: float) -> None:
         """
@@ -204,19 +187,19 @@ class Simulation:
 
     @staticmethod
     def order_x(particle: Particle):
-        return particle.bbox[LLB, X]
+        return particle.bbox[BLB, X]
 
     @staticmethod
     def order_y(particle: Particle):
-        return particle.bbox[LLB, Y]
+        return particle.bbox[BLB, Y]
 
     @staticmethod
     def order_z(particle: Particle):
-        return particle.bbox[LLB, Z]
+        return particle.bbox[BLB, Z]
 
     def sort_particles(self):
         for axis, order_func in zip(
-            [X, Y, Z], [self.order_x, self.order_y, self.order_z]
+            AXES, [self.order_x, self.order_y, self.order_z]
         ):
             self.sorted_by_bboxes[axis] = sorted(
                 self.particle_list, key=order_func
@@ -225,14 +208,14 @@ class Simulation:
     def check_axis_overlaps(self, axis: int) -> None:
         for p1_idx, p1 in enumerate(self.sorted_by_bboxes[axis]):
             for p2 in self.sorted_by_bboxes[axis][p1_idx + 1 :]:
-                if p2.bbox[LLB, axis] <= p1.bbox[URF, axis]:
+                if p2.bbox[BLB, axis] <= p1.bbox[URF, axis]:
                     self.axis_overlap_matrix[axis, p1.id, p2.id] = 1
                     self.axis_overlap_matrix[axis, p2.id, p1.id] = 1
                 else:
                     break
 
     def set_full_overlaps(self):
-        # overlaps.append(list())
+        # reduce() is used because there are three overlap matrices
         self.full_overlap_matrix = np.triu(
             np.logical_and.reduce(self.axis_overlap_matrix)
         )
@@ -251,8 +234,6 @@ class Simulation:
             p1, p2 = self.particle_list[i], self.particle_list[j]
             if distance(p1.pos, p2.pos) <= p1.rad + p2.rad:
                 p1.vel, p2.vel = elastic_collision(p1, p2)
-                p1.add_free_path()
-                p2.add_free_path()
 
     def resolve_wall_collisions(self):
         for particle in self.particle_list:
@@ -340,27 +321,35 @@ def animate_histograms(frame: int, bar_container):
 
 
 if __name__ == "__main__":
-    w: float = 400.0
-    h: float = 400.0
-    container: Container = Container(width=w, height=h)
-    N: int = 20
-    num_particles: int = N**2
-    # radius: float = w / N * 0.25
+    Lx: float = 400.0
+    Ly: float = 400.0
+    Lz: float = 400.0
+    container: Container = Container(np.array([Lx, Ly, Lz]))
+
     radius: float = 5.0
-    particles: list[Particle] = [
+
+    Nx, Ny, Nz = 3, 3, 3
+    x_pos = np.linspace(0, Lx, Nx)
+    y_pos = np.linspace(0, Ly, Ny)
+    z_pos = np.linspace(0, Lz, Nz)
+    xv, yv, zv = np.meshgrid(x_pos, y_pos, z_pos)
+
+    print(xv)
+    exit()
+
+    particles = [
         Particle(
-            id=i * N + j,
-            pos=np.array([w / N * (i + 0.5), h / N * (j + 0.5)]),
-            vel=normalize(np.random.uniform(-1, 1, size=2)) * 100.0,
+            id=id,
+            pos=np.array([x, y, z]),
             rad=radius,
-            container=container,
         )
-        for i in range(N)
-        for j in range(N)
+        for id, (x, y, z) in enumerate(zip(xv, yv, zv))
     ]
 
+    for particle in particles:
+        print(particle)
+
     simulation = Simulation(container, particles, dt=0.001, max_t=1.0)
-    # overlaps = list()
 
     # Main simulation run
     simulation.run()
@@ -385,18 +374,12 @@ if __name__ == "__main__":
     # max_freq: float = float(np.max(histograms[900:]))
 
     # Mean free path
-    mean_free_path_calculated: float = (
-        simulation.container.height
-        * simulation.container.width
-        / (np.sqrt(8) * simulation.num_particles * 2 * radius)
-    )
-    print("Mean free path (calculated):", mean_free_path_calculated)
-
-    free_paths_list: list[np.float64] = list()
-    for particle in simulation.particle_list:
-        free_paths_list += particle.free_paths_list
-    free_paths_list_np = np.array(free_paths_list)
-    print("Mean free path (simulated):", np.mean(free_paths_list_np))
+    # mean_free_path_calculated: float = (
+    #     simulation.container.height
+    #     * simulation.container.width
+    #     / (np.sqrt(8) * simulation.num_particles * 2 * radius)
+    # )
+    # print("Mean free path (calculated):", mean_free_path_calculated)
 
     ##########################
     #        Graphics        #
