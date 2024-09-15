@@ -174,6 +174,7 @@ class Simulation:
         self.sorted_by_bboxes: list[list[Particle]] = [
             deepcopy(self.particle_list),
             deepcopy(self.particle_list),
+            deepcopy(self.particle_list),
         ]
         self.reset_overlaps()
 
@@ -262,6 +263,43 @@ class Simulation:
             self.advance_step()
             self.update_data_matrices(time)
 
+    def save_to_file(self, filename: str):
+        coordinates = self.pos_matrix.reshape(
+            (self.num_steps, self.num_particles * 3)
+        )
+        other_data: npiarr = np.ones((self.num_steps, 2), dtype=int)
+        other_data[:, 0] = np.arange(1, self.num_steps + 1)
+        other_data[:, 1] = self.num_particles
+        radii: npdarr = np.array(
+            [
+                [particle.rad for particle in self.particle_list]
+                for _ in range(self.num_steps)
+            ]
+        )
+        file_content = np.concatenate((other_data, radii, coordinates), axis=1)
+
+        np.savetxt(
+            filename,
+            file_content,
+            fmt=["%04d", "%04d"] + ["%0.5f"] * self.num_particles * 4,
+        )
+
+        with open(filename, "r") as original:
+            data = original.read()
+        sphere_names: str = " ".join(
+            [
+                f"sphere{i}_{x}"
+                for i in range(1, self.num_particles + 1)
+                for x in ["x", "y", "z"]
+            ]
+        )
+        sphere_radii: str = " ".join(
+            [f"sphere{i}_radius" for i in range(1, self.num_particles + 1)]
+        )
+        column_names: str = f"frame sphere_count {sphere_radii} {sphere_names}"
+        with open(filename, "w") as modified:
+            modified.write(f"{column_names}\n{data}")
+
 
 def elastic_collision(p1: Particle, p2: Particle) -> npdarr:
     m1: float = p1.mass
@@ -274,7 +312,7 @@ def elastic_collision(p1: Particle, p2: Particle) -> npdarr:
 
     K: npdarr = 2 / (m1 + m2) * np.dot(v1 - v2, n) * n
 
-    vels_after: npdarr = np.zeros((2, 2))
+    vels_after: npdarr = np.zeros((2, 3))
     vels_after[0] = v1 - K * m2
     vels_after[1] = v2 + K * m1
 
@@ -321,57 +359,58 @@ def animate_histograms(frame: int, bar_container):
 
 
 if __name__ == "__main__":
-    Lx: float = 400.0
-    Ly: float = 400.0
-    Lz: float = 400.0
+    Lx: float = 300.0
+    Ly: float = 300.0
+    Lz: float = 300.0
     container: Container = Container(np.array([Lx, Ly, Lz]))
 
-    radius: float = 5.0
+    radius: float = 10.0
+    dw: float = radius + 1.0
 
-    Nx, Ny, Nz = 3, 3, 3
-    x_pos = np.linspace(0, Lx, Nx)
-    y_pos = np.linspace(0, Ly, Ny)
-    z_pos = np.linspace(0, Lz, Nz)
-    xv, yv, zv = np.meshgrid(x_pos, y_pos, z_pos)
-
-    print(xv)
-    exit()
+    Nx, Ny, Nz = 7, 7, 7
+    x_p = np.linspace(0 + dw, Lx - dw, Nx)
+    y_p = np.linspace(0 + dw, Ly - dw, Ny)
+    z_p = np.linspace(0 + dw, Lz - dw, Nz)
+    coordinates = np.vstack(np.meshgrid(x_p, y_p, z_p)).reshape(3, -1).T
 
     particles = [
         Particle(
             id=id,
             pos=np.array([x, y, z]),
+            vel=np.random.uniform(-10, 10, size=3),
             rad=radius,
+            container=container,
         )
-        for id, (x, y, z) in enumerate(zip(xv, yv, zv))
+        for id, (x, y, z) in enumerate(coordinates)
     ]
 
-    for particle in particles:
-        print(particle)
-
-    simulation = Simulation(container, particles, dt=0.001, max_t=1.0)
+    simulation = Simulation(container, particles, dt=0.1, max_t=100.0)
 
     # Main simulation run
     simulation.run()
+
+    # Save positions to external file
+    simulation.save_to_file("code/thermodynamics/tests/coordinates2.txt")
+    # print(simulation.pos_matrix[:, 0])
 
     ##########################
     #        Analysis        #
     ##########################
 
     # Histograms
-    # num_bins: int = 100
-    # speeds_matrix: npdarr = np.linalg.norm(simulation.vel_matrix, axis=2)
-    # max_speed: float = float(np.max(speeds))
-    # hist_bins = np.linspace(0, max_speed, num_bins)
-    #
-    # histograms: npdarr = np.zeros((simulation.num_steps, num_bins - 1))
-    # mb_params: npdarr = np.zeros((simulation.num_steps, 2))
-    # for frame, _ in enumerate(simulation.pos_matrix):
-    #     histograms[frame], _ = np.histogram(
-    #         speeds[frame], hist_bins, density=True
-    #     )
-    #     mb_params[frame] = maxwell.fit(speeds[frame], floc=0)
-    # max_freq: float = float(np.max(histograms[900:]))
+    num_bins: int = 25
+    speeds_matrix: npdarr = np.linalg.norm(simulation.vel_matrix, axis=2)
+    max_speed: float = float(np.max(speeds_matrix))
+    hist_bins = np.linspace(0, max_speed, num_bins)
+
+    histograms: npdarr = np.zeros((simulation.num_steps, num_bins - 1))
+    mb_params: npdarr = np.zeros((simulation.num_steps, 2))
+    for frame, _ in enumerate(simulation.pos_matrix):
+        histograms[frame], _ = np.histogram(
+            speeds_matrix[frame], hist_bins, density=True
+        )
+        mb_params[frame] = maxwell.fit(speeds_matrix[frame], floc=0)
+    max_freq: float = float(np.max(histograms[900:]))
 
     # Mean free path
     # mean_free_path_calculated: float = (
@@ -418,29 +457,34 @@ if __name__ == "__main__":
     # plt.show()
 
     # Velocity histogram
-    # fig, ax = plt.subplots()
-    # ax.set_xlim(0, max_speed * 1.1)
-    # ax.set_ylim(0, max_freq * 1.1)
-    # ax.set_xlabel("Speeds")
-    # ax.set_ylabel("Frequency")
-    # ax.set_title("Speed histograms")
-    # _, _, bar_container = ax.hist(
-    #     speeds[0], hist_bins, lw=1, fc="#9ecae1", ec="#3182bd", alpha=0.5
+    fig, ax = plt.subplots()
+    ax.set_xlim(0, max_speed * 1.1)
+    ax.set_ylim(0, max_freq * 1.1)
+    ax.set_xlabel("Speeds")
+    ax.set_ylabel("Frequency")
+    ax.set_title("Speed histograms")
+    _, _, bar_container = ax.hist(
+        speeds_matrix[0],
+        hist_bins,
+        lw=1,
+        fc="#9ecae1",
+        ec="#3182bd",
+        alpha=0.5,
+    )
+    frame_count_label = ax.annotate(
+        f"Frame: {0:5d}/{simulation.num_steps:05d}",
+        xy=(10.0, max_freq * 0.99),
+    )
+    # (mb_plot,) = ax.plot(
+    #     hist_bins, maxwell.pdf(hist_bins, *mb_params[0]), lw=3, c="red"
     # )
-    # frame_count_label = ax.annotate(
-    #     f"Frame: {0:5d}/{simulation.num_steps:05d}",
-    #     xy=(10.0, max_freq * 0.99),
-    # )
-    # # (mb_plot,) = ax.plot(
-    # #     hist_bins, maxwell.pdf(hist_bins, *mb_params[0]), lw=3, c="red"
-    # # )
-    # anim = functools.partial(animate_histograms, bar_container=bar_container)
-    # ani = FuncAnimation(
-    #     fig,
-    #     anim,
-    #     simulation.num_steps,
-    #     interval=0,
-    #     repeat=False,
-    #     blit=True,
-    # )
-    # plt.show()
+    anim = functools.partial(animate_histograms, bar_container=bar_container)
+    ani = FuncAnimation(
+        fig,
+        anim,
+        simulation.num_steps,
+        interval=0,
+        repeat=False,
+        blit=True,
+    )
+    plt.show()
