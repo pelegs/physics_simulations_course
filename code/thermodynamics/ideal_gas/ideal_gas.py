@@ -273,24 +273,28 @@ class Simulation:
             self.update_data_matrices(time)
 
     def save_to_file(self, filename: str) -> None:
-        coordinates = self.pos_matrix.reshape(
-            (self.num_steps, self.num_particles * 3)
-        )
+        coordinates = self.pos_matrix[:, -1:, :]
+        num_particles: int = coordinates.shape[1]
+        coordinates = coordinates.reshape((self.num_steps, num_particles * 3))
+
         other_data: npiarr = np.ones((self.num_steps, 2), dtype=int)
         other_data[:, 0] = np.arange(1, self.num_steps + 1)
-        other_data[:, 1] = self.num_particles
+        other_data[:, 1] = num_particles
         radii: npdarr = np.array(
             [
-                [particle.rad for particle in self.particle_list]
+                [particle.rad for particle in self.particle_list[-1:]]
                 for _ in range(self.num_steps)
             ]
         )
-        file_content = np.concatenate((other_data, radii, coordinates), axis=1)
+        file_content = np.concatenate(
+            (other_data, radii, coordinates),
+            axis=1,
+        )
 
         np.savetxt(
             filename,
             file_content,
-            fmt=["%04d", "%04d"] + ["%0.5f"] * self.num_particles * 4,
+            fmt=["%04d", "%04d"] + ["%0.5f"] * num_particles * 4,
         )
 
         with open(filename, "r") as original:
@@ -298,12 +302,12 @@ class Simulation:
         sphere_names: str = " ".join(
             [
                 f"sphere{i}_{x}"
-                for i in range(1, self.num_particles + 1)
+                for i in range(1, num_particles)
                 for x in ["x", "y", "z"]
             ]
         )
         sphere_radii: str = " ".join(
-            [f"sphere{i}_radius" for i in range(1, self.num_particles + 1)]
+            [f"sphere{i}_radius" for i in range(1, num_particles)]
         )
         column_names: str = f"frame sphere_count {sphere_radii} {sphere_names}"
         with open(filename, "w") as modified:
@@ -371,39 +375,15 @@ if __name__ == "__main__":
     # Setup file names
     scene_file: Path = Path(argv[1])
     scene_filename: str = scene_file.stem
-    output_path: str = f"outputs/{scene_filename}.npz"
+    npz_output_path: str = f"outputs/{scene_filename}.npz"
+    txt_output_path: str = f"outputs/{scene_filename}_blender.txt"
 
+    # Load parameters into simulation
     simulation = load_scene(scene_file)
-
-    # Lx: float = 300.0
-    # Ly: float = 300.0
-    # Lz: float = 300.0
-    # container: Container = Container(np.array([Lx, Ly, Lz]))
-    #
-    # radius: float = 10.0
-    # dw: float = radius + 1.0
-    #
-    # Nx, Ny, Nz = 7, 7, 7
-    # x_p = np.linspace(0 + dw, Lx - dw, Nx)
-    # y_p = np.linspace(0 + dw, Ly - dw, Ny)
-    # z_p = np.linspace(0 + dw, Lz - dw, Nz)
-    # coordinates = np.vstack(np.meshgrid(x_p, y_p, z_p)).reshape(3, -1).T
-    #
-    # particles = [
-    #     Particle(
-    #         id=id,
-    #         pos=np.array([x, y, z]),
-    #         vel=np.random.uniform(-10, 10, size=3),
-    #         rad=radius,
-    #         container=container,
-    #     )
-    #     for id, (x, y, z) in enumerate(coordinates)
-    # ]
-    #
-    # simulation = Simulation(container, particles, dt=0.1, max_t=500.0)
 
     # Main simulation run
     simulation.run()
 
     # Save positions to external file
-    simulation.save_np(output_path)
+    simulation.save_np(npz_output_path)
+    simulation.save_to_file(txt_output_path)

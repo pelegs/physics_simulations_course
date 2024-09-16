@@ -1,7 +1,7 @@
 import bpy
 
 # Define the path to your TXT file
-txt_file_path = "/home/pelegs/Documents/DHBW/Mannheim/physics_simulations_course/code/thermodynamics/tests/coordinates1.txt"
+txt_file_path = ""
 
 
 # Load the TXT data

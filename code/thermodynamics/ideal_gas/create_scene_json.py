@@ -19,15 +19,55 @@ def remove_spheres_from_grid(
 ) -> npdarr:
     pts_remaining: npdarr = np.empty((0, 3), dtype=np.float64)
     for pt, rad in zip(grid, pt_radii):
+        add_pt: bool = True
         for sphere in spheres:
-            if distance(pt, sphere[:3]) > rad + sphere[3]:
-                pts_remaining = np.vstack([pts_remaining, pt[:3]])
+            if distance(pt, sphere[:3]) <= rad + sphere[3]:
+                add_pt = False
+                break
+        if add_pt:
+            pts_remaining = np.vstack([pts_remaining, pt[:3]])
     return pts_remaining
 
 
 if __name__ == "__main__":
-    grid: npdarr = generate_grid([200.0, 200.0, 0.0], [10, 10, 1], 5.0)
-    spheres: npdarr = np.array([[50.0, 50.0, 0.0, 50.0]])
-    pt_radii: npdarr = np.array([5.0] * 12)
+    L: list[float] = [100.0, 100.0, 100.0]
+    N: list[int] = [10, 10, 10]
+    grid: npdarr = generate_grid(L, N, 2.0)
+    spheres: npdarr = np.zeros((1, 4))
+    spheres[0, :3] = np.array(L) / 2.0
+    spheres[0, 3] = 25.0
+    pt_radii: npdarr = np.array([5.0] * N[0] * N[1] * N[2])
     grid = remove_spheres_from_grid(grid, spheres, pt_radii)
-    np.save("tests/grid_with_hole_1.npy", grid)
+
+    output_dict: dict = {
+        "time": {
+            "dt": 0.01,
+            "max_t": 10.0,
+        },
+        "container": {
+            "dimensions": L,
+        },
+        "particles": list(),
+    }
+    for id, pt in enumerate(grid):
+        output_dict["particles"].append(
+            {
+                "id": id,
+                "pos": pt.tolist(),
+                "vel": np.random.uniform(-100.0, 100.0, size=3).tolist(),
+                "rad": 2.5,
+                "mass": 1.0,
+            }
+        )
+    output_dict["particles"].append(
+        {
+            "id": len(grid),
+            "pos": spheres[0, :3].tolist(),
+            "vel": [0.0, 0.0, 0.0],
+            "rad": spheres[0, 3],
+            "mass": 10.0,
+        }
+    )
+
+    with open("scenes/brownian_motion_test_1.json", "w") as f:
+        json.dump(output_dict, f, indent=4)
