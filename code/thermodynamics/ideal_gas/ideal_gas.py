@@ -1,12 +1,10 @@
-import functools
+import json
 from copy import deepcopy
+from pathlib import Path
+from sys import argv
 
-import matplotlib.pyplot as plt
 import numpy as np
 import numpy.typing as npt
-from matplotlib.animation import FuncAnimation
-from matplotlib.patches import Circle
-from scipy.stats import maxwell
 from tqdm import tqdm
 
 # Types (for hints)
@@ -16,11 +14,14 @@ npiarr = npt.NDArray[np.int8]
 # Useful constants
 X: int = 0
 Y: int = 1
-ZERO_VEC: npdarr = np.zeros(2)
-X_DIR: npdarr = np.array([1, 0])
-Y_DIR: npdarr = np.array([0, 1])
-LL: int = 0
-UR: int = 1
+Z: int = 2
+AXES: list[int] = [X, Y, Z]
+ZERO_VEC: npdarr = np.zeros(3)
+X_DIR: npdarr = np.array([1, 0, 0])
+Y_DIR: npdarr = np.array([0, 1, 0])
+Z_DIR: npdarr = np.array([0, 0, 1])
+BLB: int = 0
+URF: int = 1
 
 
 # Useful variables
@@ -59,20 +60,22 @@ def distance(vec1: npdarr, vec2: npdarr) -> np.float64:
 class Container:
     """
     A container holding all the particles in the simulation.
-    It has a width and a height, and it is assumed that its bottom-left corner
-    is at (0,0).
+    It has 3 dimensions (in the x-, y- and z-directions).
+    It is assumed that one of its corners (Bottom-Left-Back, BLB) is at (0,0,0)
+    and the other (Upper-Right-Front, URF) is at (Lx, Ly, Lz).
 
     Attributes:
-        width: Width of the container.
-        height: Height of the container.
+        dimensions: the dimensions of the container in the x, y and z
+        directions.
     """
 
-    def __init__(self, width: float = 1000.0, height: float = 1000.0) -> None:
-        self.width: float = width
-        self.height: float = height
+    def __init__(
+        self, dimensions: npdarr = np.array([100.0, 100.0, 100.0])
+    ) -> None:
+        self.dimensions: npdarr = dimensions
 
     def __repr__(self) -> str:
-        return f"width: {self.width}, height: {self.height}"
+        return f"{self.dimensions}"
 
 
 class Particle:
@@ -82,15 +85,14 @@ class Particle:
     Attributes:
         id: Particle's unique identification number.
         container: A reference to the container in which the particle exists.
-        pos: Position of the particle in (x,y) format (numpt ndarr, double).
-        vel: Velocity of the particle in (x,y) format (numpt ndarr, double).
+        pos: Position of the particle in (x,y,z) format (numpt ndarr, double).
+        vel: Velocity of the particle in (x,y,z) format (numpt ndarr, double).
         rad: Radius of the particle.
         mass: Mass of the particle.
-        bbox: Bounding box of the particle. Represented as a 2x2 ndarray where the first row
-            is the coordinates of the lower left corner of the bbox, and the second row is the
-            coordinates of the upper right corner of the bbox.
-        overlaps: List of all references to all particles which have overlapping bboxes to
-            this particle.
+        bbox: Bounding box of the particle. Represented as a 2x2 ndarray
+              where the first row is the coordinates of the lower left corner
+              of the bbox, and the second row is the coordinates of the upper
+              right corner of the bbox.
     """
 
     def __init__(
@@ -111,11 +113,9 @@ class Particle:
         self.rad: float = rad
         self.mass: float = mass
         self.color: str = color
-        self.pos_save: npdarr = np.zeros(2)
-        self.free_paths_list: list[np.float64] = list()
 
         # Setting non-argument variables
-        self.bbox: npdarr = np.zeros((2, 2))
+        self.bbox: npdarr = np.zeros((2, 3))
         self.set_bbox()
 
     def __repr__(self) -> str:
@@ -126,21 +126,18 @@ class Particle:
         )
 
     def set_bbox(self):
-        self.bbox[LL] = self.pos - self.rad
-        self.bbox[UR] = self.pos + self.rad
+        self.bbox[BLB] = self.pos - self.rad
+        self.bbox[URF] = self.pos + self.rad
 
     def bounce_wall(self, direction: int) -> None:
         self.vel[direction] *= -1.0
 
     def resolve_wall_collisions(self) -> None:
-        if (self.bbox[LL, X] < 0.0) or (
-            self.bbox[UR, X] > self.container.width
-        ):
-            self.bounce_wall(X)
-        if (self.bbox[LL, Y] < 0.0) or (
-            self.bbox[UR, Y] > self.container.height
-        ):
-            self.bounce_wall(Y)
+        for axis in AXES:
+            if (self.bbox[BLB, axis] < 0.0) or (
+                self.bbox[URF, axis] > self.container.dimensions[axis]
+            ):
+                self.bounce_wall(axis)
 
     def move(self, dt: float) -> None:
         """
@@ -150,10 +147,6 @@ class Particle:
         """
         self.pos += self.vel * dt
         self.set_bbox()
-
-    def add_free_path(self) -> None:
-        self.free_paths_list.append(distance(self.pos, self.pos_save))
-        self.pos_save = np.zeros(2)
 
 
 class Simulation:
@@ -179,44 +172,60 @@ class Simulation:
         self.sorted_by_bboxes: list[list[Particle]] = [
             deepcopy(self.particle_list),
             deepcopy(self.particle_list),
+            deepcopy(self.particle_list),
         ]
         self.reset_overlaps()
 
         # Data matrices
         self.pos_matrix: npdarr = np.zeros(
-            (self.num_steps, self.num_particles, 2)
+            (self.num_steps, self.num_particles, 3)
         )
         self.vel_matrix: npdarr = np.zeros(
-            (self.num_steps, self.num_particles, 2)
+            (self.num_steps, self.num_particles, 3)
+        )
+        self.collision_matrix: npiarr = np.zeros(
+            (self.num_steps, self.num_particles), dtype=int
+        )
+
+    def __repr__(self) -> str:
+        return (
+            f"Container: {self.container}, particles: {self.particle_list}, "
+            f"dt: {self.dt}, max time: {self.max_t}"
         )
 
     @staticmethod
     def order_x(particle: Particle):
-        return particle.bbox[LL, X]
+        return particle.bbox[BLB, X]
 
     @staticmethod
     def order_y(particle: Particle):
-        return particle.bbox[LL, Y]
+        return particle.bbox[BLB, Y]
+
+    @staticmethod
+    def order_z(particle: Particle):
+        return particle.bbox[BLB, Z]
 
     def sort_particles(self):
-        self.sorted_by_bboxes[X] = sorted(self.particle_list, key=self.order_x)
-        self.sorted_by_bboxes[Y] = sorted(self.particle_list, key=self.order_y)
+        for axis, order_func in zip(
+            AXES, [self.order_x, self.order_y, self.order_z]
+        ):
+            self.sorted_by_bboxes[axis] = sorted(
+                self.particle_list, key=order_func
+            )
 
     def check_axis_overlaps(self, axis: int) -> None:
         for p1_idx, p1 in enumerate(self.sorted_by_bboxes[axis]):
             for p2 in self.sorted_by_bboxes[axis][p1_idx + 1 :]:
-                if p2.bbox[LL, axis] <= p1.bbox[UR, axis]:
+                if p2.bbox[BLB, axis] <= p1.bbox[URF, axis]:
                     self.axis_overlap_matrix[axis, p1.id, p2.id] = 1
                     self.axis_overlap_matrix[axis, p2.id, p1.id] = 1
                 else:
                     break
 
     def set_full_overlaps(self):
-        # overlaps.append(list())
+        # reduce() is used because there are three overlap matrices
         self.full_overlap_matrix = np.triu(
-            np.logical_and(
-                self.axis_overlap_matrix[X], self.axis_overlap_matrix[Y]
-            )
+            np.logical_and.reduce(self.axis_overlap_matrix)
         )
         self.overlap_ids = np.vstack(np.where(self.full_overlap_matrix)).T
 
@@ -228,13 +237,13 @@ class Simulation:
             (self.num_particles, self.num_particles), dtype=bool
         )
 
-    def resolve_elastic_collisions(self):
+    def resolve_elastic_collisions(self, time: int):
         for i, j in self.overlap_ids:
             p1, p2 = self.particle_list[i], self.particle_list[j]
             if distance(p1.pos, p2.pos) <= p1.rad + p2.rad:
                 p1.vel, p2.vel = elastic_collision(p1, p2)
-                p1.add_free_path()
-                p2.add_free_path()
+                self.collision_matrix[time, i] = 1
+                self.collision_matrix[time, j] = 1
 
     def resolve_wall_collisions(self):
         for particle in self.particle_list:
@@ -249,7 +258,7 @@ class Simulation:
             self.pos_matrix[time, pidx] = particle.pos
             self.vel_matrix[time, pidx] = particle.vel
 
-    def run(self):
+    def run(self) -> None:
         for time, _ in enumerate(
             tqdm(self.time_series, desc="Running simulation")
         ):
@@ -258,10 +267,65 @@ class Simulation:
             self.check_axis_overlaps(axis=X)
             self.check_axis_overlaps(axis=Y)
             self.set_full_overlaps()
-            self.resolve_elastic_collisions()
+            self.resolve_elastic_collisions(time)
             self.resolve_wall_collisions()
             self.advance_step()
             self.update_data_matrices(time)
+
+    def save_to_file(self, filename: str) -> None:
+        coordinates = self.pos_matrix.reshape(
+            (self.num_steps, self.num_particles * 3)
+        )
+        other_data: npiarr = np.ones((self.num_steps, 2), dtype=int)
+        other_data[:, 0] = np.arange(1, self.num_steps + 1)
+        other_data[:, 1] = self.num_particles
+        radii: npdarr = np.array(
+            [
+                [particle.rad for particle in self.particle_list]
+                for _ in range(self.num_steps)
+            ]
+        )
+        file_content = np.concatenate((other_data, radii, coordinates), axis=1)
+
+        np.savetxt(
+            filename,
+            file_content,
+            fmt=["%04d", "%04d"] + ["%0.5f"] * self.num_particles * 4,
+        )
+
+        with open(filename, "r") as original:
+            data = original.read()
+        sphere_names: str = " ".join(
+            [
+                f"sphere{i}_{x}"
+                for i in range(1, self.num_particles + 1)
+                for x in ["x", "y", "z"]
+            ]
+        )
+        sphere_radii: str = " ".join(
+            [f"sphere{i}_radius" for i in range(1, self.num_particles + 1)]
+        )
+        column_names: str = f"frame sphere_count {sphere_radii} {sphere_names}"
+        with open(filename, "w") as modified:
+            modified.write(f"{column_names}\n{data}")
+
+    def save_np(self, filename: str) -> None:
+        radii_data: npdarr = np.array(
+            [particle.rad for particle in self.particle_list]
+        )
+        masses_data: npdarr = np.array(
+            [particle.mass for particle in self.particle_list]
+        )
+        time_data: npdarr = np.array([self.dt, self.max_t])
+        np.savez(
+            filename,
+            time_data=time_data,
+            pos=self.pos_matrix,
+            vel=self.vel_matrix,
+            radii=radii_data,
+            masses=masses_data,
+            collisions=self.collision_matrix,
+        )
 
 
 def elastic_collision(p1: Particle, p2: Particle) -> npdarr:
@@ -275,171 +339,71 @@ def elastic_collision(p1: Particle, p2: Particle) -> npdarr:
 
     K: npdarr = 2 / (m1 + m2) * np.dot(v1 - v2, n) * n
 
-    vels_after: npdarr = np.zeros((2, 2))
+    vels_after: npdarr = np.zeros((2, 3))
     vels_after[0] = v1 - K * m2
     vels_after[1] = v2 + K * m1
 
     return vels_after
 
 
-# def init_spheres_animation():
-#     for patch in patches:
-#         ax.add_patch(patch)
-#     return patches
-
-
-# def animate_spheres(frame: int = 0):
-#     frame_count_label.set_text(f"Frame: {frame:5d}")
-#     # overlaps_text.set_text("\n".join([f"({x})" for x in overlaps[frame]]))
-#     for i, patch in enumerate(patches):
-#         patch.center = simulation.pos_matrix[frame, i]
-#     # for i, (patch, label) in enumerate(zip(patches, labels)):
-#     # patch.center = simulation.pos_matrix[frame, i]
-#     # patch.set_xy(simulation.pos_matrix[frame, i] - particles[i].rad)
-#     # label.set_position(patch.get_xy())
-#     # return patches + labels + [frame_count_label]
-#     return patches + [frame_count_label]
-
-
-# def onClick(event):
-#     global pause
-#     pause = not pause
-#     if pause:
-#         anim.pause()
-#     else:
-#         anim.resume()
-
-
-def animate_histograms(frame: int, bar_container):
-    for count, rect in zip(histograms[frame], bar_container.patches):
-        rect.set_height(count)
-    frame_count_label.set_text(f"Frame: {frame:5d}/{simulation.num_steps:5d}")
-    # mx = maxwell.pdf(hist_bins, *mb_params[frame])
-    # mb_plot.set_ydata(mx)
-    # print(mx)
-
-    return bar_container.patches + [frame_count_label]  # + [mb_plot]
+def load_scene(scene_path: str | Path) -> Simulation:
+    with open(scene_path, "r") as json_file:
+        scene = json.load(json_file)
+    particles: list[Particle] = [
+        Particle(
+            id=particle["id"],
+            pos=np.array(particle["pos"]),
+            vel=np.array(particle["vel"]),
+            rad=particle["rad"],
+            mass=particle["mass"],
+        )
+        for particle in scene["particles"]
+    ]
+    container: Container = Container(
+        np.array(scene["container"]["dimensions"])
+    )
+    return Simulation(
+        container, particles, scene["time"]["dt"], scene["time"]["max_t"]
+    )
 
 
 if __name__ == "__main__":
-    w: float = 400.0
-    h: float = 400.0
-    container: Container = Container(width=w, height=h)
-    N: int = 20
-    num_particles: int = N**2
-    # radius: float = w / N * 0.25
-    radius: float = 5.0
-    particles: list[Particle] = [
-        Particle(
-            id=i * N + j,
-            pos=np.array([w / N * (i + 0.5), h / N * (j + 0.5)]),
-            vel=normalize(np.random.uniform(-1, 1, size=2)) * 100.0,
-            rad=radius,
-            container=container,
-        )
-        for i in range(N)
-        for j in range(N)
-    ]
+    # Setup file names
+    scene_file: Path = Path(argv[1])
+    scene_filename: str = scene_file.stem
+    output_path: str = f"outputs/{scene_filename}.npz"
 
-    simulation = Simulation(container, particles, dt=0.001, max_t=1.0)
-    # overlaps = list()
+    simulation = load_scene(scene_file)
+
+    # Lx: float = 300.0
+    # Ly: float = 300.0
+    # Lz: float = 300.0
+    # container: Container = Container(np.array([Lx, Ly, Lz]))
+    #
+    # radius: float = 10.0
+    # dw: float = radius + 1.0
+    #
+    # Nx, Ny, Nz = 7, 7, 7
+    # x_p = np.linspace(0 + dw, Lx - dw, Nx)
+    # y_p = np.linspace(0 + dw, Ly - dw, Ny)
+    # z_p = np.linspace(0 + dw, Lz - dw, Nz)
+    # coordinates = np.vstack(np.meshgrid(x_p, y_p, z_p)).reshape(3, -1).T
+    #
+    # particles = [
+    #     Particle(
+    #         id=id,
+    #         pos=np.array([x, y, z]),
+    #         vel=np.random.uniform(-10, 10, size=3),
+    #         rad=radius,
+    #         container=container,
+    #     )
+    #     for id, (x, y, z) in enumerate(coordinates)
+    # ]
+    #
+    # simulation = Simulation(container, particles, dt=0.1, max_t=500.0)
 
     # Main simulation run
     simulation.run()
 
-    ##########################
-    #        Analysis        #
-    ##########################
-
-    # Histograms
-    # num_bins: int = 100
-    # speeds_matrix: npdarr = np.linalg.norm(simulation.vel_matrix, axis=2)
-    # max_speed: float = float(np.max(speeds))
-    # hist_bins = np.linspace(0, max_speed, num_bins)
-    #
-    # histograms: npdarr = np.zeros((simulation.num_steps, num_bins - 1))
-    # mb_params: npdarr = np.zeros((simulation.num_steps, 2))
-    # for frame, _ in enumerate(simulation.pos_matrix):
-    #     histograms[frame], _ = np.histogram(
-    #         speeds[frame], hist_bins, density=True
-    #     )
-    #     mb_params[frame] = maxwell.fit(speeds[frame], floc=0)
-    # max_freq: float = float(np.max(histograms[900:]))
-
-    # Mean free path
-    mean_free_path_calculated: float = (
-        simulation.container.height
-        * simulation.container.width
-        / (np.sqrt(8) * simulation.num_particles * 2 * radius)
-    )
-    print("Mean free path (calculated):", mean_free_path_calculated)
-
-    free_paths_list: list[np.float64] = list()
-    for particle in simulation.particle_list:
-        free_paths_list += particle.free_paths_list
-    free_paths_list_np = np.array(free_paths_list)
-    print("Mean free path (simulated):", np.mean(free_paths_list_np))
-
-    ##########################
-    #        Graphics        #
-    ##########################
-
-    # Visual animation
-
-    # patches = [
-    #     Circle(particle.pos.tolist(), particle.rad, fc=particle.color)
-    #     for particle in particles
-    # ]
-    #
-    # fig, ax = plt.subplots()
-    # ax.set_aspect("equal", "box")
-    # ax.set_xlim(0, w)
-    # ax.set_ylim(0, h)
-    # ax.set_xticks([])
-    # ax.set_yticks([])
-    # # labels = [ax.annotate(f"{p.id}", xy=p.pos.astype(int)) for p in particles]
-    # # ax.grid()
-    # frame_count_label = ax.annotate(
-    #     f"Frame: {0:5d}",
-    #     xy=(10, h - 20),
-    # )
-    # # overlaps_text = ax.annotate("", xy=(10, h - 80))
-    #
-    # fig.canvas.mpl_connect("button_press_event", onClick)
-    # anim = FuncAnimation(
-    #     fig,
-    #     animate,
-    #     init_func=init_plot,
-    #     frames=simulation.num_steps,
-    #     interval=0,
-    #     blit=True,
-    # )
-    # plt.show()
-
-    # Velocity histogram
-    # fig, ax = plt.subplots()
-    # ax.set_xlim(0, max_speed * 1.1)
-    # ax.set_ylim(0, max_freq * 1.1)
-    # ax.set_xlabel("Speeds")
-    # ax.set_ylabel("Frequency")
-    # ax.set_title("Speed histograms")
-    # _, _, bar_container = ax.hist(
-    #     speeds[0], hist_bins, lw=1, fc="#9ecae1", ec="#3182bd", alpha=0.5
-    # )
-    # frame_count_label = ax.annotate(
-    #     f"Frame: {0:5d}/{simulation.num_steps:05d}",
-    #     xy=(10.0, max_freq * 0.99),
-    # )
-    # # (mb_plot,) = ax.plot(
-    # #     hist_bins, maxwell.pdf(hist_bins, *mb_params[0]), lw=3, c="red"
-    # # )
-    # anim = functools.partial(animate_histograms, bar_container=bar_container)
-    # ani = FuncAnimation(
-    #     fig,
-    #     anim,
-    #     simulation.num_steps,
-    #     interval=0,
-    #     repeat=False,
-    #     blit=True,
-    # )
-    # plt.show()
+    # Save positions to external file
+    simulation.save_np(output_path)
