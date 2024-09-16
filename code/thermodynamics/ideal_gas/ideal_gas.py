@@ -272,18 +272,29 @@ class Simulation:
             self.advance_step()
             self.update_data_matrices(time)
 
-    def save_to_file(self, filename: str) -> None:
-        coordinates = self.pos_matrix[:, -1:, :]
-        num_particles: int = coordinates.shape[1]
-        coordinates = coordinates.reshape((self.num_steps, num_particles * 3))
+    def save_to_file(
+        self,
+        filename: str,
+        time_range: list[int | None] = [0, -1],
+        particle_range: list[int | None] = [0, -1],
+    ) -> None:
+        time_slice: slice = slice(time_range[0], time_range[1])
+        particle_slice: slice = slice(particle_range[0], particle_range[1])
 
-        other_data: npiarr = np.ones((self.num_steps, 2), dtype=int)
-        other_data[:, 0] = np.arange(1, self.num_steps + 1)
+        coordinates = self.pos_matrix[time_slice, particle_slice, :]
+        num_steps, num_particles = coordinates.shape[:2]
+        coordinates = coordinates.reshape((num_steps, num_particles * 3))
+
+        other_data: npiarr = np.ones((num_steps, 2), dtype=int)
+        other_data[:, 0] = np.arange(1, num_steps + 1)
         other_data[:, 1] = num_particles
         radii: npdarr = np.array(
             [
-                [particle.rad for particle in self.particle_list[-1:]]
-                for _ in range(self.num_steps)
+                [
+                    particle.rad
+                    for particle in self.particle_list[particle_slice]
+                ]
+                for _ in range(num_steps)
             ]
         )
         file_content = np.concatenate(

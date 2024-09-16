@@ -1,9 +1,9 @@
 import json
-from pathlib import Path
 
-#
+# from pathlib import Path
+from sys import argv
+
 import numpy as np
-import numpy.typing as npt
 from ideal_gas import distance, npdarr
 
 
@@ -42,7 +42,7 @@ if __name__ == "__main__":
     output_dict: dict = {
         "time": {
             "dt": 0.01,
-            "max_t": 10.0,
+            "max_t": 50.0,
         },
         "container": {
             "dimensions": L,
@@ -69,5 +69,5 @@ if __name__ == "__main__":
         }
     )
 
-    with open("scenes/brownian_motion_test_1.json", "w") as f:
+    with open(f"scenes/{argv[1]}.json", "w") as f:
         json.dump(output_dict, f, indent=4)
