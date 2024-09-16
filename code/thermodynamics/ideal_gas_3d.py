@@ -185,6 +185,9 @@ class Simulation:
         self.vel_matrix: npdarr = np.zeros(
             (self.num_steps, self.num_particles, 3)
         )
+        self.collision_matrix: npiarr = np.zeros(
+            (self.num_steps, self.num_particles), dtype=int
+        )
 
     @staticmethod
     def order_x(particle: Particle):
@@ -230,11 +233,13 @@ class Simulation:
             (self.num_particles, self.num_particles), dtype=bool
         )
 
-    def resolve_elastic_collisions(self):
+    def resolve_elastic_collisions(self, time: int):
         for i, j in self.overlap_ids:
             p1, p2 = self.particle_list[i], self.particle_list[j]
             if distance(p1.pos, p2.pos) <= p1.rad + p2.rad:
                 p1.vel, p2.vel = elastic_collision(p1, p2)
+                self.collision_matrix[time, i] = 1
+                self.collision_matrix[time, j] = 1
 
     def resolve_wall_collisions(self):
         for particle in self.particle_list:
@@ -249,7 +254,7 @@ class Simulation:
             self.pos_matrix[time, pidx] = particle.pos
             self.vel_matrix[time, pidx] = particle.vel
 
-    def run(self):
+    def run(self) -> None:
         for time, _ in enumerate(
             tqdm(self.time_series, desc="Running simulation")
         ):
@@ -258,12 +263,12 @@ class Simulation:
             self.check_axis_overlaps(axis=X)
             self.check_axis_overlaps(axis=Y)
             self.set_full_overlaps()
-            self.resolve_elastic_collisions()
+            self.resolve_elastic_collisions(time)
             self.resolve_wall_collisions()
             self.advance_step()
             self.update_data_matrices(time)
 
-    def save_to_file(self, filename: str):
+    def save_to_file(self, filename: str) -> None:
         coordinates = self.pos_matrix.reshape(
             (self.num_steps, self.num_particles * 3)
         )
@@ -299,6 +304,22 @@ class Simulation:
         column_names: str = f"frame sphere_count {sphere_radii} {sphere_names}"
         with open(filename, "w") as modified:
             modified.write(f"{column_names}\n{data}")
+
+    def save_np(self, filename: str) -> None:
+        radii_data = np.array(
+            [particle.rad for particle in self.particle_list]
+        )
+        masses_data = np.array(
+            [particle.mass for particle in self.particle_list]
+        )
+        np.savez(
+            filename,
+            pos=self.pos_matrix,
+            vel=self.vel_matrix,
+            radii=radii_data,
+            masses=masses_data,
+            collisions=self.collision_matrix,
+        )
 
 
 def elastic_collision(p1: Particle, p2: Particle) -> npdarr:
@@ -384,14 +405,14 @@ if __name__ == "__main__":
         for id, (x, y, z) in enumerate(coordinates)
     ]
 
-    simulation = Simulation(container, particles, dt=0.1, max_t=100.0)
+    simulation = Simulation(container, particles, dt=0.1, max_t=500.0)
 
     # Main simulation run
     simulation.run()
 
     # Save positions to external file
-    simulation.save_to_file("code/thermodynamics/tests/coordinates2.txt")
-    # print(simulation.pos_matrix[:, 0])
+    # simulation.save_to_file("code/thermodynamics/tests/coordinates2.txt")
+    simulation.save_np("code/thermodynamics/tests/mfp_test1.npz")
 
     ##########################
     #        Analysis        #
