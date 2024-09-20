@@ -272,58 +272,6 @@ class Simulation:
             self.advance_step()
             self.update_data_matrices(time)
 
-    def save_to_file(
-        self,
-        filename: str,
-        time_range: list[int | None] = [0, -1],
-        particle_range: list[int | None] = [0, -1],
-    ) -> None:
-        time_slice: slice = slice(time_range[0], time_range[1])
-        particle_slice: slice = slice(particle_range[0], particle_range[1])
-
-        coordinates = self.pos_matrix[time_slice, particle_slice, :]
-        num_steps, num_particles = coordinates.shape[:2]
-        coordinates = coordinates.reshape((num_steps, num_particles * 3))
-
-        other_data: npiarr = np.ones((num_steps, 2), dtype=int)
-        other_data[:, 0] = np.arange(1, num_steps + 1)
-        other_data[:, 1] = num_particles
-        radii: npdarr = np.array(
-            [
-                [
-                    particle.rad
-                    for particle in self.particle_list[particle_slice]
-                ]
-                for _ in range(num_steps)
-            ]
-        )
-        file_content = np.concatenate(
-            (other_data, radii, coordinates),
-            axis=1,
-        )
-
-        np.savetxt(
-            filename,
-            file_content,
-            fmt=["%04d", "%04d"] + ["%0.5f"] * num_particles * 4,
-        )
-
-        with open(filename, "r") as original:
-            data = original.read()
-        sphere_names: str = " ".join(
-            [
-                f"sphere{i}_{x}"
-                for i in range(1, num_particles)
-                for x in ["x", "y", "z"]
-            ]
-        )
-        sphere_radii: str = " ".join(
-            [f"sphere{i}_radius" for i in range(1, num_particles)]
-        )
-        column_names: str = f"frame sphere_count {sphere_radii} {sphere_names}"
-        with open(filename, "w") as modified:
-            modified.write(f"{column_names}\n{data}")
-
     def save_np(self, filename: str) -> None:
         radii_data: npdarr = np.array(
             [particle.rad for particle in self.particle_list]
@@ -397,4 +345,34 @@ if __name__ == "__main__":
 
     # Save positions to external file
     simulation.save_np(npz_output_path)
-    simulation.save_to_file(txt_output_path)
+
+    # Animate?
+    if int(argv[2]) == 1:
+        print(
+            f"Showing {simulation.num_particles} particles "
+            f"in {simulation.num_steps} steps"
+        )
+        import pyvista as pv
+
+        pl = pv.Plotter()
+        spheres = [
+            pl.add_mesh(
+                pv.Sphere(center=pos, radius=simulation.particle_list[i].rad),
+                color=simulation.particle_list[i].color,
+            )
+            for i, pos in enumerate(simulation.pos_matrix[0])
+        ]
+
+        def callback(step):
+            for i, pos in enumerate(simulation.pos_matrix[step]):
+                spheres[i].position = pos
+
+        pl.add_timer_event(
+            max_steps=simulation.num_steps, duration=200, callback=callback
+        )
+        cpos = [
+            (500.0, 500.0, 500.0),
+            (0.0, 0.0, 0.0),
+            (0.0, 1.0, 0.0),
+        ]
+        pl.show(cpos=cpos)
