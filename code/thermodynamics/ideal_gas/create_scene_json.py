@@ -30,8 +30,8 @@ def remove_spheres_from_grid(
 
 
 if __name__ == "__main__":
-    L: list[float] = [120.0, 120.0, 0.0]
-    N: list[int] = [30, 30, 1]
+    L: list[float] = [120.0, 120.0, 120.0]
+    N: list[int] = [10, 10, 10]
     rad: float = 1.0
     grid: npdarr = generate_grid(L, N, rad)
     spheres: npdarr = np.zeros((1, 4))
@@ -52,7 +52,6 @@ if __name__ == "__main__":
     }
     for id, pt in enumerate(grid):
         vel = np.random.uniform(-100.0, 100.0, size=3)
-        vel[2] = 0.0
         output_dict["particles"].append(
             {
                 "id": id,

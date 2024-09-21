@@ -367,11 +367,12 @@ if __name__ == "__main__":
             for i, pos in enumerate(simulation.pos_matrix[step]):
                 spheres[i].position = pos
 
+        _ = pl.add_camera_orientation_widget()
         pl.add_timer_event(
             max_steps=simulation.num_steps, duration=200, callback=callback
         )
         cpos = [
-            (500.0, 500.0, 500.0),
+            (500.0, 500.0, 250.0),
             (0.0, 0.0, 0.0),
             (0.0, 1.0, 0.0),
         ]
