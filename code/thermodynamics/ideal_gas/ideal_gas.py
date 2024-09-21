@@ -104,6 +104,7 @@ class Particle:
         rad: float = 1.0,
         mass: float = 1.0,
         color: str = "#aaaaaa",
+        opacity: float = 1.0,
     ) -> None:
         # Setting argument variables
         self.id: int = id
@@ -113,6 +114,7 @@ class Particle:
         self.rad: float = rad
         self.mass: float = mass
         self.color: str = color
+        self.opacity: float = opacity
 
         # Setting non-argument variables
         self.bbox: npdarr = np.zeros((2, 3))
@@ -330,6 +332,39 @@ def load_scene(scene_path: str | Path) -> Simulation:
     )
 
 
+def visualize_3D(simulation: Simulation):
+    print(
+        f"Showing {simulation.num_particles} particles "
+        f"in {simulation.num_steps} steps"
+    )
+    import pyvista as pv
+
+    pl = pv.Plotter()
+    spheres = [
+        pl.add_mesh(
+            pv.Sphere(center=pos, radius=simulation.particle_list[i].rad),
+            color=simulation.particle_list[i].color,
+            opacity=simulation.particle_list[i].opacity,
+        )
+        for i, pos in enumerate(simulation.pos_matrix[0])
+    ]
+
+    def callback(step):
+        for i, pos in enumerate(simulation.pos_matrix[step]):
+            spheres[i].position = pos
+
+    _ = pl.add_camera_orientation_widget()
+    pl.add_timer_event(
+        max_steps=simulation.num_steps, duration=200, callback=callback
+    )
+    cpos = [
+        (500.0, 500.0, 250.0),
+        (0.0, 0.0, 0.0),
+        (0.0, 1.0, 0.0),
+    ]
+    pl.show(cpos=cpos)
+
+
 if __name__ == "__main__":
     # Setup file names
     scene_file: Path = Path(argv[1])
@@ -348,32 +383,4 @@ if __name__ == "__main__":
 
     # Animate?
     if int(argv[2]) == 1:
-        print(
-            f"Showing {simulation.num_particles} particles "
-            f"in {simulation.num_steps} steps"
-        )
-        import pyvista as pv
-
-        pl = pv.Plotter()
-        spheres = [
-            pl.add_mesh(
-                pv.Sphere(center=pos, radius=simulation.particle_list[i].rad),
-                color=simulation.particle_list[i].color,
-            )
-            for i, pos in enumerate(simulation.pos_matrix[0])
-        ]
-
-        def callback(step):
-            for i, pos in enumerate(simulation.pos_matrix[step]):
-                spheres[i].position = pos
-
-        _ = pl.add_camera_orientation_widget()
-        pl.add_timer_event(
-            max_steps=simulation.num_steps, duration=200, callback=callback
-        )
-        cpos = [
-            (500.0, 500.0, 250.0),
-            (0.0, 0.0, 0.0),
-            (0.0, 1.0, 0.0),
-        ]
-        pl.show(cpos=cpos)
+        visualize_3D(simulation)

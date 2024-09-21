@@ -14,3 +14,4 @@ other_course/
 *.txt
 *.npy
 *.npz
+code/**/*.json
