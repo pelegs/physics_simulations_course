@@ -1,4 +1,7 @@
 \documentclass[a4paper, twoside, symmetric, nobib, nohyper]{tufte-book}
+% \usepackage{mparhack}
+\usepackage[strict]{changepage}
+\newcommand{\forcecaptionside}{\strictpagecheck\checkoddpage\ifoddpage\forcerectofloat\else\forceversofloat\fi}
 % I changed the actual tufte-latex definitions by commenting lines 1650-1658
 % in /usr/share/texmf/tex/latex/tufte-latex/tufte-common.def
 % This should be avoided and made such that the subsubsection format
@@ -11,6 +14,16 @@
   {}% before the title body
   []% after the title body
 \titlespacing*{\subsubsection}{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus.2ex}
+\makeatletter
+
+% Paragraph indentation and separation for normal text
+\renewcommand{\@tufte@reset@par}{%
+  \setlength{\RaggedRightParindent}{0.0pc}%
+  \setlength{\JustifyingParindent}{0.0pc}%
+  \setlength{\parindent}{0pc}%
+  \setlength{\parskip}{0pt}%
+}
+\@tufte@reset@par
 
 
 \raggedbottom
@@ -95,7 +108,7 @@
 \usepackage{mhchem}
 
 % Graphics
-\usepackage{tikz}
+\usepackage{tikz, tikz-3dplot}
 \usetikzlibrary{calc, positioning, intersections, through, arrows.meta, decorations.pathmorphing, decorations.text, decorations.pathreplacing, patterns, external}
 \tikzexternalize[prefix=figs/] % activate externalization of TikZ figures, save results in figs folder
 \tikzset{

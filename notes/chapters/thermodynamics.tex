@@ -93,6 +93,69 @@ and altogether we get
 	The reader is encouraged to repeat the above calculation for the cases of walls oriented in the $xz$- and $yz$-planes.
 \end{note}
 
+When a sphere collides with a wall, the distance $d$ from the center of the sphere to the wall is exactly $r$, the radius of the sphere. The distance between a point $\bm{P}$ and a plane $\bm{\pi}$ can be defined as follows: start from $\bm{P}$ and move along the direction $\pm\hat{n}$ (where $\hat{n}$ is the normal to the plane) until the plane is intersected at a point $\bm{B}$. The distance between $\bm{P}$ and $\bm{\pi}$ is then the length $\bm{PB}$ (\autoref{fig:point_plane_distance_1}).
+
+\begin{figure}
+	\forcecaptionside
+	\begin{center}
+		\tdplotsetmaincoords{70}{200}
+		\begin{tikzpicture}[tdplot_main_coords, rotate=30]
+			\coordinate (P) at (-1.2,-0.5,2);
+			\coordinate (B) at (-1.2,-0.5,0);
+			\draw[thick, fill=xblue, fill opacity=0.25] (-2,-2,0) -- (2,-2,0) -- (2,2,0) -- (-2,2,0) -- cycle;
+			\node at (1.5,1,0) {$\bm{\pi}$};
+			\fill[xred] (P) circle (0.05) node[above] {$\bm{P}$};
+			\fill (B) circle (0.05) node[right] {$\bm{B}$};
+			\draw[thick, dashed, black!50] (P) -- (B);
+			\draw[vector={xblue}] (0,0,0) -- (0,0,1.5) node[above] {$\hat{n}$};
+		\end{tikzpicture}
+	\end{center}
+	\caption{The distance between a point $\bm{P}$ and a plane $\bm{\pi}$. The distance from $\bm{P}$ to the plane $\bm{\pi}$ is the length $\bm{PB}$.}
+	\label{fig:point_plane_distance_1}
+\end{figure}
+
+If we know a point $\bm{A}$ on the plane, then we can the vector $\vec{c}$ as starting at $\bm{A}$ and ending at $\bm{P}$ (i.e. corresponding to the line segment $\overline{\bm{AP}}$). The projection of $\vec{c}$ onto $\hat{n}$ then gives the length $\bm{PM}$ (\autoref{fig:point_plane_distance_2}).
+
+\begin{figure}
+	\forcecaptionside
+	\begin{center}
+		\tdplotsetmaincoords{70}{200}
+		\begin{tikzpicture}[tdplot_main_coords, rotate=30]
+			\coordinate (P) at (-1.2,-0.5,2);
+			\coordinate (B) at (-1.2,-0.5,0);
+			\coordinate (A) at (-0.5,-0.25,0);
+			\draw[thick, fill=xblue, fill opacity=0.25] (-2,-2,0) -- (2,-2,0) -- (2,2,0) -- (-2,2,0) -- cycle;
+			\node at (1.5,1,0) {$\bm{\pi}$};
+			\fill[xred] (P) circle (0.05) node[above] {$\bm{P}$};
+			\fill (B) circle (0.05) node[right] {$\bm{B}$};
+			\draw[thick, dashed, black!50] (P) -- (B);
+			\draw[vector={xblue}] (0,0,0) -- (0,0,1.5) node[above] {$\hat{n}$};
+			\fill[xpurple] (A) circle (0.05) node[right] {$\bm{A}$};
+			\draw[vector={xpurple}] (A) -- (P) node [midway, left] {$\vec{c}$};
+		\end{tikzpicture}
+	\end{center}
+	\caption{The vector $\vec{c}$ connects a known point on the plane $\bm{A}$ and the point $\bm{P}$. Its projection on $\hat{n}$ gives the distance $\bm{PB}$.}
+	\label{fig:point_plane_distance_2}
+\end{figure}
+
+Since $\hat{n}$ is a unit vector, the projection of $\vec{c}$ onto it is simply the dot product between the two vectors, i.e. the distance $d$ of point $\bm{P}$ and the plane $\bm{\pi}$ is
+\begin{equation}
+	d = \innerproduct{\vec{c}}{\hat{n}}.
+	\label{eq:distance_point_plane_as_dot_product}
+\end{equation}
+
+\begin{example}{Distance of a point and a plane: sanity check}{}
+	Let $\bm{P}=(2,-4,3)$. Let's calculate its distance to the three principle planes $xy$, $xz$ and $yz$. We will use the origin as the point $\bm{A}$, since all of these planes contain it. In each case, $\vec{c}$ will have as components the respective coordinates of $\bm{P}$.
+	\begin{enumerate}
+		\item The normal to the $xy$-plane is $\hat{z}=\colvec{0;0;1}$. The dot product $\innerproduct{\vec{c}}{\hat{n}}$ is therefore $d=\cancel{2\cdot0}+\cancel{(-4)\cdot0}+3\cdot1=3$.
+		\item The normal to the $xz$-plane is $\hat{y}=\colvec{0;1;0}$. The dot product $\innerproduct{\vec{c}}{\hat{n}}$ is therefore $d=\cancel{2\cdot0}+(-4)\cdot1+\cancel{3\cdot0}=-4$.
+		\item The normal to the $yz$-plane is $\hat{x}=\colvec{1;0;0}$. The dot product $\innerproduct{\vec{c}}{\hat{n}}$ is therefore $d=2\cdot1+\cancel{(-4)\cdot0}+\cancel{3\cdot0}=2$.
+	\end{enumerate}
+
+	As expected, the distance we get from $\bm{P}$ to each of the principle planes in $\Rs[3]$ using \autoref{eq:distance_point_plane_as_dot_product} is exactly the respective coordinate of $\bm{P}$.
+\end{example}
+
+
 \subsubsection{Sphere-sphere collision}
 Consider two solid spheres which have a single point of contact $\bm{A}$. Let $m_{1}, r_{1}, \vec{x}_{1}$ and $\vec{v}_{1}$ be the mass, radius, position and velocity of the first sphere, and $m_{2}, r_{2}, \vec{x}_{2}$ and $\vec{v}_{2}$ the respective quantities for the second sphere (\autoref{fig:elastic_collision}). The line connecting the centers of the two spheres is in the direction $\hat{n}$ (without loss of generality let us assume that the normal vector $\hat{n}$ points from $\vec{x}_{1}$ towards $\vec{x}_{2}$). The unit vector $\hat{t}$ is orthogonal to $\hat{n}$ (and without loss of generality we will assume that it is oriented counter-clockwise from $\hat{n}$).
 

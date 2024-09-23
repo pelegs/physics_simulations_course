@@ -24,7 +24,7 @@ theta = np.zeros(num_steps, dtype=np.float32)
 vel = np.zeros(num_steps, dtype=np.float32)
 
 # Initial conditions
-theta[0] = np.pi / 2.5
+theta[0] = np.pi / 4
 vel[0] = 0.0
 
 # Run simulation
