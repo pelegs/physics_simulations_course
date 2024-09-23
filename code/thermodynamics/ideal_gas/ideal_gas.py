@@ -362,7 +362,7 @@ def visualize_3D(simulation: Simulation):
         (0.0, 0.0, 0.0),
         (0.0, 1.0, 0.0),
     ]
-    pl.show(cpos=cpos)
+    pl.show(cpos=cpos, interactive=True)
 
 
 if __name__ == "__main__":

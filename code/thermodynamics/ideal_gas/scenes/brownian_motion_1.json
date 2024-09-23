@@ -1,7 +1,7 @@
 {
     "time": {
         "dt": 0.01,
-        "max_t": 5.0
+        "max_t": 1.0
     },
     "container": {
         "dimensions": [
