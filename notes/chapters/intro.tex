@@ -233,6 +233,51 @@ and if we subtitute $x=0$ we get
 
 % Continue like here and note the difference: https://math.stackexchange.com/questions/209320/where-do-the-factorials-come-from-in-the-taylor-series
 
+\subsection{Projections, rejections and the dot product}
+Every vector $\vec{v}\in\Rs[n]$ can be decomposed into two components: one in the direction of another vector $\vec{u}$, and one orthogonal to $\vec{u}$ (\autoref{fig:projection_rejection_of_vector}). These components are called, respectively, the \textbf{projection} of $\vec{v}$ onto $\vec{u}$ and the \textbf{rejection} of $\vec{v}$ from $\vec{u}$. In $\Rs[3]$ the same procedure can be applied to projecting a vector onto- and rejecting it from a plane, since every plane in $\Rs[3]$ has a single normal vector (up to a sign).
+
+\begin{figure}
+	\forcecaptionside
+	\begin{center}
+		\tdplotsetmaincoords{70}{200}
+		\begin{tikzpicture}[tdplot_main_coords, rotate=30]
+			\draw[thick, fill=xgreen, fill opacity=0.25] (-2,-2,0) -- (2,-2,0) -- (2,2,0) -- (-2,2,0) -- cycle;
+			\pgfmathsetmacro{\vx}{1}
+			\pgfmathsetmacro{\vy}{0.5}
+			\pgfmathsetmacro{\vz}{2}
+			\coordinate (v) at (\vx,\vy,\vz);
+			\coordinate (va) at (\vx,\vy,0);
+			\coordinate (o) at (-1,0,0);
+			\draw[vector={xblue}, dashed] (va) -- (v) node [midway, left] {$\hat{n}_{\perp}$};
+			\draw[vector={xred}, dashed] (o) -- (va) node [midway, below] {$\hat{n}_{\parallel}$};
+			\draw[vector={xpurple}] (o) -- (v) node [pos=1.075] {$\vec{v}$};
+		\end{tikzpicture}
+	\end{center}
+	\caption{Decomposing the vector $\vec{v}$ into two components in respect to a plane: one parallel to the plane ($\vec{v}_{\parallel}$) and one orthogonal to it ($\vec{v}_{\perp}$). These are also called the projection and rejection of $\vec{v}$ on the plane, respectively.}
+	\label{fig:projection_rejection_of_vector}
+\end{figure}
+
+The projection of a vector onto another vector can be described via the \textbf{dot product}: given a vector $\vec{a}$, its projection on the vector $\vec{b}$ is denoted equal to
+\begin{equation}
+	\text{proj}_{\vec{b}}\vec{a} = \vnorm{a}\cos(\theta),
+	\label{eq:vector_projection}
+\end{equation}
+where $\theta$ is the angle between the vectors. See \autoref{fig:vector_projection} for a visual representation.
+
+\begin{figure}
+	\begin{center}
+		\begin{tikzpicture}
+			\draw[thick, dashed] (2,1.5) -- (2,0);
+			\draw[thick] (1.75,0) -- ++(0,0.25) -- ++(0.25,0);
+			\draw[filledangle={xpurple}] (0,0) -- (0.5, 0) arc (0:36.87:0.5) node [pos=0.9] {$\theta$};
+			\draw[vector={xred}] (0,0) -- (3,0) node [pos=1.05] {$\vec{b}$};
+			\draw[vector={xblue}] (0,0) -- (2,1.5) node [pos=1.1] {$\vec{a}$};
+		\end{tikzpicture}
+	\end{center}
+	\caption{Projection of $\vec{a}$ onto $\vec{b}$: no matter how many dimensions we use, we can always rotate our view such that we look at the plane spanned by both vectors and $\vec{b}$ lies horizontally. In this way it's easy to see why the projection of $\vec{a}$ onto $\vec{b}$ is $\vnorm{a}\cos(\theta)$: it's simply the defintions of the cosine function (\enquote{side next to the angle divided by hypotenous}).}
+	\label{fig:vector_projection}
+\end{figure}
+
 % \section{Harmonic Oscillator}
 % \subsection{Simple Harmonic Oscillator}
 % Many systems in physics present a simple, periodic (repeating) motion. One such system is a simple mass-less spring connected to a mass $m$ and allowed to move in a single dimension only. If we ignore the effects of gravity, the only force acting on the mass arises from the spring itself: the more we pull or push the spring, the stronger it will resist to that change. This resistant force is given by
