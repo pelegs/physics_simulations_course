@@ -52,6 +52,7 @@
 
 % Math related defs
 \usepackage{amsthm, commath, bm, mathtools}
+\renewcommand\vec{\mathbf}
 
 % Cancel terms
 \usepackage[thicklines]{cancel}
@@ -103,6 +104,10 @@
 \usepackage[separate-uncertainty=true]{siunitx}
 \renewcommand{\SI}[3][]{\mbox{$\num[#1]{#2}\,\left[\si{#3}\right]$}}
 \newcommand{\SIe}[1]{\SI{}{#1}}
+
+% Testing an idea #2
+% \renewcommand{\innerproduct}[2]{#1\cdot#2}
+\renewcommand{\innerproduct}[2]{\langle #1,#2\rangle}
 
 % Chemistry
 \usepackage{mhchem}
