@@ -3,7 +3,8 @@
 % date: $date
 
 # Introduction
-## Why we use simulations
+## Why do we use simulations?
+[//]: # (https://www.reddit.com/r/AskPhysics/comments/msze9o/what_are_the_benefits_of_computational)
 ## Python
 ### Basic introduction to python
 ### NumPy
@@ -12,6 +13,7 @@
 ## Some mathematics
 ### Radians vs. degrees
 ### Taylor series
+### The dot product
 
 # Newtonian mechanics
 ## Pendulum
@@ -36,6 +38,6 @@
 ## The heat equation
 
 # Thermodynamics
-## Background
+## Ideal gas
 ## Random processes
 ## Molecular dynamics
