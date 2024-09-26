@@ -234,7 +234,7 @@ and if we subtitute $x=0$ we get
 % Continue like here and note the difference: https://math.stackexchange.com/questions/209320/where-do-the-factorials-come-from-in-the-taylor-series
 
 \subsection{Projections, rejections and the dot product}
-Every vector $\vec{v}\in\Rs[n]$ can be decomposed into two components: one in the direction of another vector $\vec{u}$, and one orthogonal to $\vec{u}$ (\autoref{fig:projection_rejection_of_vector}). These components are called, respectively, the \textbf{projection} of $\vec{v}$ onto $\vec{u}$ and the \textbf{rejection} of $\vec{v}$ from $\vec{u}$. In $\Rs[3]$ the same procedure can be applied to projecting a vector onto- and rejecting it from a plane, since every plane in $\Rs[3]$ has a single normal vector (up to a sign).
+Every vector $\vec{a}\in\Rs[n]$ can be decomposed into two components: one in the direction of another vector $\vec{b}$, and one orthogonal to $\vec{b}$. These components are called, respectively, the \textbf{projection} of $\vec{a}$ onto $\vec{b}$ and the \textbf{rejection} of $\vec{a}$ from $\vec{b}$. In $\Rs[3]$ the same procedure can be applied to projecting a vector onto- and rejecting it from a plane, since every plane in $\Rs[3]$ has a single normal vector up to a sign (\autoref{fig:projection_rejection_of_vector}).
 
 \begin{figure}
 	\forcecaptionside
@@ -242,65 +242,67 @@ Every vector $\vec{v}\in\Rs[n]$ can be decomposed into two components: one in th
 		\tdplotsetmaincoords{70}{200}
 		\begin{tikzpicture}[tdplot_main_coords, rotate=30]
 			\draw[thick, fill=xgreen, fill opacity=0.25] (-2,-2,0) -- (2,-2,0) -- (2,2,0) -- (-2,2,0) -- cycle;
-			\pgfmathsetmacro{\vx}{1}
-			\pgfmathsetmacro{\vy}{0.5}
-			\pgfmathsetmacro{\vz}{2}
-			\coordinate (v) at (\vx,\vy,\vz);
-			\coordinate (va) at (\vx,\vy,0);
+			\pgfmathsetmacro{\ax}{1}
+			\pgfmathsetmacro{\ay}{0.5}
+			\pgfmathsetmacro{\az}{2}
+			\coordinate (a) at (\ax,\ay,\az);
+			\coordinate (aa) at (\ax,\ay,0);
 			\coordinate (o) at (-1,0,0);
-			\draw[vector={xblue}, dashed] (va) -- (v) node [midway, left] {$\hat{n}_{\perp}$};
-			\draw[vector={xred}, dashed] (o) -- (va) node [midway, below] {$\hat{n}_{\parallel}$};
-			\draw[vector={xpurple}] (o) -- (v) node [pos=1.075] {$\vec{v}$};
+			\draw[vector={xblue}, dashed] (aa) -- (a) node [midway, left] {$\uvec{n}_{\perp}$};
+			\draw[vector={xred}, dashed] (o) -- (aa) node [midway, below] {$\uvec{n}_{\parallel}$};
+			\draw[vector={xpurple}] (o) -- (a) node [pos=1.075] {$\vec{a}$};
 		\end{tikzpicture}
 	\end{center}
-	\caption{Decomposing the vector $\vec{v}$ into two components in respect to a plane: one parallel to the plane ($\vec{v}_{\parallel}$) and one orthogonal to it ($\vec{v}_{\perp}$). These are also called the projection and rejection of $\vec{v}$ on the plane, respectively.}
+	\caption{Decomposing the vector $\vec{a}$ into two components in respect to a plane: one parallel to the plane ($\vec{a}_{\parallel}$) and one orthogonal to it ($\vec{a}_{\perp}$). These are also called the projection and rejection of $\vec{a}$ on the plane, respectively.}
 	\label{fig:projection_rejection_of_vector}
 \end{figure}
 
-The projection of a vector onto another vector gives rise to an important operation between two vectors: the \textbf{dot product}: given a vector $\vec{v}$, its projection on the vector $\vec{w}$ is
+The projection of a vector onto another vector gives rise to an important operation between two vectors: the \textbf{dot product}: given a vector $\vec{a}$, its projection on the vector $\vec{b}$ is
 \begin{equation}
-	\text{proj}_{\vec{w}}\vec{v} = \vnorm{v}\cos(\theta),
+	\text{proj}_{\vec{b}}\vec{a} = \vnorm{a}\cos(\theta),
 	\label{eq:vector_projection}
 \end{equation}
 where $\theta$ is the angle between the vectors. See \autoref{fig:vector_projection} for a visual representation. We then define the dot product between the two vectors as
 \begin{equation}
-	\innerproduct{\vec{v}}{\vec{w}} = \vnorm{w}\text{proj}_{\vec{w}}\vec{v} = \vnorm{w}\vnorm{v}\cos(\theta).
+	\innerproduct{\vec{a}}{\vec{b}} = \vnorm{b}\text{proj}_{\vec{b}}\vec{a} = \vnorm{b}\vnorm{a}\cos(\theta).
 	\label{eq:label}
 \end{equation}
 
 \begin{figure}
 	\begin{center}
 		\begin{tikzpicture}
-			\pgfmathsetmacro{\vx}{2.0}
-			\pgfmathsetmacro{\vy}{1.5}
-			\coordinate (v) at (\vx,\vy);
-			\coordinate (w) at (3,0);
-			\pgfmathsetmacro{\th}{atan(\vy/\vx)}
+			\pgfmathsetmacro{\ax}{2.0}
+			\pgfmathsetmacro{\ay}{1.5}
+			\coordinate (a) at (\ax,\ay);
+			\coordinate (b) at (3,0);
+			\coordinate (o) at (0,0);
+			\pgfmathsetmacro{\th}{atan(\ay/\ax)}
 			\draw[thick, dashed] (2,1.5) -- (2,0);
 			\draw[thick] (1.75,0) -- ++(0,0.25) -- ++(0.25,0);
-			\draw[filledangle={xpurple}] (0,0) -- (0.5, 0) arc (0:\th:0.5) node [pos=0.35] {$\theta$};
-			\draw[vector={xred}] (0,0) -- (v) node [midway, above left] {$\vec{v}$};
-			\draw[vector={xblue}] (0,0) -- (w) node [midway, below] {$\vec{w}$};
+			\draw pic["$\theta$", draw=xpurple, thick, fill=xpurple!35, text=xpurple, angle eccentricity=0.75, angle radius=1cm] {angle=b--o--a};
+			\draw[vector={xred}] (0,0) -- (a) node [midway, above left] {$\vec{a}$};
+			\draw[vector={xblue}] (0,0) -- (b) node [midway, below] {$\vec{b}$};
 		\end{tikzpicture}
 	\end{center}
-	\caption{Projection of $\vec{v}$ onto $\vec{w}$: no matter how many dimensions we use, we can always rotate our view such that we look at the plane spanned by both vectors, and $\vec{w}$ lies horizontally. In this way it's easy to see why the projection of $\vec{v}$ onto $\vec{w}$ is $\vnorm{v}\cos(\theta)$: it's simply the definitions of the cosine function (\enquote{side next to the angle divided by the hypotenuse}).}
+	\caption{Projection of $\vec{a}$ onto $\vec{b}$: no matter how many dimensions we use, we can always rotate our view such that we look at the plane spanned by both vectors, and $\vec{b}$ lies horizontally. In this way it's easy to see why the projection of $\vec{a}$ onto $\vec{b}$ is $\vnorm{a}\cos(\theta)$: it's simply the definitions of the cosine function (\enquote{side next to the angle divided by the hypotenuse}).}
 	\label{fig:vector_projection}
 \end{figure}
 
-It is of course convenient to have a way to calculate the dot product component-wise. To find such form, we use the same two vectors $\vec{v}$ and $\vec{w}$ from before, and their difference $\vec{c}=\vec{v}-\vec{w}$ (\autoref{fig:three_vectors}).
+It is of course convenient to have a way to calculate the dot product component-wise. To find such form, we use the same two vectors $\vec{a}$ and $\vec{b}$ from before, and their difference $\vec{c}=\vec{a}-\vec{b}$ (\autoref{fig:three_vectors}).
 
 \begin{figure}
 	\begin{center}
 		\begin{tikzpicture}
-			\pgfmathsetmacro{\vx}{2.0}
-			\pgfmathsetmacro{\vy}{1.5}
-			\coordinate (v) at (\vx,\vy);
-			\coordinate (w) at (3,0);
-			\pgfmathsetmacro{\th}{atan(\vy/\vx)}
-			\draw[filledangle={xpurple}] (0,0) -- (0.5, 0) arc (0:\th:0.5) node [pos=0.35] {$\theta$};
-			\draw[vector={xred}] (0,0) -- (v) node [midway, above left] {$\vec{v}$};
-			\draw[vector={xblue}] (0,0) -- (w) node [midway, below] {$\vec{w}$};
-			\draw[vector={xpurple}] (w) -- (v) node [midway, right] {$\vec{c}$};
+			\pgfmathsetmacro{\ax}{2.0}
+			\pgfmathsetmacro{\ay}{1.5}
+			\coordinate (a) at (\ax,\ay);
+			\coordinate (b) at (3,0);
+			\coordinate (o) at (0,0);
+			\pgfmathsetmacro{\th}{atan(\ay/\ax)}
+			\draw pic["$\theta$", draw=xpurple, thick, fill=xpurple!35, text=xpurple, angle eccentricity=0.75, angle radius=1cm] {angle=b--o--a};
+			\draw[vector={xred}] (0,0) -- (a) node [midway, above left] {$\vec{a}$};
+			\draw[vector={xblue}] (0,0) -- (b) node [midway, below] {$\vec{b}$};
+			\draw[vector={xpurple}] (b) -- (a) node [midway, right] {$\vec{c}$};
 		\end{tikzpicture}
 	\end{center}
 	\caption{Text text text.}
@@ -310,58 +312,57 @@ It is of course convenient to have a way to calculate the dot product component-
 Thanks to trigonometry we know that the following relation holds (\enquote{the law of cosines}):
 \begin{equation}
 	\begin{aligned}
-		\vnorm{c}^{2} & = \vnorm{v}^{2} + \vnorm{w}^{2} - 2\vnorm{v}\vnorm{w}\cos(\theta)   \\
-		              & = \vnorm{v}^{2} + \vnorm{w}^{2} - 2\innerproduct{\vec{v}}{\vec{w}},
+		\vnorm{c}^{2} & = \vnorm{a}^{2} + \vnorm{b}^{2} - 2\vnorm{a}\vnorm{b}\cos(\theta)   \\
+		              & = \vnorm{a}^{2} + \vnorm{b}^{2} - 2\innerproduct{\vec{a}}{\vec{b}},
 	\end{aligned}
 	\label{eq:law_of_cosines}
 \end{equation}
 which we can rearrange into
 \begin{equation}
-	\innerproduct{\vec{v}}{\vec{w}} = \frac{1}{2}\left(\vnorm{v}^{2}+\vnorm{w}^{2}-\vnorm{c}^{2}\right).
+	\innerproduct{\vec{a}}{\vec{b}} = \frac{1}{2}\left(\vnorm{a}^{2}+\vnorm{b}^{2}-\vnorm{c}^{2}\right).
 	\label{eq:law_of_cosines_dot_product}
 \end{equation}
 In $\Rs[2]$ the component version of the vectors are
 \begin{equation}
-	\vec{v} = \colvec{v_{x};v_{y}},\quad \vec{w} = \colvec{w_{x};w_{y}},\quad \vec{c} = \colvec{c_{x};c_{y}} = \colvec{v_{x}-w_{x};v_{y}-w_{y}},
+	\vec{a} = \colvec{a_{x};a_{y}},\quad \vec{b} = \colvec{b_{x};b_{y}},\quad \vec{c} = \colvec{c_{x};c_{y}} = \colvec{a_{x}-b_{x};a_{y}-b_{y}},
 	\label{eq:law_of_cosines_vector_components_1}
 \end{equation}
 and \autoref{eq:law_of_cosines_dot_product} becomes
 \begin{equation}
 	\begin{aligned}
-		\innerproduct{\vec{v}}{\vec{w}} & = \frac{1}{2}\left(v_{x}^{2}+v_{y}^{2}+w_{x}^{2}+w_{y}^{2}-\left(v_{x}-w_{x}\right)^{2}-\left(v_{y}-w_{y}\right)^{2}\right)                                                                                                          \\
-		                                & = \frac{1}{\cancel{2}}\left(\cancel{v_{x}^{2}}+\cancel{v_{y}^{2}}+\cancel{w_{x}^{2}}+\cancel{w_{y}^{2}}-\cancel{v_{x}^{2}}+\cancel{2}v_{x}w_{x}-\cancel{w_{x}^{2}}-\cancel{v_{y}^{2}}+\cancel{2}v_{y}w_{y}+\cancel{w_{y}^{2}}\right) \\
-		                                & = v_{x}w_{x} + v_{y}w_{y}.
+		\innerproduct{\vec{a}}{\vec{b}} & = \frac{1}{2}\left(a_{x}^{2}+a_{y}^{2}+b_{x}^{2}+b_{y}^{2}-\left(a_{x}-b_{x}\right)^{2}-\left(a_{y}-b_{y}\right)^{2}\right)                                                                                                          \\
+		                                & = \frac{1}{\cancel{2}}\left(\cancel{a_{x}^{2}}+\cancel{a_{y}^{2}}+\cancel{b_{x}^{2}}+\cancel{b_{y}^{2}}-\cancel{a_{x}^{2}}+\cancel{2}a_{x}b_{x}-\cancel{b_{x}^{2}}-\cancel{a_{y}^{2}}+\cancel{2}a_{y}b_{y}+\cancel{b_{y}^{2}}\right) \\
+		                                & = a_{x}b_{x} + a_{y}b_{y}.
 	\end{aligned}
 	\label{eq:law_of_cosines_vector_components_2}
 \end{equation}
 
 In general, we can apply the same procedure in $\Rs[n]$: the components of the vectors are
 \begin{equation}
-	\vec{v} = \colvec{v_{1};v_{2};\vdots;v_{n}},\quad \vec{w} = \colvec{w_{1};w_{2};\vdots;w_{n}},\quad \vec{c} = \colvec{c_{1};c_{2};\vdots;c_{n}} = \colvec{v_{1}-w_{1};v_{2}-w_{2};\vdots;v_{n}-w_{n}},
+	\vec{a} = \colvec{a_{1};a_{2};\vdots;a_{n}},\quad \vec{b} = \colvec{b_{1};b_{2};\vdots;b_{n}},\quad \vec{c} = \colvec{c_{1};c_{2};\vdots;c_{n}} = \colvec{a_{1}-b_{1};a_{2}-b_{2};\vdots;a_{n}-b_{n}},
 	\label{eq:law_of_cosines_vector_components_3}
 \end{equation}
 and \autoref{eq:law_of_cosines_dot_product} becomes
 \begin{equation}
 	\begin{aligned}
-		\innerproduct{\vec{v}}{\vec{w}} & = \frac{1}{2}\left(v_{1}^{2}+v_{2}^{2}+\dots+v_{n}^{2} + w_{1}^{2}+w_{2}^{2}+\dots+w_{n}^{2}-\left(v_{1}-w_{1}\right)^{2}\right.                                                                                      \\
-		                                & \ \left.-\left(v_{2}-w_{2}\right)^{2}-\dots-\left(v_{n}-w_{n}\right)^{2}\right)                                                                                                                                       \\
-		                                & = \frac{1}{\cancel{2}}\left(\cancel{v_{1}^{2}}+\cancel{v_{2}^{2}}+\dots+\cancel{v_{n}^{2}} + \cancel{w_{1}^{2}}+\cancel{w_{2}^{2}} + \dots + \cancel{\vec{w}_{n}^{2}}-\cancel{v_{1}^{2}}+\cancel{2}v_{1}w_{1}-\right. \\
-		                                & \ \left.\cancel{w_{1}^{2}}-\cancel{v_{2}^{2}}+\cancel{2}v_{2}w_{2}+\cancel{w_{2}^{2}} + \dots + \cancel{v_{n}^{2}}+\cancel{2}v_{n}w_{n}+\cancel{w_{n}^{2}}\right)                                                     \\
-		                                & = v_{1}w_{1} + v_{2}w_{2} + \dots + v_{n}{w_{n}}                                                                                                                                                                      \\
-		                                & = \sum\limits_{i=1}^{n}v_{i}w_{i}.
+		\innerproduct{\vec{a}}{\vec{b}} & = \frac{1}{2}\left(a_{1}^{2}+a_{2}^{2}+\dots+a_{n}^{2} + b_{1}^{2}+b_{2}^{2}+\dots+b_{n}^{2}-\left(a_{1}-b_{1}\right)^{2}\right.                                                                                      \\
+		                                & \ \left.-\left(a_{2}-b_{2}\right)^{2}-\dots-\left(a_{n}-b_{n}\right)^{2}\right)                                                                                                                                       \\
+		                                & = \frac{1}{\cancel{2}}\left(\cancel{a_{1}^{2}}+\cancel{a_{2}^{2}}+\dots+\cancel{a_{n}^{2}} + \cancel{b_{1}^{2}}+\cancel{b_{2}^{2}} + \dots + \cancel{\vec{b}_{n}^{2}}-\cancel{a_{1}^{2}}+\cancel{2}a_{1}b_{1}-\right. \\
+		                                & \ \left.\cancel{b_{1}^{2}}-\cancel{a_{2}^{2}}+\cancel{2}a_{2}b_{2}+\cancel{b_{2}^{2}} + \dots + \cancel{a_{n}^{2}}+\cancel{2}a_{n}b_{n}+\cancel{b_{n}^{2}}\right)                                                     \\
+		                                & = a_{1}b_{1} + a_{2}b_{2} + \dots + a_{n}{b_{n}}                                                                                                                                                                      \\
+		                                & = \sum\limits_{i=1}^{n}a_{i}b_{i}.
 	\end{aligned}
 	\label{eq:law_of_cosines_vector_components_4}
 \end{equation}
 
-Let us now explore some key properties of the dot product:
+Let us now explore some key properties of the dot product (the reader is encouraged to prove \Autoref{item:dpdistributive,item:dpscalars}):
 \begin{enumerate}
 	\item Since the product of real numbers is commutative (i.e. $ab=ba$), the dot product is also commutative: if we exchange $v_{i}$ and $w_{i}$ in \autoref{eq:law_of_cosines_vector_components_4} the result stays the same.
-	\item The dot product is distributive over vector addition: $\innerproduct{\vec{a}}{\vec{b}+\vec{c}} = \innerproduct{\vec{a}}{\vec{b}} + \innerproduct{\vec{a}}{\vec{c}}$.
-	\item We can take out scalars from within the product: given the scalars $\epsilon_{1}$ and $\epsilon_{2}$, $\innerproduct{\epsilon_{1}\vec{a}}{\epsilon_{2}\vec{b}} = \epsilon_{1}\epsilon_{2}\innerproduct{\vec{a}}{\vec{b}}$.
+	\item\label{item:dpdistributive} The dot product is distributive over vector addition: $\innerproduct{\vec{a}}{\vec{b}+\vec{c}} = \innerproduct{\vec{a}}{\vec{b}} + \innerproduct{\vec{a}}{\vec{c}}$.
+	\item\label{item:dpscalars} We can take out scalars from within the product: given the scalars $\epsilon_{1}$ and $\epsilon_{2}$, $\innerproduct{\epsilon_{1}\vec{a}}{\epsilon_{2}\vec{b}} = \epsilon_{1}\epsilon_{2}\innerproduct{\vec{a}}{\vec{b}}$.
 	\item The angle between two non-zero orthogonal vectors $\vec{a}$ and $\vec{b}$ is $\theta=\frac{\pi}{2}$, and therefore $\innerproduct{\vec{a}}{\vec{b}} = \vnorm{a}\vnorm{b}\cos\left(\frac{\pi}{2}\right) = 0$ (since $\cos\left(\frac{\pi}{2}\right)=0$). This works in the other way around as well: if the dot product of two non-zero vectors is zero, then they are orthogonal.
-	\item We can't cancel vectors in the dot product the same we do with real numbers: consider three vectors $\vec{a}\neq\vec{0},\ \vec{b},\ \vec{c}$ such that $\innerproduct{\vec{a}}{\vec{b}}=\innerproduct{\vec{a}}{\vec{c}}$. We can redistribute the equation to give $\innerproduct{\vec{a}}{\vec{b}-\vec{c}}=0$, which means that $\vec{a}$ and $\vec{b}-\vec{c}$ are orthogonal, and doesn't imply that $\vec{b}-\vec{c}=\vec{0}$ - i.e. $\vec{b}$ and $\vec{c}$ might not be equal.
+	\item We can't cancel vectors in the dot product the same we do with real numbers: consider three vectors $\vec{a}\neq\vec{0},\ \vec{b},\ \vec{c}$ such that $\innerproduct{\vec{a}}{\vec{b}}=\innerproduct{\vec{a}}{\vec{c}}$. We can redistribute the equation to give $\innerproduct{\vec{a}}{\vec{b}-\vec{c}}=0$, which means that $\vec{a}$ and $\vec{b}-\vec{c}$ are orthogonal, and doesn't imply that $\vec{b}-\vec{c}=\vec{0}$ (i.e. $\vec{b}$ and $\vec{c}$ might not be equal).
 \end{enumerate}
-
 
 % \section{Harmonic Oscillator}
 % \subsection{Simple Harmonic Oscillator}

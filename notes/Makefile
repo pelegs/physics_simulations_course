@@ -6,7 +6,7 @@ movefiles:
 	mv auxfiles/main.pdf pdfs
 
 main:
-	latexmk -shell-escape -pdf $(LATEXMKSWITCHES) $@.tex
+	latexmk -shell-escape -pdf -halt-on-error $(LATEXMKSWITCHES) $@.tex
 
 full: clean main movefiles
 
