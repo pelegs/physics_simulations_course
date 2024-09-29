@@ -50,10 +50,15 @@
 ]{biblatex}
 \addbibresource{ref/references.bib}
 
+% Introducing new terms
+\newcommand\newterm[1]{\textbf{#1}}
+
 % Math related defs
 \usepackage{amsthm, commath, bm, mathtools}
 \renewcommand\vec{\mathbf}
 \newcommand\uvec[1]{\hat{\vec{#1}}}
+\newcommand\bigO[1]{\mathcal{O}\left(#1\right)}
+\newcommand\pnt[1]{\mathbf{#1}}
 
 % Cancel terms
 \usepackage[thicklines]{cancel}
@@ -115,7 +120,7 @@
 
 % Graphics
 \usepackage{tikz, tikz-3dplot}
-\usetikzlibrary{calc, positioning, intersections, through, arrows.meta, decorations.pathmorphing, decorations.text, decorations.pathreplacing, patterns, external, quotes, angles}
+\usetikzlibrary{calc, positioning, intersections, through, arrows.meta, decorations.pathmorphing, decorations.text, decorations.pathreplacing, patterns, external, quotes, angles, fit}
 % \tikzexternalize[prefix=figs/] % activate externalization of TikZ figures, save results in figs folder
 \tikzexternalize[prefix=figs/,optimize command away=\includepdf]
 \tikzset{

@@ -39,5 +39,5 @@
 
 # Thermodynamics
 ## Ideal gas
-## Random processes
+## Brownian dynamics
 ## Molecular dynamics

@@ -68,7 +68,7 @@ In the case of $\vec{u}$, the orthogonal component is the same as that of $\vec{
 and altogether we get
 \begin{equation}
 	\begin{aligned}
-		\vec{u} & = \vec{u}_{\perp} + \vec{u}_{\parallel}                                                     \\
+		\vec{u} & = \vec{u}_{\perp} + \vec{u}_{\parallel}                                                         \\
 		        & = \vec{v} - \innerproduct{\vec{v}}{\uvec{n}}\uvec{n} - \innerproduct{\vec{v}}{\uvec{n}}\uvec{n} \\
 		        & = \vec{v}-2\innerproduct{\vec{v}}{\uvec{n}}\uvec{n}.
 	\end{aligned}
@@ -78,7 +78,7 @@ and altogether we get
 \begin{example}{A simple sanity check}{}
 	To make a simple validation of this equation, let's examine the case for a collision with a wall which is oriented in the $xy$-plane (i.e. its normal points in the $z$-direction): given the velocity $\vec{v}=\colvec{v_{x};v_{y};v_{z}}$, \autoref{eq:elastic_sphere_wall_collision} becomes
 	\begin{align*}
-		\vec{u} & = \vec{v}-2\innerproduct{\vec{v}}{\uvec{n}}\uvec{n}                                                     \\
+		\vec{u} & = \vec{v}-2\innerproduct{\vec{v}}{\uvec{n}}\uvec{n}                                                   \\
 		        & = \colvec{v_{x};v_{y};v_{z}}-2\innerproduct{\colvec{v_{x};v_{y};v_{z}}}{\colvec{0;0;1}}\colvec{0;0;1} \\
 		        & = \colvec{v_{x};v_{y};v_{z}}-2(\cancel{v_{x}\cdot0}+\cancel{v_{y}\cdot0}+v_{z}\cdot1)\colvec{0;0;1}   \\
 		        & = \colvec{v_{x};v_{y};v_{z}}-2v_{z}\colvec{0;0;1}                                                     \\
@@ -243,5 +243,32 @@ yielding
 
 \subsubsection{Reducing collision test complexity}
 % BBOX, Neighbor lists, etc.
+Much like in the case of gravitational simulations, the number of calculations needed to resolve collisions between $N$ particles is $N(N-1)=N^{2}-N$, which grows like $\bigO{N^{2}}$. And much like in that case, we would like to reduce this complexity. One possible method is using a quad- or oct-tree as in the Barnes-Hutt algorithm mentioned in (REF!), but in the case of perfectly spherical particles which only experience instantaneous elastic collisions, there are much simpler method.
+
+The first and simplest of these methods is the \newterm{Axis-Aligned Bounding Box}, or simply \newterm{AABB}. In the 2-dimensional case, a bounding box (BB) of an object is the minimal rectangular area surrounding it completely (i.e. that contains the entire object within it). An AABB of an object is (as the name suggests) a BB with sides parallel to the 2 axes (\autoref{fig:AABB_1}).
+
+\begin{figure}
+	\begin{center}
+		\begin{tikzpicture}[
+				inner sep=0pt,thick,
+				dot/.style={fill=blue,circle,minimum size=3pt}
+			]
+			\node[circle, draw=xblue, thick, fill=xblue!30, minimum size=1cm, inner sep=0pt, outer sep=0pt] (circ1) at (0,0) {};
+			\node[thick, xred, fit=(circ1)] {};
+		\end{tikzpicture}
+	\end{center}
+	\caption{Axis-Aligned Bounding Boxes (AABBs) for different objects in 2-dimensions.}
+	\label{fig:AABB_1}
+\end{figure}
+
+In the case of a circle of radius $r$, its AABB is a square of side $2r$ with the sides parallel to the $x$ and $y$ axes, respectively, and sharing its center with the circle. Therefore, given a circle of radius $r$ centered at $(x,y)$, its AABB is the square with the two opposing corners
+\begin{equation}
+	\begin{aligned}
+		\pnt{c}_{\text{LL}} & =(x-r,y-r), \\
+		\pnt{c}_{\text{UR}} & =(x+r,y+r).
+	\end{aligned}
+	\label{eq:circle_AABB}
+\end{equation}
+
 
 \section{Brownian dynamics}
