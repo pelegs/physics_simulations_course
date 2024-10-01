@@ -119,18 +119,6 @@
 \usepackage{mhchem}
 
 % Graphics
-\usepackage{tikz, tikz-3dplot}
-\usetikzlibrary{calc, positioning, intersections, through, arrows.meta, decorations.pathmorphing, decorations.text, decorations.pathreplacing, patterns, external, quotes, angles, shapes}
-% \tikzexternalize[prefix=figs/] % activate externalization of TikZ figures, save results in figs folder
-\tikzexternalize[prefix=figs/,optimize command away=\includepdf]
-\tikzset{
-  point/.style = {circle, fill=black, inner sep=0pt, minimum size=5pt, label=above:{#1}},
-  vector/.style = {#1, ultra thick, -stealth, cap=round},
-  springcoil/.style = {thick, decoration={aspect=0.3, segment length=3mm, amplitude=3mm, coil}, decorate},
-  filledangle/.style = {thick, draw=#1, fill=#1, text=#1, fill opacity=0.3, text opacity=1},
-  pics/carc/.style args={#1:#2:#3}{ code={ \draw[pic actions] (#1:#3) arc(#1:#2:#3); }}, % from https://tex.stackexchange.com/questions/66490/drawing-a-tikz-arc-specifying-the-center
-}
-
 \usepackage{pgfplots}
 \usepgfplotslibrary{colormaps, colorbrewer}
 \pgfplotsset{
@@ -171,6 +159,27 @@
 }
 \pgfplotscreateplotcyclelist{rainbowlist}{
 	{xred}, {xorange}, {xgreen}, {xdarkgreen}, {xblue}, {xpurple}, {xpink}, {xred}, {xorange}, {xgreen},
+}
+\pgfdeclarelayer{foreground}
+\pgfdeclarelayer{background}
+\pgfsetlayers{background, main, foreground}
+
+\usepackage{tikz, tikz-3dplot}
+\usetikzlibrary{calc, positioning, intersections, through, arrows.meta, decorations.pathmorphing, decorations.text, decorations.pathreplacing, patterns, external, quotes, angles, shapes}
+% \tikzexternalize[prefix=figs/] % activate externalization of TikZ figures, save results in figs folder
+\tikzexternalize[prefix=figs/,optimize command away=\includepdf]
+\tikzset{
+  point/.style = {circle, fill=black, inner sep=0pt, minimum size=5pt, label=above:{#1}},
+  vector/.style = {#1, ultra thick, -stealth, cap=round},
+  springcoil/.style = {thick, decoration={aspect=0.3, segment length=3mm, amplitude=3mm, coil}, decorate},
+  filledangle/.style = {thick, draw=#1, fill=#1, text=#1, fill opacity=0.3, text opacity=1},
+  pics/carc/.style args={#1:#2:#3}{ code={ \draw[pic actions] (#1:#3) arc(#1:#2:#3); }}, % from https://tex.stackexchange.com/questions/66490/drawing-a-tikz-arc-specifying-the-center
+  showbb/.style={path picture={
+    \begin{pgfonlayer}{foreground}
+      \draw[#1] (path picture bounding box.south west) -- (path picture bounding box.north west) -- (path picture bounding box.north east) -- (path picture bounding box.south east)-- cycle;
+    \end{pgfonlayer}
+  }},
+  shape with bb/.style={showbb={xred, thick}, thick, draw=#1, fill=#1!30},
 }
 
 % Colors

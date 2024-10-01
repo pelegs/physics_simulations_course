@@ -250,25 +250,10 @@ The first and simplest of these methods is the \newterm{Axis-Aligned Bounding Bo
 \begin{figure}
 	\begin{center}
 		\begin{tikzpicture}
-			\begin{scope}[local bounding box=circ_aabb]
-				\node[circle, draw=xblue, thick, fill=xblue!30, minimum size=1cm, inner sep=0pt, outer sep=0pt] at (0.5,0) {};
-			\end{scope}
-			\draw[xred] (circ_aabb.south west) rectangle (circ_aabb.north east);
-
-			\begin{scope}[local bounding box=star1_aabb]
-				\node[star, star points=6, draw=xgreen, thick, fill=xgreen!30, minimum size=1.5cm, inner sep=0pt, outer sep=0pt, rotate=30] at (-1.3,-0.7) {};
-			\end{scope}
-			\draw[xred] (star1_aabb.south west) rectangle (star1_aabb.north east);
-
-			\begin{scope}[local bounding box=star2_aabb]
-				\node[star, star points=6, draw=xpurple, thick, fill=xpurple!30, minimum size=1.5cm, inner sep=0pt, outer sep=0pt] at (-2.3,0.9) {};
-			\end{scope}
-			\draw[xred] (star2_aabb.south west) rectangle (star2_aabb.north east);
-
-			\begin{scope}[local bounding box=poly_aabb]
-				\draw[thick, xorange, fill=xorange!30] (-2.6,-1.0) -- ++(-0.25,0.6) -- ++(-0.5,-2.0) -- ++(0.5,0.8) -- cycle;
-			\end{scope}
-			\draw[xred] ($(poly_aabb.south west)+(-0.8pt,-0.8pt)$) rectangle ($(poly_aabb.north east)+(+0.8pt,+0.8pt)$);
+			\draw[shape with bb={xblue}] (0,0) circle [radius=1];
+			\node[star, star points=6, minimum size=1.2cm, shape with bb={xgreen}] at (-2.5, 0.5) {};
+			\node[star, star points=6, minimum size=1.2cm, shape with bb={xpurple}, rotate=25] at (1.7, -1.7) {};
+			\draw[shape with bb={xorange}] (-3,-1.0) -- ++(-1,0.6) -- ++(+0.5,-2.0) -- ++(-0.5,0.8) -- cycle;
 		\end{tikzpicture}
 	\end{center}
 	\caption{Axis-Aligned Bounding Boxes (AABBs) for different objects in 2-dimensions.}
@@ -286,37 +271,80 @@ In the case of a circle of radius $r$, its AABB is a square of side $2r$ with th
 \end{equation}
 where LL stands for \enquote{Lower-Left} and UR stands for \enquote{Upper-Right}.
 
-When two objects collide, their AABBs overlap (\autoref{fig:AABB_2}).
+When two objects collide, their AABBs necessarily overlap (\autoref{fig:AABB_2}). This means that if we know that two circles have no overlap in their AABBs, we can skip the check whether they collide or not, as it is entirely redundant. Luckily, checking overlaps in AABBs can be very fast compared to checking even the simplest collision, and this way we gain advantage in computation speed. Let's see how it is done.
 
 \begin{figure}
 	\begin{center}
 		\begin{tikzpicture}
 			\tikzset{
-				bsphere/.style n args={2}{circle, thick, draw=#1, fill=#1!30, minimum size=#2, inner sep=0pt, outer sep=0pt},
-				sp1/.style={bsphere={xblue}{1.5cm}},
-				sp2/.style={bsphere={xgreen}{1.25cm}},
+				bsphere/.style n args={2}{circle, minimum size=#2, shape with bb={#1}},
+				sp1/.style={bsphere={xblue}{2cm}},
+				sp2/.style={bsphere={xgreen}{3cm}},
 			}
-			\begin{scope}[local bounding box=circ1_aabb]
-				\node[sp1] at (0,0) {};
-			\end{scope}
-			\draw[xred] (circ1_aabb.south west) rectangle (circ1_aabb.north east);
-			\begin{scope}[local bounding box=circ2_aabb]
-				\node[sp2] at (-2,1) {};
-			\end{scope}
-			\draw[xred] (circ2_aabb.south west) rectangle (circ2_aabb.north east);
-
-			\begin{scope}[local bounding box=circ1_aabb]
-				\node[sp1] at (0.25,-3.1) {};
-			\end{scope}
-			\draw[xred] (circ1_aabb.south west) rectangle (circ1_aabb.north east);
-			\begin{scope}[local bounding box=circ2_aabb]
-				\node[sp2] at (-1,-2) {};
-			\end{scope}
-			\draw[xred] (circ2_aabb.south west) rectangle (circ2_aabb.north east);
+			\node[sp1] at (-2,-1) {};
+			\node[sp2] at (2,1) {};
+			\node[align=left] at (-5,0.5) {No overlap, no collision};
+			%---------------------%
+			\node[sp1] at (-1,-7) {};
+			\node[sp2] at (1,-5) {};
+			\node[align=left] at (-5,-5.5) {Overlap but no collision};
+			% %---------------------%
+			\node[sp1] at (-0.74,-12) {};
+			\node[sp2] at (0.74,-10) {};
+			\node[align=left] at (-5,-10.5) {Both overlap and collision};
+			%---------------------%
 		\end{tikzpicture}
 	\end{center}
-	\caption{Text.}
+	\caption{AABBs of twho circles. There can be three different relations between the circles in regards to their AABBS - no overlap between the AABBs and no collision between the circles (top), and overlap of the AABBs but no collision (middle), and an overlap with a collision (bottom). A collision between the circles necessarily means that there is also an overlap between the AABBs.}
 	\label{fig:AABB_2}
+\end{figure}
+
+We first examine the conditions for an overlap in a single dimension: given two intervals $I_{1}=(a,b)$ and $I_{2}=(c,d)$, let's assume without loss of generality that $a$ is the smallest number of the four quantities $a,b,c$ and $d$. The condition for overlap between the two intervals is simply $c<b$, i.e. that the left-most point of $I_{2}$ is to the \textit{left} of the right-most point of $I_{1}$ (\autoref{fig:overlap_intervals}).
+
+\begin{figure}
+	\forcecaptionside
+	\begin{center}
+		\begin{tikzpicture}
+			\pgfmathsetmacro{\a}{-2}
+			\pgfmathsetmacro{\b}{1}
+			\pgfmathsetmacro{\c}{0}
+			\pgfmathsetmacro{\d}{3}
+			\draw[thick, stealth-stealth] (-4,0) -- (4,0) node [right] {$x$};
+			\draw[thick, xblue, Circle-Circle] (\a,0.25) -- (\b,0.25) node[pos=-0.1] {$a$} node [pos=1.1] {$b$};
+			\draw[thick, xred, Circle-Circle] (\c,-0.25) -- (\d,-0.25) node[pos=-0.1] {$c$} node [pos=1.1] {$d$};
+		\end{tikzpicture}
+	\end{center}
+	\caption{For two intervals $(a,b),(c,d)$ (assuming $a<b,c,d$) to overlap, the condition $c<b$ must be fulfilled.}
+	\label{fig:overlap_intervals}
+\end{figure}
+
+We can consider an AABB across each axis to be an interval: if the lower-left and upper-right corners of the AABB are at $\pnt{c}_{\text{LL}}=\left(x_{1},y_{1}\right)$ and $\pnt{c}_{\text{UR}}=\left(x_{2},y_{2}\right)$, respectively, then the vertical sides of the AABB are represented as an interval $I_{\text{horiz}}=\left(x_{1},x_{2}\right)$, and the horizontal sides by $I_{\text{vert}}=\left(y_{1},y_{2}\right)$ (\autoref{fig:AABB_as_two_intervals}).
+
+\begin{figure}
+	\begin{center}
+		\begin{tikzpicture}
+			\node[circle, minimum size=2cm, shape with bb={xgreen}] at (0,0) {};
+			\draw[thick, xred, Circle-Circle] ($(-1,-1)+(-0.1,-0.25)$) -- ++($(2,0)+(0.2,0)$) node[pos=0, below] {$x_{1}$} node [pos=1, below] {$x_{2}$};
+			\draw[thick, xred, Circle-Circle] ($(1,-1)+(0.25,-0.1)$) -- ++($(0,2)+(0,0.2)$) node[pos=0, right] {$y_{1}$} node [pos=1, right] {$y_{2}$};
+		\end{tikzpicture}
+	\end{center}
+	\caption{The sides of an AABB as two intervals $I_{\text{horiz}}=\left(x_{1},x_{2}\right)$ and $I_{\text{vert}}=\left(y_{1},y_{2}\right)$.}
+	\label{fig:AABB_as_two_intervals}
+\end{figure}
+
+Two AABBs overlap \textbf{if and only if} both their horizontal and vertical intervals overlap (\autoref{fig:AABB_axis_overlap})
+
+\begin{figure}
+	\begin{center}
+		\begin{tikzpicture}[every node/.style={circle, font=\large}]
+			\node[minimum size=2cm, shape with bb={xgreen}] at (0,0) {1};
+			\node[minimum size=1.5cm, shape with bb={xblue}] at (1,2) {2};
+			\node[minimum size=1.75cm, shape with bb={xpurple}] at (-2,-1) {3};
+			\node[minimum size=1cm, shape with bb={xorange}] at (1.25,-1.25) {4};
+		\end{tikzpicture}
+	\end{center}
+	\caption{Four circles with different overlaps between their AABBs: 1-2 and 2-4 overlap horizontally only. 1-3 and 3-4 overlap vertically only. 1-4 overlap in both directions.}
+	\label{fig:AABB_axis_overlap}
 \end{figure}
 
 \section{Brownian dynamics}
