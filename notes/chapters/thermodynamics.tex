@@ -299,7 +299,7 @@ When two objects collide, their AABBs necessarily overlap (\autoref{fig:AABB_2})
 	\label{fig:AABB_2}
 \end{figure}
 
-We first examine the conditions for an overlap in a single dimension: given two intervals $I_{1}=(a,b)$ and $I_{2}=(c,d)$, let's assume without loss of generality that $a$ is the smallest number of the four quantities $a,b,c$ and $d$. The condition for overlap between the two intervals is simply $c<b$, i.e. that the left-most point of $I_{2}$ is to the \textit{left} of the right-most point of $I_{1}$ (\autoref{fig:overlap_intervals}).
+We first examine the conditions for an overlap in a single dimension: given two intervals $I_{1}=[a,b]$ and $I_{2}=[c,d]$, let's assume without loss of generality that $a$ is the smallest number of the four quantities $a,b,c$ and $d$. The condition for overlap between the two intervals is simply $c<b$, i.e. that the left-most point of $I_{2}$ is to the \textit{left} of the right-most point of $I_{1}$ (\autoref{fig:overlap_intervals}).
 
 \begin{figure}
 	\forcecaptionside
@@ -318,7 +318,7 @@ We first examine the conditions for an overlap in a single dimension: given two 
 	\label{fig:overlap_intervals}
 \end{figure}
 
-We can consider an AABB across each axis to be an interval: if the lower-left and upper-right corners of the AABB are at $\pnt{c}_{\text{LL}}=\left(x_{1},y_{1}\right)$ and $\pnt{c}_{\text{UR}}=\left(x_{2},y_{2}\right)$, respectively, then the vertical sides of the AABB are represented as an interval $I_{\text{horiz}}=\left(x_{1},x_{2}\right)$, and the horizontal sides by $I_{\text{vert}}=\left(y_{1},y_{2}\right)$ (\autoref{fig:AABB_as_two_intervals}).
+We can consider an AABB across each axis to be an interval: if the lower-left and upper-right corners of the AABB are at $\pnt{c}_{\text{LL}}=\left(x_{1},y_{1}\right)$ and $\pnt{c}_{\text{UR}}=\left(x_{2},y_{2}\right)$, respectively, then the vertical sides of the AABB are represented as an interval $I_{\text{horiz}}=\left[x_{1},x_{2}\right]$, and the horizontal sides by $I_{\text{vert}}=\left[y_{1},y_{2}\right]$ (\autoref{fig:AABB_as_two_intervals}).
 
 \begin{figure}
 	\begin{center}
@@ -328,7 +328,7 @@ We can consider an AABB across each axis to be an interval: if the lower-left an
 			\draw[thick, xred, Circle-Circle] ($(1,-1)+(0.25,-0.1)$) -- ++($(0,2)+(0,0.2)$) node[pos=0, right] {$y_{1}$} node [pos=1, right] {$y_{2}$};
 		\end{tikzpicture}
 	\end{center}
-	\caption{The sides of an AABB as two intervals $I_{\text{horiz}}=\left(x_{1},x_{2}\right)$ and $I_{\text{vert}}=\left(y_{1},y_{2}\right)$.}
+	\caption{The sides of an AABB as two intervals $I_{\text{horiz}}=\left[x_{1},x_{2}\right]$ and $I_{\text{vert}}=\left[y_{1},y_{2}\right]$.}
 	\label{fig:AABB_as_two_intervals}
 \end{figure}
 
