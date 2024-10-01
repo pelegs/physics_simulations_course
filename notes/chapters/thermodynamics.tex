@@ -286,4 +286,37 @@ In the case of a circle of radius $r$, its AABB is a square of side $2r$ with th
 \end{equation}
 where LL stands for \enquote{Lower-Left} and UR stands for \enquote{Upper-Right}.
 
+When two objects collide, their AABBs overlap (\autoref{fig:AABB_2}).
+
+\begin{figure}
+	\begin{center}
+		\begin{tikzpicture}
+			\tikzset{
+				bsphere/.style n args={2}{circle, thick, draw=#1, fill=#1!30, minimum size=#2, inner sep=0pt, outer sep=0pt},
+				sp1/.style={bsphere={xblue}{1.5cm}},
+				sp2/.style={bsphere={xgreen}{1.25cm}},
+			}
+			\begin{scope}[local bounding box=circ1_aabb]
+				\node[sp1] at (0,0) {};
+			\end{scope}
+			\draw[xred] (circ1_aabb.south west) rectangle (circ1_aabb.north east);
+			\begin{scope}[local bounding box=circ2_aabb]
+				\node[sp2] at (-2,1) {};
+			\end{scope}
+			\draw[xred] (circ2_aabb.south west) rectangle (circ2_aabb.north east);
+
+			\begin{scope}[local bounding box=circ1_aabb]
+				\node[sp1] at (0.25,-3.1) {};
+			\end{scope}
+			\draw[xred] (circ1_aabb.south west) rectangle (circ1_aabb.north east);
+			\begin{scope}[local bounding box=circ2_aabb]
+				\node[sp2] at (-1,-2) {};
+			\end{scope}
+			\draw[xred] (circ2_aabb.south west) rectangle (circ2_aabb.north east);
+		\end{tikzpicture}
+	\end{center}
+	\caption{Text.}
+	\label{fig:AABB_2}
+\end{figure}
+
 \section{Brownian dynamics}
