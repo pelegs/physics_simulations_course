@@ -63,6 +63,7 @@ If we measure the angle $\theta$ in degrees, we get that the units of angular ve
 A much better approach is to measure the \textit{ratio} between the length of an arc created by our angle at a radius $R$ and the same radius itself (\autoref{fig:radians_measure}). This gives a unitless measure which we call \textit{radians}, and can be either ignored in the unit calculation (since it is unitless), or simply denoted \SI{}{\radian}.
 
 \begin{figure}
+	\forcecaptionside
 	\begin{center}
 		\begin{tikzpicture}
 			\pgfmathsetmacro{\R}{2}
@@ -229,9 +230,72 @@ Calculating the general $n$-th derivative of \autoref{eq:exp_series_expansion} i
 	\od[2]{}{x}s(x) & = 2 + 6x + 12x^{2} + \dots,         \\
 	\od[3]{}{x}s(x) & = 6 + 24x + \dots,
 \end{align*}
-and if we subtitute $x=0$ we get
+and if we subtitute $x=0$ we get\dots TBW!
 
 % Continue like here and note the difference: https://math.stackexchange.com/questions/209320/where-do-the-factorials-come-from-in-the-taylor-series
+
+The most general polynomial expansion of a smooth function $f(x)$ is an infinite polynomial in $x$:
+\begin{equation}
+	P(x) = a_{0} + a_{1}x + a_{2}x^{2} + a_{3}x^{3} + \dots
+	\label{eq:general_polynomial_in_x}
+\end{equation}
+If $P(x)=f(x)$ then all their derivatives are the equal, i.e.
+\begin{equation}
+	\begin{aligned}
+		f'(x)      & = P'(x) = a_{1} + 2a_{2}x + 3a_{3}x^{2} + 4a_{4}x^{3} + \dots      \\
+		f''(x)     & = P''(x) = 2a_{2} + (2\cdot3)a_{3}x + (4\cdot3)a_{4}x^{2} + \dots, \\
+		f'''(x)    & = P'''(x) = (2\cdot3)a_{3} + (4\cdot3\cdot2)a_{4}x + \dots,        \\
+		f''''(x)   & = P''''(x) = (4\cdot3\cdot2)a_{4} + \dots,                         \\
+		           & \vdots                                                             \\
+		f^{(n)}(x) & = P^{(n)}(x) = n!a_{n} + \dots,                                    \\
+		           & \vdots
+	\end{aligned}
+	\label{eq:polynomial_function_derivative_equality}
+\end{equation}
+Subtituting $x=0$ into the equality we get
+\begin{equation}
+	\begin{aligned}
+		f'(0)      & = P'(0) = a_{1} + \cancel{2a_{2}x} + \cancel{3a_{3}x^{2}} + \cancel{4a_{4}x^{3}} + \cancel{\dots}\\
+		f''(0)     & = P''(0) = 2a_{2} + \cancel{(2\cdot3)a_{3}x} + \cancel{(4\cdot3)a_{4}x^{2}} + \cancel{\dots},\\
+		f'''(0)    & = P'''(0) = (2\cdot3)a_{3} + \cancel{(4\cdot3\cdot2)a_{4}x} + \cancel{\dots},\\
+		f''''(0)   & = P''''(0) = (4\cdot3\cdot2)a_{4} + \cancel{\dots},\\
+		           & \vdots\\
+		f^{(n)}(0) & = P^{(n)}(x) = n!a_{n} + \cancel{\dots},\\
+		           & \vdots
+	\end{aligned}
+	\label{eq:polynomial_function_derivatives_at_0}
+\end{equation}
+or more succinctly:
+\begin{equation}
+	a_{n} = \frac{f^{n}(x)}{n!}.
+	\label{eq:taylor_coefficients}
+\end{equation}
+Therefore, the full taylor polynomial for $f(x)$ is
+\begin{equation}
+	\begin{aligned}
+		P(x) &= f(0) + f'(0)x + \frac{f''(0)}{2}x^{2} + \frac{f'''(0)}{3!}x^{3} + \frac{f''''(0)}{4!}x^{4} + \dots\\
+			 &= \sum\limits_{n=0}^{\infty}\frac{f^{(n)}(0)}{n!}x^n.
+	\end{aligned}
+	\label{eq:taylor_series_around_0_full}
+\end{equation}
+If we take only the first $N$ terms in $P(x)$ we get
+\begin{equation}
+	P_{N}(x) = \sum\limits_{n=0}^{N}\frac{f^{(n)}(x)}{n!}x^{n}.
+	\label{eq:partial_taylor_sum}
+\end{equation}
+
+\begin{note}{$(N+1)$-th derivative an $N$-th partial Taylor sum}{}
+	Since the $N$-th partial sum of any taylor series $P(x)$ is 
+	\[
+		P_{N}(x)=\sum\limits_{n=0}^{N}\frac{f^{(n)}(x)}{n!}x^{n},
+	\]
+	all terms except $\frac{a_{N}}{N!}$ cancel out by the $N$-derivative. And at the $(N+1)$-derivative this term cancels out as well, since its a constant. Therefore from its $(N+1)$-th term and on, the partial sum $P_{N}(x)$ reduces to zero:
+	\[
+		P^{(k>N)}(x) = 0.
+	\]
+\end{note}
+
+TBW: remainder of Taylor approximation.
 
 \subsection{Projections, rejections and the dot product}
 Every vector $\vec{a}\in\Rs[n]$ can be decomposed into two components: one in the direction of another vector $\vec{b}$, and one orthogonal to $\vec{b}$. These components are called, respectively, the \textbf{projection} of $\vec{a}$ onto $\vec{b}$ and the \textbf{rejection} of $\vec{a}$ from $\vec{b}$. In $\Rs[3]$ the same procedure can be applied to projecting a vector onto- and rejecting it from a plane, since every plane in $\Rs[3]$ has a single normal vector up to a sign (\autoref{fig:projection_rejection_of_vector}).
