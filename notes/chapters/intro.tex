@@ -295,7 +295,32 @@ If we take only the first $N$ terms in $P(x)$ we get
 	\]
 \end{note}
 
-TBW: remainder of Taylor approximation.
+Since in practice we can't use the full Taylor series to approximate a function at a point, we must intelligently choose how many terms we want to use to get a \enquote{good enough} approximation - that is, we want that the differemce between our polynomial approximation is the actual function to be no more than some value $\Delta$:
+\begin{equation}
+	\left|f(a) - P_{n}(a)\right| \leq \Delta.
+	\label{eq:taylor_error_1}
+\end{equation}
+
+We can construct a \newterm{remainder function} which gives the difference between the actual function value and out $n$-th degree approximation at every point on the interval $I=[0, a]$:
+\begin{equation}
+	R_{n}(x) = f(x) - P_{n}(x).
+	\label{eq:taylor_error_2}
+\end{equation}
+
+Thanks to Lagrange and other great mathematicians, the following always holds for the remainder function: if the the $n+1$-th derivative of the original function is bounded on the open interval $(0, a)$, i.e.
+\begin{equation}
+	\left| f^{(n+1)}(x) \right| \leq M,
+\end{equation}
+then there's a finite value $M$ such that
+\begin{equation}
+	\left| R_{n}(x) \right| \leq \left| \frac{Mx^{n+1}}{(n+1)!} \right|.
+	\label{eq:lagrange_error_bound}
+\end{equation}
+This is called the \newterm{Lagrange error bound}. No proof is provided for it in this course (TBW: add reference to one?).
+
+\begin{example}{Lagrange error bound}{}
+	TBW
+\end{example}
 
 \subsection{Projections, rejections and the dot product}
 Every vector $\vec{a}\in\Rs[n]$ can be decomposed into two components: one in the direction of another vector $\vec{b}$, and one orthogonal to $\vec{b}$. These components are called, respectively, the \textbf{projection} of $\vec{a}$ onto $\vec{b}$ and the \textbf{rejection} of $\vec{a}$ from $\vec{b}$. In $\Rs[3]$ the same procedure can be applied to projecting a vector onto- and rejecting it from a plane, since every plane in $\Rs[3]$ has a single normal vector up to a sign (\autoref{fig:projection_rejection_of_vector}).
