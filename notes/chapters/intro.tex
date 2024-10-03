@@ -319,7 +319,44 @@ then there's a finite value $M$ such that
 This is called the \newterm{Lagrange error bound}. No proof is provided for it in this course (TBW: add reference to one?).
 
 \begin{example}{Lagrange error bound}{}
-	TBW
+	Let's calculate what is the minimum $n$ needed to calculate $\cos(0.25)$ to within $\Delta=10^{-3}=0.001$ using a Taylor series: the first four derivatives of $\cos(x)$ are 
+
+	\begin{center}
+		\tikz{
+			\node (c)  at (0,0)  {$\cos(x)$};
+			\node (-s) at (2,0)  {$-\sin(x)$};
+			\node (-c) at (2,-2) {$-\cos(x)$};
+			\node (s)  at (0,-2) {$\sin(x)$};
+			\draw[->] (c)  --  (-s) node [midway, above] {$\od{}{x}$};
+			\draw[->] (-s) --  (-c) node [midway, right] {$\od{}{x}$};
+			\draw[->] (-c) --  (s)  node [midway, below] {$\od{}{x}$};
+			\draw[->] (s)  --  (c)  node [midway, left]  {$\od{}{x}$};
+		}
+	\end{center}
+
+	All of these functions are bounded to the interval $[-1,1]$, and so their absolute value is bounded by $1$. We can replace $M$ in \autoref{eq:lagrange_error_bound} by $1$ and we get
+	\[
+		\left| R_{n}(0.25) \right| \leq \left| \frac{0.25^{n+1}}{(n+1)!} \right|.
+	\]
+
+	It's rather difficult to isolate $n$ from this relation, but we can simply substitute different values to it until we get a result smaller than $10^{-3}$:
+
+	\begin{center}
+		\begin{tabular}{l|l}
+			\toprule
+			$n$ & $\left| R_{n} \right| $ \\ 
+			\midrule
+			$0$ & $\frac{1}{4^{1}\cdot1!} = 0.25$ \\
+			$1$ & $\frac{1}{4^{2}\cdot2!} = 0.03125$ \\
+			$2$ & $\frac{1}{4^{3}\cdot3!} \approx 0.0026$ \\
+			$3$ & $\frac{1}{4^{4}\cdot4!} \approx 0.0001627$ \\
+			\bottomrule
+		\end{tabular}
+	\end{center}
+
+	\vspace{1em}
+	Meaning that we need at least the $n=3$ term to reach our required precision.
+
 \end{example}
 
 \subsection{Projections, rejections and the dot product}
