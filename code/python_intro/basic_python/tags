@@ -1,0 +1,132 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_EXCMD	mixed	/number, pattern, mixed, or combineV2/
+!_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PATTERN_LENGTH_LIMIT	96	/0 for no limit/
+!_TAG_PROC_CWD	/home/pelegs/prog/python/python_common_mistakes/	//
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	5.9.0	/p5.9.20220828.0/
+A	basic_python.py	/^A = [1, 2, 3, 4]$/;"	v
+Employee	basic_python.py	/^class Employee(Person):$/;"	c
+N	optimizations.py	/^N = 100000$/;"	v
+Person	basic_python.py	/^class Person:$/;"	c
+Point	common.py	/^Point = namedtuple('Point', ['x', 'y'])$/;"	v
+X	basic_python.py	/^X = ['a', 'b']$/;"	v
+__init__	basic_python.py	/^    def __init__(self, first_name, last_name):$/;"	m	class:Person
+__init__	basic_python.py	/^    def __init__(self, first_name, last_name, company):$/;"	m	class:Employee
+__str__	basic_python.py	/^    def __str__(self):$/;"	m	class:Employee
+__str__	basic_python.py	/^    def __str__(self):$/;"	m	class:Person
+a	basic_python.py	/^a = 'foo'$/;"	v
+a	basic_python.py	/^a = 2$/;"	v
+a	basic_python.py	/^a = 30 # int$/;"	v
+a	common.py	/^a = -1$/;"	v
+a	common.py	/^a = 3.1$/;"	v
+a	common.py	/^a = True and False$/;"	v
+a	common.py	/^a = b = c = 0$/;"	v
+a	common.py	/^a, b, c = (-50, 20, 'test')$/;"	v
+a	common.py	/^a, b, c, d = 10, 20, -50, 35$/;"	v
+animals_list	common.py	/^animals_list = ['Dog', 'Cat', 'Turtle', 'Rabbit', 'Bear', 'Tapir', 'Dolphin']$/;"	v
+animals_list	common.py	/^animals_list = ['Tapir', 'Dog', 'Cat', 'Turtle', 'Bear']$/;"	v
+animals_list	common.py	/^animals_list = ['Tapir', 'Dog', 'Cat', 'Turtle']$/;"	v
+append	optimizations.py	/^def append(n):$/;"	f
+arr	common.py	/^arr = ['foo', 'bar', 'baz', 'bla', 'yo']$/;"	v
+b	basic_python.py	/^b = 1.337 # float$/;"	v
+b	basic_python.py	/^b = 1.5$/;"	v
+b	basic_python.py	/^b = 3$/;"	v
+b	basic_python.py	/^b = True and False$/;"	v
+b	common.py	/^a, b, c = (-50, 20, 'test')$/;"	v
+b	common.py	/^a, b, c, d = 10, 20, -50, 35$/;"	v
+b	common.py	/^b = 'text'$/;"	v
+b	common.py	/^b = 1 < 5$/;"	v
+c	common.py	/^a, b, c = (-50, 20, 'test')$/;"	v
+c	common.py	/^a, b, c, d = 10, 20, -50, 35$/;"	v
+c	common.py	/^c = a or b$/;"	v
+capitals	basic_python.py	/^capitals = {$/;"	v
+capitals	common.py	/^capitals = {$/;"	v
+colors_list	common.py	/^colors_list = ['Orange', 'Green', 'Blue', 'Purple', 'Pink', 'Red', 'White']$/;"	v
+comprh	optimizations.py	/^def comprh(n):$/;"	f
+d	common.py	/^a, b, c, d = 10, 20, -50, 35$/;"	v
+d	common.py	/^d, e = ['Hi', 'Hello']$/;"	v
+devops_cols	common.py	/^devops_cols = {dev: col for dev, col in zip(devops_list, colors_list)}$/;"	v
+devops_list	common.py	/^devops_list = ['Aaron', 'Alemseged', 'Emanuel', 'Frauke', 'Nehru', 'Peleg', 'Satya']$/;"	v
+e	basic_python.py	/^e = Employee('Jane', 'Doe', 'exocad')$/;"	v
+e	common.py	/^d, e = ['Hi', 'Hello']$/;"	v
+even_nums	common.py	/^even_nums = [n for n in range(20) if n%2==0]$/;"	v
+func	basic_python.py	/^def func(x, y, z=10):$/;"	f
+func	common.py	/^def func(x, lst=[]):$/;"	f
+func	mylib.py	/^def func(n):$/;"	f
+generator	optimizations.py	/^def generator():$/;"	f
+generator	optimizations.py	/^generator = t2.timeit(reps)$/;"	v
+i	basic_python.py	/^i = 0$/;"	v
+iterator	optimizations.py	/^iterator =  t1.timeit(reps)$/;"	v
+jumping_nums	common.py	/^jumping_nums = [n if n%2==0 else -n for n in range(20)]$/;"	v
+l	basic_python.py	/^l = [1, 2, -3, 'a', False, 7.5]$/;"	v
+len	mylib.py	/^    def len(self):$/;"	m	class:xstr
+letters	common.py	/^letters = ['a', 'b', 'c', 'd', 'e']$/;"	v
+lib	common.py	/^import mylib as lib$/;"	I	nameref:module:mylib
+lines_len	common.py	/^    lines_len = {$/;"	v
+lst	common.py	/^lst = ['foo', 'bar', 'baz', 'bla', 'yo']$/;"	v
+lst	common.py	/^lst = [(n, l) for n in nums for l in letters]$/;"	v
+lst	common.py	/^lst = [(n, l) for n, l in zip(nums, letters)]$/;"	v
+lst	common.py	/^lst = [1, 'a', True, 'cow', [0, 1, 2, 3], 2, somefunc, 5]$/;"	v
+lst	common.py	/^lst = [1,2,3,4,5]$/;"	v
+mltxt1	basic_python.py	/^mltxt1 = """$/;"	v
+mltxt2	basic_python.py	/^mltxt2 = '''$/;"	v
+n	basic_python.py	/^n = 3$/;"	v
+natlang	common.py	/^natlang = {$/;"	v
+no_return	basic_python.py	/^def no_return(a):$/;"	f
+np	basic_python.py	/^import numpy as np$/;"	I	nameref:module:numpy
+npsum	optimizations.py	/^from numpy import arange, sum as npsum$/;"	x	nameref:unknown:sum
+numbers	optimizations.py	/^numbers = uniform(size=10000)$/;"	v
+nums	common.py	/^nums = [1, 2, 3, 4, 5]$/;"	v
+p	basic_python.py	/^p = Person('Danny', 'Mendel')$/;"	v
+p	common.py	/^p = Point(3, -5)$/;"	v
+p	optimizations.py	/^p = Path('.').rglob('*.txt')$/;"	v
+perms	basic_python.py	/^from itertools import permutations as perms$/;"	x	nameref:unknown:permutations
+pi	basic_python.py	/^pi = 3.1415926535897932384626433 # another float$/;"	v
+reps	optimizations.py	/^reps = 100 # List should be faster$/;"	v
+reps	optimizations.py	/^reps = 200$/;"	v
+reps	optimizations.py	/^reps = 50$/;"	v
+s	basic_python.py	/^s = "something"$/;"	v
+somefunc	common.py	/^def somefunc():$/;"	f
+sqr	basic_python.py	/^def sqr(n):$/;"	f
+sqr_gen	optimizations.py	/^def sqr_gen(nums):$/;"	f
+sqr_list	optimizations.py	/^def sqr_list(nums):$/;"	f
+st	common.py	/^st = set([1, 2, 3, 1, 2, 1, 1, 3, 4, 5, 1, 2, 1, 1, 5])$/;"	v
+st2	common.py	/^st2 = set([True, (1,1,1), (1,1,1), None, (1,1,1,1), False, (1,1,1), (1,1,1,1), True, None, None]/;"	v
+sum	basic_python.py	/^def sum(a: int, b: int) -> int:$/;"	f	typeref:typename:int
+sum_direct	optimizations.py	/^def sum_direct(n):$/;"	f
+sum_for	optimizations.py	/^def sum_for(n):$/;"	f
+sum_np_arange	optimizations.py	/^def sum_np_arange(n):$/;"	f
+sum_numpy	optimizations.py	/^def sum_numpy(n):$/;"	f
+sum_while	optimizations.py	/^def sum_while(n):$/;"	f
+t1	optimizations.py	/^t1 = Timer(lambda: append(N))$/;"	v
+t1	optimizations.py	/^t1 = Timer(lambda: sqr_list(numbers))$/;"	v
+t1	optimizations.py	/^t1 = Timer(lambda: sum_while(N))$/;"	v
+t2	optimizations.py	/^t2 = Timer(lambda: comprh(N))$/;"	v
+t2	optimizations.py	/^t2 = Timer(lambda: sqr_gen(numbers))$/;"	v
+t2	optimizations.py	/^t2 = Timer(lambda: sum_for(N))$/;"	v
+t3	optimizations.py	/^t3 = Timer(lambda: [x for x in sqr_gen(numbers)])$/;"	v
+t3	optimizations.py	/^t3 = Timer(lambda: sum_direct(N))$/;"	v
+t4	optimizations.py	/^t4 = Timer(lambda: sum_numpy(N))$/;"	v
+t5	optimizations.py	/^t5 = Timer(lambda: sum_np_arange(N))$/;"	v
+test	basic_python.py	/^test = sum(1, 4.4)$/;"	v
+tup	common.py	/^tup = (1, 5, 'b', False, (0, 0, 0), [1, 1, 1])$/;"	v
+txt	common.py	/^    txt = file.read()$/;"	v
+txt	common.py	/^    txt = file.readlines()$/;"	v
+txt	common.py	/^txt = """$/;"	v
+txt1	basic_python.py	/^txt1 = "I'm a text, and I can use single quotes. Double quotes, i.e. \\", must be escaped."$/;"	v
+txt2	basic_python.py	/^txt2 = 'I\\'m also a text! Here\\'s a quote: "bla bla bla".'$/;"	v
+word_count	common.py	/^    word_count = [len(line.split()) for line in file.readlines()]$/;"	v
+word_count	common.py	/^word_count = []$/;"	v
+words_list	common.py	/^words_list = ['foo', 'bar', 'baz', 'bla', 'yo', 'aaa', 'ooo']$/;"	v
+words_list	common.py	/^words_list = ['foo', 'bar', 'baz', 'bla', 'yo']$/;"	v
+x	basic_python.py	/^x = 2.5 + 0.1$/;"	v
+x	basic_python.py	/^x = 64321277$/;"	v
+xs	common.py	/^xs = [1, 2, 3, 4, 5, 6, 7]$/;"	v
+xstr	mylib.py	/^class xstr(UserString):$/;"	c
+ys	common.py	/^ys = [x**2 for x in xs]$/;"	v
+z	basic_python.py	/^z = 1 + 2j$/;"	v
