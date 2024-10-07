@@ -295,6 +295,100 @@ If we take only the first $N$ terms in $P(x)$ we get
 	\]
 \end{note}
 
+\begin{example}{Taylor series of $\EX{x}$}{}
+	Any order derivative of $\EX{x}$ is equal to $\EX{x}$ itself, i.e. in more mathematical notation:
+	\[
+		\od[n]{}{x}\EX{x} = \EX{x},\ \forall n\in\mathbb{N}.
+	\]
+	Thus, we know the value at $x=0$ of any order derivative of $\EX{x}$:
+	\[
+		\left.\od[n]{}{x}\EX{x}\right|_{x=0} = \EX{0} = 1.
+	\]
+	The Taylor series of $\EX{x}$ is therefore very easy to calculate around $x=0$:
+	\[
+		\begin{aligned}
+			\EX{x} &= \sum\limits_{k=0}^{\infty}\frac{\EX{(n)}(0)}{n!}x^{n}\\
+				   &= \frac{1}{0!}x^{0} + \frac{1}{1!}x^{1} + \frac{1}{2!}x^{2} + \frac{1}{3!}x^{3} + \dots\\
+				   &= 1 + x + \frac{1}{2}x^{2} + \frac{1}{3!}x^{3} + \frac{1}{4!}x^{4} + \dots
+		\end{aligned}
+	\]
+\end{example}
+
+\begin{example}{Taylor series of $\sin{x}$ and $\cos(x)$}{}
+	The derivatives of both $\sin(x)$ and $\cos(x)$ are periodic:
+
+	\begin{center}
+		\tikz{
+			\node (c)  at (0,0)  {$\cos(x)$};
+			\node (-s) at (2,0)  {$-\sin(x)$};
+			\node (-c) at (2,-2) {$-\cos(x)$};
+			\node (s)  at (0,-2) {$\sin(x)$};
+			\draw[->] (c)  --  (-s) node [midway, above] {$\od{}{x}$};
+			\draw[->] (-s) --  (-c) node [midway, right] {$\od{}{x}$};
+			\draw[->] (-c) --  (s)  node [midway, below] {$\od{}{x}$};
+			\draw[->] (s)  --  (c)  node [midway, left]  {$\od{}{x}$};
+		}
+	\end{center}
+
+	And here it is summed as a table:
+
+	\begin{center}
+		\begin{tabular}{lll}
+			\toprule
+			$n$ & $\od[n]{}{x}\sin(x)$ & $\od[n]{}{x}\cos(x)$\\
+			\midrule
+			0 & $\sin(x)$  & $\cos(x)$  \\
+			1 & $\cos(x)$  & $-\sin(x)$ \\
+			2 & $-\sin(x)$ & $-\cos(x)$ \\
+			3 & $-\cos(x)$ & $\sin(x)$  \\
+			4 & $\sin(x)$  & $\cos(x)$  \\
+			5 & $\cos(x)$  & $-\sin(x)$ \\
+			\multicolumn{3}{c}{$\vdots$}\\
+			\bottomrule
+		\end{tabular}
+	\end{center}
+
+	And since
+	\[
+		\begin{aligned}
+			\sin(0) &= -\sin(0) = 0,\\
+			\cos(0) &= 1,\\
+			-\cos(0) &= -1,
+		\end{aligned}
+	\]
+	we can easily derive the Taylor series for both functions around $x=0$:
+	\[
+		\begin{aligned}
+			\sin(x) &= \sum\limits_{k=0}^{\infty}\frac{\sin^{(n)}(0)}{n!}x^{n}\\
+					&= \frac{\sin(0)}{0!}x^{0} + \frac{\cos(0)}{1!}x^{1} + \frac{-\sin(0)}{2!}x^{2} + \frac{-\cos(0)}{3!}x^{3} + \dots\\
+					&= 0 + x + 0 -x^{3} + 0 + x^{5} + 0 - x^{7} + 0 + \dots\\
+					&= x -x^{3} + x^{5} - x^{7} + \dots\\
+			\cos(x) &= \sum\limits_{k=0}^{\infty}\frac{\cos^{(n)}(0)}{n!}x^{n}\\
+					&= \frac{\cos(0)}{0!}x^{0} + \frac{-\sin(0)}{1!}x^{1} + \frac{-\cos(0)}{2!}x^{2} + \frac{\sin(0)}{3!}x^{3} + \dots\\
+					&= 1 + 0 - x^{2} + 0 + x^{4} + 0 - x^{6} + \dots\\
+					&= 1 - x^{2} + x^{4} - x^{6} + \dots
+		\end{aligned}
+	\]
+\end{example}
+
+Looking at the above results for $\EX{x},\ \sin(x)$ and $\cos(x)$, one can derive a nice connection: notice that 
+\begin{equation}
+	\iu^{0}=1,\ \iu^{1}=\iu,\ \iu^{2}=-1,\ \iu^{3}=-\iu,\ \iu^{4}=1,\ \iu^{5}=\iu,\ \dots
+	\label{eq:powers_of_i}
+\end{equation}
+and if we plug $\iu x$ into the Taylor expansion of $\EX{x}$ we get
+\begin{equation}
+	\begin{aligned}
+		\EX{ix} &= 1 + \iu x + \frac{1}{2!}(\iu x)^{2} + \frac{1}{3!}{\iu x}^{3} + \frac{1}{4!}{\iu x}^{4} + \frac{1}{5!}{\iu x}^{5}\\
+				&= \iu^{0} + \iu^{1}x + \frac{1}{2!}\iu^{2}x^{2} + \frac{1}{3!}\iu^{3}x^{3} + \frac{1}{4!}\iu^{4}x^{4} + \frac{1}{5!}\iu^{5}x^{5} + \dots\\
+				&= 1 + \iu x - \frac{1}{2!}x^{2} - \frac{1}{3!}\iu x^{3} + \frac{1}{4!}x^{4} + \frac{1}{5!}\iu x^{5} + \dots\\
+				&= 1 + - \frac{1}{2!}x^{2} + \frac{1}{4!}x^{4} + \dots + \iu x - \iu\frac{1}{3!}x^{3} + \iu\frac{1}{5!}x^{5} + \dots\\
+				&= \left(1 + - \frac{1}{2!}x^{2} + \frac{1}{4!}x^{4} + \dots\right) + \iu \left(x - \frac{1}{3!}x^{3} + \frac{1}{5!}x^{5} + \dots\right)\\
+				&= \cos(x) + \iu\sin(x).
+	\end{aligned}
+	\label{eq:eulers_formula}
+\end{equation}
+
 Since in practice we can't use the full Taylor series to approximate a function at a point, we must intelligently choose how many terms we want to use to get a \enquote{good enough} approximation - that is, we want that the differemce between our polynomial approximation is the actual function to be no more than some value $\Delta$:
 \begin{equation}
 	\left|f(a) - P_{n}(a)\right| \leq \Delta.
@@ -356,7 +450,6 @@ This is called the \newterm{Lagrange error bound}. No proof is provided for it i
 
 	\vspace{1em}
 	Meaning that we need at least the $n=3$ term to reach our required precision.
-
 \end{example}
 
 \subsection{Projections, rejections and the dot product}
