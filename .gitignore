@@ -11,7 +11,7 @@ auxfiles/
 hgerhards/
 other_course/
 *.mp4
-*.txt
 *.npy
 *.npz
+code/**/*.txt
 code/**/*.json
