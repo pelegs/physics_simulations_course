@@ -12,7 +12,7 @@ print(s, type(s))
 print(b, type(b))
 print(n + x, type(n + x))
 # print(s + n)
-# print(s + str(n))
+print(s + str(n))
 
 # ----- Strings ----- #
 txt1 = "I'm a text, and I can use single quotes."
@@ -36,10 +36,10 @@ print(mltxt2)
 
 a = "foo"
 b = 3
-print("my var is a=", a, "and also b=", b, ".")
+# print("my var is a=", a, "and also b=", b, ".")
 # print('my var is a=' + a + 'and also b=' + b + '.')
 # print('my var is a=' + a + ' and also b=' + str(b) + '.')
-# print(f'my var is {a}, and also b={b}.')
+print(f"my var is {a}, and also b={b}.")
 # print(f"""Multiline strings can also be formatted.
 # Here for example a = '{a}' and b = {b}.
 # Hooray!
@@ -61,12 +61,13 @@ print(f"x = {x:x}")  # hexadecimal
 
 # ----- Lists and dictionaries ----- #
 lst = [1, 2, -3, "a", False, 7.5]
-print(lst)
-print(lst[-1])
-lst += [0, 0]
-print(lst)
-del lst[1]
-print(lst)
+# print(lst)
+# print(lst[-19])
+# lst += [0, 0]
+# print(lst)
+# del lst[1]
+# print(lst)
+print(lst[2:])
 
 capitals = {
     "Germany": "Berlin",
@@ -76,7 +77,8 @@ capitals = {
     "Sweden": "Stockholm",
     "The Netherlands": "not the Hague",
 }
-print(capitals["Germany"])
+capitals["USA"] = "not NYC"
+print(capitals)
 
 # ----- Conditionals ----- #
 a = 2
@@ -97,10 +99,11 @@ while i < 10:
     print(i)
     i += 1
 
-for i in range(10):
-    if i == 5:
-        break
-    print(i)
+for j in range(5):
+    for i in range(10):
+        if i == 5:
+            break
+        print(j, i)
 
 
 # ----- Functions ----- #
