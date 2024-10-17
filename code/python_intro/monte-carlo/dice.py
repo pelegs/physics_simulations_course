@@ -1,0 +1,22 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+def get_distribution(runs, dice, sides):
+    vals = np.random.randint(low=1, high=sides + 1, size=(dice, runs))
+    sum_vals = np.sum(vals, axis=0)
+    bins = np.arange(dice, sides * dice + 2, 1)
+    return np.histogram(sum_vals, bins, density=True)
+
+
+if __name__ == "__main__":
+    hist, edges = get_distribution(1000000, 2, 6)
+
+    fig, ax = plt.subplots()
+    ax.set_title("Multiple dice value distribution", size=30)
+    ax.set_xlabel("Sum of sides", size=25)
+    ax.set_ylabel("Frequency", size=25)
+    ax.tick_params(labelsize=20)
+    ax.bar(edges[:-1], hist)
+
+    plt.show()
