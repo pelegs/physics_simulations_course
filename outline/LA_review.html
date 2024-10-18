@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <meta name="author" content="Peleg Bar Sapir" />
   <meta name="author" content="" />
-  <title>Physics simulations using python</title>
+  <title>Linear Algebra Review: Linear Transformations and Matrices</title>
   <style>
     html {
       color: #1a1a1a;
@@ -175,80 +175,77 @@
 </head>
 <body>
 <header id="title-block-header">
-<h1 class="title">Physics simulations using python</h1>
+<h1 class="title">Linear Algebra Review: Linear Transformations and
+Matrices</h1>
 <p class="author">Peleg Bar Sapir</p>
 <p class="author"></p>
 <p class="date">18-10-2024</p>
 </header>
-<h1 data-number="1" id="introduction"><span
-class="header-section-number">1</span> Introduction</h1>
-<h2 data-number="1.1" id="why-do-we-use-simulations"><span
-class="header-section-number">1.1</span> Why do we use simulations?</h2>
-<h2 data-number="1.2" id="python"><span
-class="header-section-number">1.2</span> Python</h2>
-<h3 data-number="1.2.1" id="basic-introduction-to-python"><span
-class="header-section-number">1.2.1</span> Basic introduction to
-python</h3>
-<h3 data-number="1.2.2" id="numpy"><span
-class="header-section-number">1.2.2</span> NumPy</h3>
-<h3 data-number="1.2.3" id="matplotlib"><span
-class="header-section-number">1.2.3</span> Matplotlib</h3>
-<h2 data-number="1.3" id="git"><span
-class="header-section-number">1.3</span> Git</h2>
-<h2 data-number="1.4" id="some-mathematics"><span
-class="header-section-number">1.4</span> Some mathematics</h2>
-<h3 data-number="1.4.1" id="radians-vs.-degrees"><span
-class="header-section-number">1.4.1</span> Radians vs. degrees</h3>
-<h3 data-number="1.4.2" id="taylor-series"><span
-class="header-section-number">1.4.2</span> Taylor series</h3>
-<h3 data-number="1.4.3" id="the-dot-product"><span
-class="header-section-number">1.4.3</span> The dot product</h3>
-<h1 data-number="2" id="newtonian-mechanics"><span
-class="header-section-number">2</span> Newtonian mechanics</h1>
-<h2 data-number="2.1" id="pendulum"><span
-class="header-section-number">2.1</span> Pendulum</h2>
-<h3 data-number="2.1.1" id="simple-pendulum"><span
-class="header-section-number">2.1.1</span> Simple pendulum</h3>
-<h3 data-number="2.1.2" id="small-angle-approximation"><span
-class="header-section-number">2.1.2</span> Small-angle
-approximation</h3>
-<h3 data-number="2.1.3" id="numerical-solution"><span
-class="header-section-number">2.1.3</span> Numerical solution</h3>
-<h3 data-number="2.1.4" id="damped-oscillation"><span
-class="header-section-number">2.1.4</span> Damped oscillation</h3>
-<h3 data-number="2.1.5" id="double-pendulum"><span
-class="header-section-number">2.1.5</span> Double pendulum</h3>
-<h2 data-number="2.2" id="gravity"><span
-class="header-section-number">2.2</span> Gravity</h2>
-<h3 data-number="2.2.1" id="gravitational-force"><span
-class="header-section-number">2.2.1</span> Gravitational force</h3>
-<h3 data-number="2.2.2" id="conic-sections"><span
-class="header-section-number">2.2.2</span> Conic sections</h3>
-<h3 data-number="2.2.3" id="basic-orbital-mechanics"><span
-class="header-section-number">2.2.3</span> Basic orbital mechanics</h3>
-<h3 data-number="2.2.4" id="n-body-problem"><span
-class="header-section-number">2.2.4</span> N-body problem</h3>
-<h3 data-number="2.2.5" id="integration-methods"><span
-class="header-section-number">2.2.5</span> Integration methods</h3>
-<h1 data-number="3" id="differential-euqations"><span
-class="header-section-number">3</span> Differential euqations</h1>
-<h2 data-number="3.1" id="background"><span
-class="header-section-number">3.1</span> Background</h2>
-<h2 data-number="3.2" id="the-wave-equation"><span
-class="header-section-number">3.2</span> The wave equation</h2>
-<h3 data-number="3.2.1" id="d-wave-equation"><span
-class="header-section-number">3.2.1</span> 1D wave equation</h3>
-<h3 data-number="3.2.2" id="d-wave-equation-1"><span
-class="header-section-number">3.2.2</span> 2D wave equation</h3>
-<h2 data-number="3.3" id="the-heat-equation"><span
-class="header-section-number">3.3</span> The heat equation</h2>
-<h1 data-number="4" id="thermodynamics"><span
-class="header-section-number">4</span> Thermodynamics</h1>
-<h2 data-number="4.1" id="ideal-gas"><span
-class="header-section-number">4.1</span> Ideal gas</h2>
-<h2 data-number="4.2" id="brownian-dynamics"><span
-class="header-section-number">4.2</span> Brownian dynamics</h2>
-<h2 data-number="4.3" id="molecular-dynamics"><span
-class="header-section-number">4.3</span> Molecular dynamics</h2>
+<h2 data-number="0.1" id="intro"><span
+class="header-section-number">0.1</span> Intro</h2>
+<h3 data-number="0.1.1"
+id="intro-las-take-vectors-and-return-vectors.-using-pictures-as-representing-all-vectors-in-a-region."><span
+class="header-section-number">0.1.1</span> Intro: LAs take vectors and
+return vectors. Using pictures as representing all vectors in a
+region.</h3>
+<h3 data-number="0.1.2"
+id="examples-of-las-in-2d-scaling-rotation-shear-mirror-project."><span
+class="header-section-number">0.1.2</span> Examples of LAs in 2D:
+scaling, rotation, shear, mirror, project.</h3>
+<h2 data-number="0.2" id="more-math"><span
+class="header-section-number">0.2</span> More math</h2>
+<h3 data-number="0.2.1"
+id="more-rigorous-definition-addition-scaling."><span
+class="header-section-number">0.2.1</span> More rigorous definition:
+addition + scaling.</h3>
+<h3 data-number="0.2.2"
+id="properties-of-las-perserve-zero-parallel-lines-scale-areas-uniformly."><span
+class="header-section-number">0.2.2</span> Properties of LAs: perserve
+zero + parallel lines, scale areas uniformly.</h3>
+<h2 data-number="0.3" id="vectors-and-basis-sets"><span
+class="header-section-number">0.3</span> Vectors and basis sets</h2>
+<h3 data-number="0.3.1"
+id="reminder-vectors-as-linear-combinations-of-basis-vectors."><span
+class="header-section-number">0.3.1</span> Reminder: vectors as linear
+combinations of basis vectors.</h3>
+<h2 data-number="0.4" id="from-las-to-matrices"><span
+class="header-section-number">0.4</span> From LAs to Matrices</h2>
+<h3 data-number="0.4.1"
+id="the-most-general-form-of-las.-example-in-mathbbr2-leftxyright-to-leftaxby-cxdyright."><span
+class="header-section-number">0.4.1</span> The most general form of LAs.
+Example in <span
+class="math inline">ℝ<sup>2</sup>: (<em>x</em>,<em>y</em>) → (<em>a</em><em>x</em>+<em>b</em><em>y</em>,<em>c</em><em>x</em>+<em>d</em><em>y</em>)</span>.</h3>
+<h3 data-number="0.4.2"
+id="from-las-to-matrices-using-the-basis-vectors."><span
+class="header-section-number">0.4.2</span> From LAs to matrices using
+the basis vectors.</h3>
+<h3 data-number="0.4.3"
+id="write-examples-from-beginning-as-2x2-matrices."><span
+class="header-section-number">0.4.3</span> Write examples from beginning
+as 2x2 matrices.</h3>
+<h3 data-number="0.4.4"
+id="generalize-concepts-to-mathbbr3-mathbbrn."><span
+class="header-section-number">0.4.4</span> Generalize concepts to <span
+class="math inline">ℝ<sup>3</sup>, ℝ<sup><em>n</em></sup></span>.</h3>
+<h2 data-number="0.5" id="the-deteminant"><span
+class="header-section-number">0.5</span> The deteminant</h2>
+<h3 data-number="0.5.1"
+id="the-determinant-how-to-calculate-it-for-the-2x2-case."><span
+class="header-section-number">0.5.1</span> The determinant + how to
+calculate it for the 2x2 case.</h3>
+<h3 data-number="0.5.2" id="rank-null-space-of-a-matrix."><span
+class="header-section-number">0.5.2</span> Rank + Null space of a
+matrix.</h3>
+<h2 data-number="0.6" id="matrix-matrix-product"><span
+class="header-section-number">0.6</span> Matrix-matrix product</h2>
+<h3 data-number="0.6.1" id="matrix-product-as-la-composition."><span
+class="header-section-number">0.6.1</span> Matrix product as LA
+composition.</h3>
+<h2 data-number="0.7" id="eigenvalues-and-eigenvectors"><span
+class="header-section-number">0.7</span> Eigenvalues and
+eigenvectors</h2>
+<h3 data-number="0.7.1" id="eigenvalues-and-eigenvectors."><span
+class="header-section-number">0.7.1</span> Eigenvalues and
+eigenvectors.</h3>
 </body>
 </html>

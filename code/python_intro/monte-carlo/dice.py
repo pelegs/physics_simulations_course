@@ -20,7 +20,7 @@ def pretty_print(hist, edges):
 
 
 def create_figure(hist, edges):
-    fig, ax = plt.subplots()
+    _, ax = plt.subplots()
     ax.set_title("Multiple dice value distribution", size=30)
     ax.set_xlabel("Sum of sides", size=25)
     ax.set_ylabel("Frequency", size=25)
@@ -30,6 +30,8 @@ def create_figure(hist, edges):
 
 
 if __name__ == "__main__":
-    hist, edges = get_distribution(10000000, 2, 6)
-    pretty_print(hist, edges)
+    from sys import argv
+
+    hist, edges = get_distribution(int(argv[1]), int(argv[2]), int(argv[3]))
+    # pretty_print(hist, edges)
     create_figure(hist, edges)
