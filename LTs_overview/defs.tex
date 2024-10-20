@@ -1,0 +1,81 @@
+% Basic packages
+\usepackage[a4paper, margin=2cm]{geometry}
+\usepackage{tikz}
+\usetikzlibrary{calc, positioning, external, fit}
+\tikzexternalize[prefix=figs/,optimize command away=\includepdf]
+\tikzset{
+	vector/.style = {#1, ultra thick, -stealth, cap=round},
+}
+\usepackage{hyperref}
+
+% Colors
+\definecolor{xred}{HTML}{BD4242}
+\definecolor{xblue}{HTML}{4268BD}
+\definecolor{xgreen}{HTML}{52B256}
+\definecolor{xpurple}{HTML}{7F52B2}
+\definecolor{xorange}{HTML}{FD9337}
+
+% General defs
+\newcommand\newterm[1]{\textbf{#1}}
+
+% Math related defs
+\usepackage{amsthm, commath, bm, mathtools, amsfonts}
+\renewcommand\vec{\mathbf}
+\newcommand\uvec[1]{\hat{\vec{#1}}}
+\newcommand\bigO[1]{\mathcal{O}\left(#1\right)}
+\newcommand\pnt[1]{\mathbf{#1}}
+\newcommand{\eb}[1]{\mathbf{\hat{e}_{#1}}}
+
+% Set math in section to be bold
+\usepackage{etoolbox}
+\makeatletter
+% \tracingpatches
+\patchcmd{\@sect}{#8}{\boldmath #8}{}{}
+\let\ori@chapter\@chapter
+\def\@chapter[#1]#2{\ori@chapter[\boldmath#1]{\boldmath#2}}
+\makeatother
+
+% Cancel terms
+\usepackage[thicklines]{cancel}
+\renewcommand\CancelColor{\color{xred}}
+\newcommand{\cancelcol}[2][xred]{ % This is such a silly solution...
+	\renewcommand\CancelColor{\color{#1}}
+	\cancel{#2}
+	\renewcommand\CancelColor{\color{xred}}
+}
+
+% Row- and column-vectors: arguments separated by ";".
+% Example: $\vec{a} = \colvec{1;2;3;4}$.
+\makeatletter
+\newcommand\rcvector[2][\\]{\ensuremath{%
+		\global\def\rc@delim{#1}%
+		\negthinspace\begin{bmatrix}
+			\rc@vector #2;\relax\noexpand\@eolst%
+		\end{bmatrix}}}
+\def\rc@vector #1;#2\@eolst{%
+	\ifx\relax#2\relax
+		#1
+	\else
+		#1\rc@delim
+		\rc@vector #2\@eolst%
+	\fi}
+\makeatother
+\newcommand{\colvec}{\rcvector}
+\newcommand{\rowvec}[1]{\rcvector[,\;]{#1}}
+\newcommand{\GenericRowVec}[2][n]{\rowvec{#2_{1};#2_{2};\dots;#2_{#1}}}
+\newcommand{\GenericColVec}[2][n]{\colvec{#2^{1};#2^{2};\vdots;#2^{#1}}}
+
+% Easier space-notation
+\newcommand{\Rs}[1][]{\mathbb{R}^{#1}}
+\newcommand{\Cs}[1][]{\mathbb{C}^{#1}}
+
+% Better imaginary unit and natural base notation (to separate from variables)
+\newcommand{\iu}{\mathrm{i}\mkern1mu}
+\newcommand{\eu}{\mathrm{e}}
+\newcommand{\Eu}[1]{\mathrm{e}^{#1}}
+\newcommand{\EX}[1]{\exp\left(#1\right)}
+
+% Norms and the like
+\renewcommand{\norm}[1]{\left| #1 \right|}
+\newcommand{\vnorm}[1]{\left| \vec{#1} \right|}
+\newcommand{\snorm}[1]{\left| #1 \right|}

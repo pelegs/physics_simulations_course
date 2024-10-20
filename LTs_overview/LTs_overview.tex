@@ -1,0 +1,106 @@
+\documentclass{article}
+
+\input{defs}
+
+\title{Linear Transformations and Matrices - a short Review}
+\author{Peleg Bar Sapir}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+\subsection{Transformations on Vectors}
+\subsection{Examples of Core LTs in $\Rs[2]$}
+
+\section{Definition and Properties of LTs}
+
+\section{Vectors and Basis Sets}
+
+\section{From LTs to Matrices}
+
+\section{The Determinant}
+\subsection{Definition and Properties}
+\subsection{Calculating the Determinant}
+In $\Rs[2]$ the determinant of two vectors $\vec{a}$ and $\vec{b}$ is simply the area of the parallelogram spanned by the two vectors (\autoref{fig:area_two_vecs}).
+
+\begin{figure}
+	\begin{center}
+		\begin{tikzpicture}
+			\coordinate (a) at (3,1);
+			\coordinate (b) at (1,2);
+			\fill[xpurple!35] (0,0) -- (a) -- ++(b) -- (b) -- cycle;
+			\node[fit={(0,0) (a) ($(a)+(b)$) (b)}] {$A$};
+			\draw[vector={xred}]  (0,0) -- (a) node [midway, below right] {$\vec{a}$};
+			\draw[vector={xblue}] (0,0) -- (b) node [midway, above left]  {$\vec{b}$};
+			\draw[vector={xred}, dashed]  (b) -- ++(a) node [midway, above left]   {$\vec{a}$};
+			\draw[vector={xblue}, dashed] (a) -- ++(b) node [midway, below right]  {$\vec{b}$};
+		\end{tikzpicture}
+	\end{center}
+	\caption{The area of the parallelogram spanned by two vectors $\vec{a}$ and $\vec{b}$.}
+	\label{fig:area_two_vecs}
+\end{figure}
+
+Let's check several properties of this area:
+\begin{enumerate}
+	\item The parallelogram spanned by the two basis vectors $\eb{1}$ and $\eb{2}$ has an area of $1$: $A\left(\eb{1},\eb{2}\right)=1$.
+	\item If the two vectors are on the same line then the area equals $0$, i.e. $A\left(\vec{a}, \lambda\vec{a}\right)=0$, where $\lambda\in\Rs$.
+	\item The parallelogram spanned by one vector $\vec{a}$ and a sum of two vectors $\vec{b}+\vec{c}$ has the same area as the sum of the areas of the two parallelograms spanned by $\vec{a},\ \vec{b}$ and by $\vec{a},\ \vec{c}$: $A\left(\vec{a},\vec{b}+\vec{c}\right)=A\left(\vec{a},\vec{b}\right)+A\left(\vec{a},\vec{c}\right)$ (\autoref{fig:adding_parallelograms}).
+	\item Scaling any of the two vectors scales the area by the same factor: $A\left(\alpha\vec{a},\beta\vec{b}\right)=\alpha\beta A\left(\vec{a},\vec{b}\right)$, where $\alpha,\beta\in\Rs$ (\autoref{fig:scaling_parallelogram}). A special case of scaling is that of scaling by a negative scalar: for example, $A\left(-\vec{a},\vec{b}\right)=-A\left(\vec{a},\vec{b}\right)$.
+\end{enumerate}
+
+\begin{figure}
+	\begin{center}
+		\begin{tikzpicture}
+			\coordinate (a) at (3,1);
+			\coordinate (b) at (1,2);
+			\coordinate (c) at (0,2);
+			\fill[xpurple!35] (0,0) -- (a) -- ++(b) -- (b) -- cycle;
+			\node[fit={(0,0) (a) ($(a)+(b)$) (b)}] {$A$};
+			\draw[vector={xred}]  (0,0) -- (a) node [midway, below right] {$\vec{a}$};
+			\draw[vector={xblue}] (0,0) -- (b) node [midway, above left]  {$\vec{b}$};
+			\draw[vector={xred}, dashed]  (b) -- ++(a) node [midway, above left] {$\vec{a}$};
+			\draw[vector={xblue}, dashed] (a) -- ++(b) node [midway, right] {$\vec{b}$};
+		\end{tikzpicture}
+	\end{center}
+	\caption{Adding two vectors\ldots}
+	\label{fig:adding_parallelograms}
+\end{figure}
+
+\begin{figure}
+	\begin{center}
+		\begin{tikzpicture}
+			\coordinate (a) at (3,1);
+			\coordinate (b) at (1,2);
+			\fill[xpurple!35] (0,0) -- ($2*(a)$) -- ++(b) -- (b) -- cycle;
+			\node[fit={(0,0) (a) ($(a)+(b)$) (b)}] {$A$};
+			\node[fit={(a) ($2*(a)$) ($2*(a)+(b)$) ($(a)+(b)$)}] {$A$};
+			\draw[vector={xred}]  (0,0) -- (a) node [midway, below right] {$\vec{a}$};
+			\draw[vector={xblue}] (0,0) -- (b) node [midway, above left]  {$\vec{b}$};
+			\draw[vector={xred}, dashed]  (b) -- ++(a) node [midway, above left] {$\vec{a}$};
+			\draw[vector={xblue}, dashed] (a) -- ++(b) node [midway, right] {$\vec{b}$};
+			\draw[vector={xred}, dashed]  (a) -- ++(a) node [midway, below right] {$\vec{a}$};
+			\draw[vector={xblue}, dashed] ($2*(a)$) -- ++(b) node [midway, right] {$\vec{b}$};
+			\draw[vector={xred}, dashed]  ($(a)+(b)$) -- ++(a) node [midway, above left] {$\vec{a}$};
+		\end{tikzpicture}
+	\end{center}
+	\caption{Scaling the vector $\vec{a}$ by a factor of $2$ scales the area of the parallelogram by the same factor.}
+	\label{fig:scaling_parallelogram}
+\end{figure}
+
+Using the above properties, we can derive the relation between $A\left(\vec{a},\vec{b}\right)$ and $A\left(\vec{b},\vec{a}\right)$:
+\begin{equation}
+	\begin{aligned}
+		A\left(\vec{a},\vec{b}\right) & = \cancel{A\left(\vec{a}+\vec{b},\vec{b}+\vec{a}\right)} - A\left(\vec{b},\vec{a}\right) \\
+		                              & = -A\left(\vec{b},\vec{a}\right).
+	\end{aligned}
+	\label{eq:sqapping_order_of_vectors_area_paeallelogram}
+\end{equation}
+This means that swapping the order of vectors in the area of a parallelogram changes its sign.
+
+\subsection{Matrix Rank and Null Space}
+
+\section{Matrix-Matrix Products}
+
+\section{Eigenvalues and Eigenvectors}
+
+\end{document}
