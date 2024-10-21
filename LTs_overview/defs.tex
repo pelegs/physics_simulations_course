@@ -7,6 +7,8 @@
 	vector/.style = {#1, ultra thick, -stealth, cap=round},
 }
 \usepackage{hyperref}
+\usepackage{caption, subcaption}
+\usepackage{setspace}
 
 % Colors
 \definecolor{xred}{HTML}{BD4242}
@@ -16,7 +18,9 @@
 \definecolor{xorange}{HTML}{FD9337}
 
 % General defs
+\setlength{\parindent}{0pt}
 \newcommand\newterm[1]{\textbf{#1}}
+\onehalfspacing
 
 % Math related defs
 \usepackage{amsthm, commath, bm, mathtools, amsfonts}
@@ -25,6 +29,8 @@
 \newcommand\bigO[1]{\mathcal{O}\left(#1\right)}
 \newcommand\pnt[1]{\mathbf{#1}}
 \newcommand{\eb}[1]{\mathbf{\hat{e}_{#1}}}
+\newcommand{\xhat}{\mathbf{\hat{x}}}
+\newcommand{\yhat}{\mathbf{\hat{y}}}
 
 % Set math in section to be bold
 \usepackage{etoolbox}

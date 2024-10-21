@@ -49,20 +49,99 @@ Let's check several properties of this area:
 \end{enumerate}
 
 \begin{figure}
-	\begin{center}
-		\begin{tikzpicture}
-			\coordinate (a) at (3,1);
-			\coordinate (b) at (1,2);
-			\coordinate (c) at (0,2);
-			\fill[xpurple!35] (0,0) -- (a) -- ++(b) -- (b) -- cycle;
-			\node[fit={(0,0) (a) ($(a)+(b)$) (b)}] {$A$};
-			\draw[vector={xred}]  (0,0) -- (a) node [midway, below right] {$\vec{a}$};
-			\draw[vector={xblue}] (0,0) -- (b) node [midway, above left]  {$\vec{b}$};
-			\draw[vector={xred}, dashed]  (b) -- ++(a) node [midway, above left] {$\vec{a}$};
-			\draw[vector={xblue}, dashed] (a) -- ++(b) node [midway, right] {$\vec{b}$};
-		\end{tikzpicture}
-	\end{center}
-	\caption{Adding two vectors\ldots}
+	\begin{subfigure}[b]{0.3\textwidth}
+		\begin{center}
+			\begin{tikzpicture}
+				\coordinate (a) at (3,1);
+				\coordinate (b) at (1,2);
+				\coordinate (c) at (-1,2);
+				\coordinate (d) at ($(b)+(c)$);
+				\draw[vector={xred}]  (0,0) -- (a) node [midway, below right] {$\vec{a}$};
+				\draw[vector={xblue}] (0,0) -- (b) node [midway, above left]  {$\vec{b}$};
+				\draw[vector={xgreen}] (0,0) -- (c) node [midway, left]  {$\vec{c}$};
+				\draw[vector={xorange}] (0,0) -- (d) node [midway, above left]  {$\vec{b}+\vec{c}$};
+			\end{tikzpicture}
+			\caption{}
+		\end{center}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.3\textwidth}
+		\begin{center}
+			\begin{tikzpicture}
+				\coordinate (a) at (3,1);
+				\coordinate (b) at (1,2);
+				\coordinate (c) at (-1,2);
+				\coordinate (d) at ($(b)+(c)$);
+				\fill[xpurple!35] (0,0) -- (a) -- ++(d) -- (d) -- cycle;
+				\node[fit={(0,0) (a) ($(a)+(d)$) (d)}] {$A_{1}$};
+				\draw[vector={xred}]  (0,0) -- (a) node [midway, below right] {$\vec{a}$};
+				\draw[vector={xorange}] (0,0) -- (d) node [midway, above left]  {$\vec{b}+\vec{c}$};
+				\draw[vector={xred}, dashed]  (d) -- ++(a);
+				\draw[vector={xorange}, dashed] (a) -- ++(d);
+			\end{tikzpicture}
+			\caption{}
+		\end{center}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.3\textwidth}
+		\begin{center}
+			\begin{tikzpicture}
+				\coordinate (a) at (3,1);
+				\coordinate (b) at (1,2);
+				\fill[xpurple!35] (0,0) -- (a) -- ++(b) -- (b) -- cycle;
+				\node[fit={(0,0) (a) ($(a)+(b)$) (b)}] {$A_{2}$};
+				\draw[vector={xred}]  (0,0) -- (a) node [midway, below right] {$\vec{a}$};
+				\draw[vector={xblue}] (0,0) -- (b) node [midway, above left]  {$\vec{b}$};
+				\draw[vector={xred}, dashed]  (a) -- ++(b);
+				\draw[vector={xblue}, dashed] (b) -- ++(a);
+			\end{tikzpicture}
+			\caption{}
+		\end{center}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.3\textwidth}
+		\begin{center}
+			\begin{tikzpicture}
+				\coordinate (a) at (3,1);
+				\coordinate (c) at (-1,2);
+				\fill[xpurple!35] (0,0) -- (a) -- ++(c) -- (c) -- cycle;
+				\node[fit={(0,0) (a) ($(a)+(c)$) (c)}] {$A_{3}$};
+				\draw[vector={xred}]   (0,0) -- (a) node [midway, below right] {$\vec{a}$};
+				\draw[vector={xgreen}] (0,0) -- (c) node [midway, left]  {$\vec{c}$};
+				\draw[vector={xred}, dashed] (a) -- ++(c);
+				\draw[vector={xgreen}, dashed] (c) -- ++(a);
+			\end{tikzpicture}
+			\caption{}
+		\end{center}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.3\textwidth}
+		\begin{center}
+			\begin{tikzpicture}
+				\coordinate (a) at (3,1);
+				\coordinate (b) at (1,2);
+				\coordinate (c) at (-1,2);
+				\coordinate (d) at ($(b)+(c)$);
+				\draw[vector={xred}]    (0,0) -- (a);
+				\draw[vector={xblue}]   (0,0) -- (b);
+				\draw[vector={xgreen}]  (0,0) -- (c);
+				\draw[vector={xorange}] (0,0) -- (d);
+				\draw[vector={xred}, dashed] (b) -- ++(a);
+				\draw[vector={xred}, dashed] (c) -- ++(a);
+				\draw[vector={xred}, dashed] (d) -- ++(a);
+				\draw[vector={xblue}, dashed] (a) -- ++(b);
+				\draw[vector={xgreen}, dashed] (a) -- ++(c);
+				\draw[vector={xorange}, dashed] (a) -- ++(d);
+				\draw[vector={xblue}, dashed] (c) -- ++(b);
+				\draw[vector={xblue}, dashed] ($(a)+(c)$) -- ++(b);
+				\draw[vector={xgreen}, dashed] (b) -- ++(c);
+				\draw[vector={xgreen}, dashed] ($(a)+(b)$) -- ++(c);
+			\end{tikzpicture}
+			\caption{}
+		\end{center}
+	\end{subfigure}
+	\hfill
+	\caption{The area of the parallelogram spanned by the vectors $\vec{a}$ and $\vec{b}+\vec{c}$: (a) all four vectors, (b)-(d) the areas of the differenct parallelograms $A_{1}=A\left(\vec{a},\vec{b}+\vec{c}\right),\ A_{2}=A\left(\vec{a},\vec{b}\right),\ A_{3}=A\left(\vec{a},\vec{c}\right)$. In (e) we see that adding the areas $A_{2}$ and $A_{3}$ gives us the area $A_{1}$.}
 	\label{fig:adding_parallelograms}
 \end{figure}
 
@@ -96,6 +175,19 @@ Using the above properties, we can derive the relation between $A\left(\vec{a},\
 	\label{eq:sqapping_order_of_vectors_area_paeallelogram}
 \end{equation}
 This means that swapping the order of vectors in the area of a parallelogram changes its sign.
+
+Now we can calculate the area of the parallelogram spanned by two vectors $\vec{a}=a_{x}\xhat+a_{y}\yhat$ and $\vec{b}=b_{x}\xhat+b_{y}\yhat$:
+\begin{equation}
+	\begin{aligned}
+		A\left(\vec{a},\vec{b}\right) &= A\left(a_{x}\xhat+a_{y}\yhat, b_{x}\xhat+b_{y}\yhat\right)\\
+									  &= A\left(a_{x}\xhat+a_{y}\yhat, b_{x}\xhat\right) + A\left(a_{x}\xhat+a_{y}\yhat, b_{y}\yhat\right)\\
+									  &= \cancel{A\left(a_{x}\xhat, b_{x}\xhat\right)} + A\left(a_{y}\yhat, b_{x}\xhat\right) + A\left(a_{x}\xhat, b_{y}\yhat\right) + \cancel{A\left(a_{y}\yhat, b_{y}\yhat\right)}\\
+									  &= a_{y}b_{x}A\left(\yhat,\xhat\right) + a_{x}b_{y}A\left(\xhat,\yhat\right)\\
+									  &= a_{y}b_{x}(-1) + a_{x}b_{y}(1)\\
+									  &= a_{x}b_{y} - a_{y}b_{x}.
+	\end{aligned}
+	\label{eq:label}
+\end{equation}
 
 \subsection{Matrix Rank and Null Space}
 
