@@ -63,32 +63,41 @@ class MScence(mn.Scene):
                 "stroke_opacity": 0.4,
             }
         )
-        grid_transformed = mn.NumberPlane(
-            background_line_style={
-                "stroke_color": mn.RED,
-                "stroke_width": 4,
-                "stroke_opacity": 0.9,
-            }
-        )
-        tapir = mn.SVGMobject(args.picture)
-        xhat = mn.Vector(direction=[1, 0, 0], color=mn.RED)
-        # xhat_label = mn.Tex(r"$\hat{x}$", color=mn.RED)
-        # xhat_label.shift([1.2, 0, 0])
-        yhat = mn.Vector(direction=[0, 1, 0], color=mn.GREEN)
-        # det_square = mn.Square(
-        #     side_length=1.0,
-        #     color=mn.ORANGE,
-        #     fill_color=mn.ORANGE,
-        #     fill_opacity=0.5,
-        # ).shift([0.5, 0.5, 0])
         self.add(grid_original)
+
+        self.elements = []
+        if args.show_trans_grid:
+            grid_transformed = mn.NumberPlane(
+                background_line_style={
+                    "stroke_color": mn.RED,
+                    "stroke_width": 4,
+                    "stroke_opacity": 0.9,
+                }
+            )
+            self.elements.append(grid_transformed)
+
+        if args.picture != "":
+            picture = mn.SVGMobject(args.picture)
+            self.elements.append(picture)
+        if args.show_basis:
+            xhat = mn.Vector(direction=[1, 0, 0], color=mn.RED)
+            yhat = mn.Vector(direction=[0, 1, 0], color=mn.GREEN)
+            self.elements += [xhat, yhat]
+        if args.show_det:
+            det_square = mn.Square(
+                side_length=1.0,
+                color=mn.ORANGE,
+                fill_color=mn.ORANGE,
+                fill_opacity=0.5,
+            ).shift([0.5, 0.5, 0])
+            self.elements.append(det_square)
+
         for matrix in matrix_list:
+            transformed_elements = [
+                mn.ApplyMatrix(matrix, element) for element in self.elements
+            ]
             self.play(
-                mn.ApplyMatrix(matrix, grid_transformed),
-                mn.ApplyMatrix(matrix, tapir),
-                mn.ApplyMatrix(matrix, xhat),
-                mn.ApplyMatrix(matrix, yhat),
-                # mn.ApplyMatrix(matrix, det_square),
+                *transformed_elements,
                 run_time=1.5,
             )
 
@@ -107,11 +116,35 @@ def get_args():
         help="List of matrices with arguments, separated by commas",
     )
     parser.add_argument(
+        "-g",
+        "--show-trans-grid",
+        type=bool,
+        default=True,
+        action=argparse.BooleanOptionalAction,
+        help="Show transformed grid on top of original grid",
+    )
+    parser.add_argument(
         "-p",
         "--picture",
         type=str,
-        default="svg/tapir.svg",
-        help="path to SVG picture to show on grid",
+        default="",
+        help="Path to SVG picture to show on grid",
+    )
+    parser.add_argument(
+        "-v",
+        "--show_basis",
+        type=bool,
+        default=False,
+        action=argparse.BooleanOptionalAction,
+        help="Show std basis vectors",
+    )
+    parser.add_argument(
+        "-d",
+        "--show_det",
+        type=bool,
+        default=False,
+        action=argparse.BooleanOptionalAction,
+        help="Show determinant",
     )
     return parser.parse_args()
 

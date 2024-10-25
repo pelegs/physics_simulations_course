@@ -1,0 +1,3 @@
+# This file is used internally by FFMPEG.
+file 'file:/home/pelegs/Documents/DHBW/Mannheim/physics_simulations_course/LTs_overview/LTs_demo/media/videos/720p30/partial_movie_files/MScence/2016333726_180375575_3200097991.mp4'
+file 'file:/home/pelegs/Documents/DHBW/Mannheim/physics_simulations_course/LTs_overview/LTs_demo/media/videos/720p30/partial_movie_files/MScence/543634251_1829577375_3200097991.mp4'
