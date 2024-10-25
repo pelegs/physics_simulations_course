@@ -58,6 +58,8 @@ class Matrices:
 
 class MScence(mn.Scene):
     def construct(self):
+        global matrix_list
+
         grid_original = mn.NumberPlane(
             background_line_style={
                 "stroke_color": mn.BLUE,
@@ -93,8 +95,15 @@ class MScence(mn.Scene):
                 fill_opacity=0.5,
             ).shift(np.array([0.5, 0.5, 0]))
             self.elements.append(det_square)
+        if args.show_eig_dirs:
+            for matrix in matrix_list:
+                vals, vecs = np.linalg.eig(matrix)
+                self.elements += [
+                    mn.Vector(v, color=mn.PURPLE)
+                    for v in vecs.T
+                    if np.all(np.isreal(v))
+                ]
 
-        global matrix_list
         self.matrices = matrix_list
         if args.single_trans:
             single_matrix = np.identity(2)
@@ -163,6 +172,14 @@ def get_args():
         default=False,
         action=argparse.BooleanOptionalAction,
         help="Show all transformations as a single transformation",
+    )
+    parser.add_argument(
+        "-e",
+        "--show_eig_dirs",
+        type=bool,
+        default=False,
+        action=argparse.BooleanOptionalAction,
+        help="Show transformation's eigen directions",
     )
     return parser.parse_args()
 
