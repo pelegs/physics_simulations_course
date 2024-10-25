@@ -4,6 +4,8 @@ from subprocess import run
 import manim as mn
 import numpy as np
 
+X_HAT, Y_HAT, Z_HAT = np.identity(3)
+
 
 class Matrices:
     def __init__(self, matrices_str):
@@ -80,8 +82,8 @@ class MScence(mn.Scene):
             picture = mn.SVGMobject(args.picture)
             self.elements.append(picture)
         if args.show_basis:
-            xhat = mn.Vector(direction=[1, 0, 0], color=mn.RED)
-            yhat = mn.Vector(direction=[0, 1, 0], color=mn.GREEN)
+            xhat = mn.Vector(direction=X_HAT, color=mn.RED)
+            yhat = mn.Vector(direction=Y_HAT, color=mn.GREEN)
             self.elements += [xhat, yhat]
         if args.show_det:
             det_square = mn.Square(
@@ -89,10 +91,18 @@ class MScence(mn.Scene):
                 color=mn.ORANGE,
                 fill_color=mn.ORANGE,
                 fill_opacity=0.5,
-            ).shift([0.5, 0.5, 0])
+            ).shift(np.array([0.5, 0.5, 0]))
             self.elements.append(det_square)
 
-        for matrix in matrix_list:
+        global matrix_list
+        self.matrices = matrix_list
+        if args.single_trans:
+            single_matrix = np.identity(2)
+            for matrix in matrix_list:
+                single_matrix = np.dot(single_matrix, matrix)
+            self.matrices = [single_matrix]
+
+        for matrix in self.matrices:
             transformed_elements = [
                 mn.ApplyMatrix(matrix, element) for element in self.elements
             ]
@@ -145,6 +155,14 @@ def get_args():
         default=False,
         action=argparse.BooleanOptionalAction,
         help="Show determinant",
+    )
+    parser.add_argument(
+        "-s",
+        "--single_trans",
+        type=bool,
+        default=False,
+        action=argparse.BooleanOptionalAction,
+        help="Show all transformations as a single transformation",
     )
     return parser.parse_args()
 
