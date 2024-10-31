@@ -1,3 +1,6 @@
+from random import choice as random_choice
+
+import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import XKCD_COLORS
@@ -19,7 +22,8 @@ EMPTY_ARRAY = np.empty((num_steps, 3))
 EMPTY_ARRAY[:] = np.nan
 
 # Colors
-Colors = {name[5:]: HTML_val for name, HTML_val in XKCD_COLORS.items()}
+colors = {name[5:]: HTML_val for name, HTML_val in XKCD_COLORS.items()}
+colors_list = list(colors.values())
 
 
 # Math and physics functions
@@ -59,7 +63,7 @@ class Particle:
         vel_0=np.copy(ZERO_VEC),
         mass=1.0,
         rad=1.0,
-        color=Colors["light red"],
+        color=colors["light red"],
         id=-1,
     ):
         self.pos = np.copy(EMPTY_ARRAY)
@@ -126,40 +130,69 @@ def run():
         verlet_2()
 
 
-def prepare_graphics():
+def setup_graphics():
     fig, ax = plt.subplots(1, 1, figsize=(10, 10))
     ax.set_title("Gravity test")
     ax.set_xlim(-500, 500)
     ax.set_ylim(-500, 500)
     ax.set_xlabel("x")
     ax.set_ylabel("y")
-    ax.grid(True)
-    for particle in particles:
-        ax.plot(particle.pos[:, 0], particle.pos[:, 1], c=particle.color)
-    plt.show()
+    lines = [
+        ax.plot(particle.pos[0, 0], particle.pos[0, 1], c=particle.color)[0]
+        for particle in particles
+    ]
+    frames_label = plt.text(
+        -450,
+        450,
+        f"frame {0:05d}/{num_steps:05d}",
+        fontsize=20,
+    )
+    return [fig, frames_label] + lines
+
+
+def animate(frame):
+    step = frame * steps_per_frame
+    frames_label.set_text(f"frame {step:05d}/{num_steps:05d}")
+    for particle, line in zip(particles, lines):
+        line.set_xdata(particle.pos[:step, 0])
+        line.set_ydata(particle.pos[:step, 1])
+    return lines + [frames_label]
 
 
 if __name__ == "__main__":
-    star = Particle(id=0, mass=1.0e3, rad=3.0, color=Colors["orange"])
-    planet = Particle(
-        id=1,
-        pos_0=100 * X_,
-        vel_0=0.7 * np.sqrt(G * star.mass / 100) * Y_,
-        mass=1.0e-4,
-        rad=3.0,
-        color=Colors["blue"],
-    )
-    particles = [star, planet]
+    # star = Particle(id=0, mass=1.0e3, rad=3.0, color=Colors["orange"])
+    # planet = Particle(
+    #     id=1,
+    #     pos_0=100 * X_,
+    #     vel_0=0.7 * np.sqrt(G * star.mass / 100) * Y_,
+    #     mass=1.0e-4,
+    #     rad=3.0,
+    #     color=Colors["blue"],
+    # )
+    # particles = [star, planet]
 
-    # num_particles = 10
-    # particles = [
-    #     Particle(
-    #         id=id,
-    #         pos_0=np.append(np.random.uniform(low=-500, high=500, size=2), 0),
-    #         mass=np.random.uniform(1.0e2, 1.0e6),
-    #     )
-    #     for id in range(num_particles)
-    # ]
+    num_particles = 10
+    particles = [
+        Particle(
+            id=id,
+            pos_0=np.append(np.random.uniform(low=-500, high=500, size=2), 0),
+            vel_0=np.append(np.random.uniform(low=-50, high=50, size=2), 0),
+            mass=np.random.uniform(1.0e-4, 1.0e-3),
+            color=random_choice(colors_list),
+        )
+        for id in range(num_particles)
+    ]
+    particles.append(
+        Particle(
+            mass=1.0e6,
+            color=colors["red"],
+        )
+    )
 
     run()
-    prepare_graphics()
+
+    fig, frames_label, *lines = setup_graphics()
+    num_frames = 50
+    steps_per_frame = num_steps // num_frames
+    ani = animation.FuncAnimation(fig=fig, func=animate, frames=num_frames)
+    plt.show()
