@@ -283,7 +283,7 @@ if __name__ == "__main__":
         id=1,
         pos_0=100 * X_,
         vel_0=np.sqrt(G * star.mass / 100) * Y_
-        + np.append(np.random.normal(0, 1200, 2), 0),
+        + np.append(np.random.normal(0, 100, 2), 0),
         mass=1.0e-5,
         rad=3.0,
         color=colors["blue"],
