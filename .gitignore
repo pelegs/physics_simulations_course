@@ -15,3 +15,4 @@ other_course/
 *.npz
 code/**/*.txt
 code/**/*.json
+notes/external_references/

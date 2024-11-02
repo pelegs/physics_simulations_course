@@ -7,8 +7,8 @@ from matplotlib.colors import XKCD_COLORS
 from tqdm import tqdm
 
 # Time-related constants, variables and parameters
-num_steps = 50000
-dt = 0.01
+num_steps = 5000
+dt = 0.001
 max_t = num_steps * dt
 time_series = np.arange(0, max_t, dt)
 current_step = 0
@@ -57,8 +57,19 @@ def distance(p1, p2):
     return np.linalg.norm(p1 - p2)
 
 
-def cross2D(a, b):
-    return a[0] * b[1] - a[1] * b[0]
+def angle_between(v1, v2):
+    return np.arccos(
+        np.dot(v1, v2) / (np.linalg.norm(v1) * np.linalg.norm(v2))
+    )
+
+
+def rotation_matrix(th):
+    c, s = np.cos(th), np.sin(th)
+    return np.array([[c, -s], [s, c]])
+
+
+def rotate(vec, th):
+    return np.dot(rotation_matrix(th), vec)
 
 
 def gravity(p1, p2):
@@ -117,6 +128,42 @@ class Particle:
                 * dt
             )
 
+    def calc_ecc_vec(self, massive_obj):
+        self.e_vec = ecc_vec(massive_obj, self)
+        self.e_hat = normalize(self.e_vec)
+        self.e = np.linalg.norm(self.e_vec)
+
+    def calc_semi_axes(self, massive_obj):
+        r_vec = self.pos[current_step] - massive_obj.pos[current_step]
+        r = np.linalg.norm(r_vec)
+        th = angle_between(r_vec, self.e_vec)
+        self.a = r * (1 + self.e * np.cos(th)) / (1 - self.e**2)
+        self.b = self.a * np.sqrt(1 - self.e**2)
+        self.rp = 2 * self.a / ((1 + self.e) / (1 - self.e) + 1)
+
+    def calc_orbital_points(self, massive_obj):
+        self.p1 = massive_obj.pos[current_step] + self.e_hat * self.rp
+        self.p2 = self.p1 - 2 * self.e_hat * self.a
+        self.c = (self.p1 + self.p2) / 2
+        b_hat = np.append(rotate(self.e_hat[:2], np.pi / 2), 0)
+        self.p3 = self.c + b_hat * self.b
+        self.p4 = self.c - b_hat * self.b
+
+    def get_orbital_points(self, massive_obj):
+        self.calc_ecc_vec(massive_obj)
+        self.calc_semi_axes(massive_obj)
+        self.calc_orbital_points(massive_obj)
+        return np.array(
+            [
+                self.pos[current_step],
+                self.p1,
+                self.p2,
+                self.p3,
+                self.p4,
+                self.c,
+            ]
+        )
+
 
 def apply_forces():
     for p1_idx, particle_1 in enumerate(particles):
@@ -144,24 +191,29 @@ def run():
         verlet_2()
 
 
-def setup_graphics(xs=[-500, 500], ys=[-500, 500]):
+def setup_graphics(xs=[-500, 500], ys=[-500, 500], orbital_pts=None):
     fig, ax = plt.subplots(1, 1, figsize=(10, 10))
-    ax.set_title("Gravity test")
     ax.set_xlim(*xs)
     ax.set_ylim(*ys)
     ax.set_xlabel("x")
     ax.set_ylabel("y")
+    ax.set_aspect("equal", "box")
     lines = [
         ax.plot(particle.pos[0, 0], particle.pos[0, 1], c=particle.color)[0]
         for particle in particles
     ]
     frames_label = plt.text(
-        xs[0],
-        ys[1],
+        xs[0] - 50,
+        ys[1] + 50,
         f"frame {0:05d}/{num_steps:05d}",
         fontsize=20,
     )
-    return [fig, frames_label] + lines
+    pts = None
+    if orbital_pts is not None:
+        pts = ax.scatter(
+            orbital_pts[:, 0], orbital_pts[:, 1], c=colors["light red"]
+        )
+    return [fig, frames_label, pts] + lines
 
 
 def animate(frame):
@@ -186,15 +238,13 @@ if __name__ == "__main__":
     planet = Particle(
         id=1,
         pos_0=100 * X_,
-        vel_0=1.0 * np.sqrt(G * star.mass / 100) * Y_,
+        vel_0=0.4 * np.sqrt(G * star.mass / 100) * Y_,
         mass=1.0e-5,
         rad=3.0,
         color=colors["blue"],
     )
     particles = [star, planet]
-    e_vec = ecc_vec(star, planet)
-    e = np.linalg.norm(e_vec)
-    print(e_vec, e)
+    orbital_pts = planet.get_orbital_points(star)
 
     # num_particles = 10
     # particles = [
@@ -214,12 +264,14 @@ if __name__ == "__main__":
     #     )
     # )
 
-    # run()
+    run()
 
-    # fig, frames_label, *lines = setup_graphics(
-    #     minmax(planet.pos[:, 0]), minmax(planet.pos[:, 1])
-    # )
-    # num_frames = 50
-    # steps_per_frame = num_steps // num_frames
-    # ani = animation.FuncAnimation(fig=fig, func=animate, frames=num_frames)
-    # plt.show()
+    fig, frames_label, pts, *lines = setup_graphics(
+        minmax(planet.pos[:, 0]),
+        minmax(planet.pos[:, 1]),
+        orbital_pts=orbital_pts,
+    )
+    num_frames = 50
+    steps_per_frame = num_steps // num_frames
+    ani = animation.FuncAnimation(fig=fig, func=animate, frames=num_frames)
+    plt.show()
