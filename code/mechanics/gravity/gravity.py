@@ -7,7 +7,7 @@ from matplotlib.colors import XKCD_COLORS
 from tqdm import tqdm
 
 # Time-related constants, variables and parameters
-num_steps = 15000
+num_steps = 50000
 dt = 0.01
 max_t = num_steps * dt
 time_series = np.arange(0, max_t, dt)
@@ -27,6 +27,12 @@ colors_list = list(colors.values())
 
 
 # Math and physics functions
+def minmax(lst):
+    min = np.min(lst)
+    max = np.max(lst)
+    return np.array([min, max])
+
+
 def normalize(vec):
     L = np.linalg.norm(vec)
     if L == 0:
@@ -43,8 +49,16 @@ def look_at(v1, v2):
     return normalize(v2 - v1)
 
 
-def sqr_dist(p1, p2):
+def distance_sqr(p1, p2):
     return np.dot(p2 - p1, p2 - p1)
+
+
+def distance(p1, p2):
+    return np.linalg.norm(p1 - p2)
+
+
+def cross2D(a, b):
+    return a[0] * b[1] - a[1] * b[0]
 
 
 def gravity(p1, p2):
@@ -130,11 +144,11 @@ def run():
         verlet_2()
 
 
-def setup_graphics():
+def setup_graphics(xs=[-500, 500], ys=[-500, 500]):
     fig, ax = plt.subplots(1, 1, figsize=(10, 10))
     ax.set_title("Gravity test")
-    ax.set_xlim(-500, 500)
-    ax.set_ylim(-500, 500)
+    ax.set_xlim(*xs)
+    ax.set_ylim(*ys)
     ax.set_xlabel("x")
     ax.set_ylabel("y")
     lines = [
@@ -159,39 +173,54 @@ def animate(frame):
     return lines + [frames_label]
 
 
-if __name__ == "__main__":
-    # star = Particle(id=0, mass=1.0e3, rad=3.0, color=Colors["orange"])
-    # planet = Particle(
-    #     id=1,
-    #     pos_0=100 * X_,
-    #     vel_0=0.7 * np.sqrt(G * star.mass / 100) * Y_,
-    #     mass=1.0e-4,
-    #     rad=3.0,
-    #     color=Colors["blue"],
-    # )
-    # particles = [star, planet]
+def orbital_ecc(massive_obj, particle):
+    r_vec = particle.pos[current_step] - massive_obj.pos[current_step]
+    r = np.linalg.norm(r_vec)
+    v_vec = particle.vel[current_step]
+    v = np.linalg.norm(v_vec)
+    mu = G * massive_obj.mass
+    eps = v**2 / 2 - mu / r
+    h2 = cross2D(r_vec, v_vec) ** 2
+    print(r_vec, r, v_vec, v, mu, eps, h2)
+    return np.sqrt(1 + (2 * eps * h2) / mu**2)
 
-    num_particles = 10
-    particles = [
-        Particle(
-            id=id,
-            pos_0=np.append(np.random.uniform(low=-500, high=500, size=2), 0),
-            vel_0=np.append(np.random.uniform(low=-50, high=50, size=2), 0),
-            mass=np.random.uniform(1.0e-4, 1.0e-3),
-            color=random_choice(colors_list),
-        )
-        for id in range(num_particles)
-    ]
-    particles.append(
-        Particle(
-            mass=1.0e6,
-            color=colors["red"],
-        )
+
+if __name__ == "__main__":
+    star = Particle(id=0, mass=1.0e7, rad=3.0, color=colors["orange"])
+    planet = Particle(
+        id=1,
+        pos_0=100 * X_,
+        vel_0=1.42 * np.sqrt(G * star.mass / 100) * Y_,
+        mass=1.0e-5,
+        rad=3.0,
+        color=colors["blue"],
     )
+    particles = [star, planet]
+    print(orbital_ecc(star, planet))
+
+    # num_particles = 10
+    # particles = [
+    #     Particle(
+    #         id=id,
+    #         pos_0=np.append(np.random.uniform(low=-500, high=500, size=2), 0),
+    #         vel_0=np.append(np.random.uniform(low=-50, high=50, size=2), 0),
+    #         mass=np.random.uniform(1.0e-4, 1.0e-3),
+    #         color=random_choice(colors_list),
+    #     )
+    #     for id in range(num_particles)
+    # ]
+    # particles.append(
+    #     Particle(
+    #         mass=1.0e6,
+    #         color=colors["red"],
+    #     )
+    # )
 
     run()
 
-    fig, frames_label, *lines = setup_graphics()
+    fig, frames_label, *lines = setup_graphics(
+        minmax(planet.pos[:, 0]), minmax(planet.pos[:, 1])
+    )
     num_frames = 50
     steps_per_frame = num_steps // num_frames
     ani = animation.FuncAnimation(fig=fig, func=animate, frames=num_frames)
