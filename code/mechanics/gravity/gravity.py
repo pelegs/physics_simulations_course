@@ -199,19 +199,23 @@ def setup_graphics(xs=[-500, 500], ys=[-500, 500], orbital_pts=None):
     fig, ax = plt.subplots(1, 1, figsize=(10, 10))
     ax.set_xlim(xs[0] - 10, xs[1] + 10)
     ax.set_ylim(ys[0] - 10, ys[1] + 10)
-    ax.set_xlabel("x")
-    ax.set_ylabel("y")
+    ax.set_xlabel("x", fontsize=15)
+    ax.set_ylabel("y", rotation=0, fontsize=15)
     ax.set_aspect("equal", "box")
+    ax.grid(alpha=0.2)
+
     paths = [
         ax.plot(particle.pos[0, 0], particle.pos[0, 1], c=particle.color)[0]
         for particle in particles
     ]
+
     circles = [
         Circle(xy=particle.pos[0], radius=particle.rad, color=particle.color)
         for particle in particles
     ]
     for circle in circles:
         ax.add_patch(circle)
+
     frames_label = plt.text(
         0.05,
         0.95,
@@ -219,8 +223,7 @@ def setup_graphics(xs=[-500, 500], ys=[-500, 500], orbital_pts=None):
         fontsize=10,
         transform=ax.transAxes,
     )
-    orbital_pts_scatter = None
-    contour = None
+
     if orbital_pts is not None:
         num_pts = 400
         xrange = np.linspace(xs[0], xs[1], num_pts)
@@ -280,7 +283,7 @@ if __name__ == "__main__":
         id=1,
         pos_0=100 * X_,
         vel_0=np.sqrt(G * star.mass / 100) * Y_
-        + np.append(np.random.normal(0, 100, 2), 0),
+        + np.append(np.random.normal(0, 1200, 2), 0),
         mass=1.0e-5,
         rad=3.0,
         color=colors["blue"],
