@@ -156,8 +156,8 @@ def setup_graphics(xs=[-500, 500], ys=[-500, 500]):
         for particle in particles
     ]
     frames_label = plt.text(
-        -450,
-        450,
+        xs[0],
+        ys[1],
         f"frame {0:05d}/{num_steps:05d}",
         fontsize=20,
     )
@@ -173,16 +173,12 @@ def animate(frame):
     return lines + [frames_label]
 
 
-def orbital_ecc(massive_obj, particle):
+def ecc_vec(massive_obj, particle):
     r_vec = particle.pos[current_step] - massive_obj.pos[current_step]
-    r = np.linalg.norm(r_vec)
     v_vec = particle.vel[current_step]
-    v = np.linalg.norm(v_vec)
     mu = G * massive_obj.mass
-    eps = v**2 / 2 - mu / r
-    h2 = cross2D(r_vec, v_vec) ** 2
-    print(r_vec, r, v_vec, v, mu, eps, h2)
-    return np.sqrt(1 + (2 * eps * h2) / mu**2)
+    h_vec = np.cross(r_vec, v_vec)
+    return np.cross(v_vec, h_vec) / mu - normalize(r_vec)
 
 
 if __name__ == "__main__":
@@ -190,13 +186,15 @@ if __name__ == "__main__":
     planet = Particle(
         id=1,
         pos_0=100 * X_,
-        vel_0=1.42 * np.sqrt(G * star.mass / 100) * Y_,
+        vel_0=1.0 * np.sqrt(G * star.mass / 100) * Y_,
         mass=1.0e-5,
         rad=3.0,
         color=colors["blue"],
     )
     particles = [star, planet]
-    print(orbital_ecc(star, planet))
+    e_vec = ecc_vec(star, planet)
+    e = np.linalg.norm(e_vec)
+    print(e_vec, e)
 
     # num_particles = 10
     # particles = [
@@ -216,12 +214,12 @@ if __name__ == "__main__":
     #     )
     # )
 
-    run()
+    # run()
 
-    fig, frames_label, *lines = setup_graphics(
-        minmax(planet.pos[:, 0]), minmax(planet.pos[:, 1])
-    )
-    num_frames = 50
-    steps_per_frame = num_steps // num_frames
-    ani = animation.FuncAnimation(fig=fig, func=animate, frames=num_frames)
-    plt.show()
+    # fig, frames_label, *lines = setup_graphics(
+    #     minmax(planet.pos[:, 0]), minmax(planet.pos[:, 1])
+    # )
+    # num_frames = 50
+    # steps_per_frame = num_steps // num_frames
+    # ani = animation.FuncAnimation(fig=fig, func=animate, frames=num_frames)
+    # plt.show()
