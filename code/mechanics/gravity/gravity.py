@@ -65,13 +65,13 @@ def angle_between(v1, v2):
     )
 
 
-def rotation_matrix(th):
+def rotation_xy(th):
     c, s = np.cos(th), np.sin(th)
-    return np.array([[c, -s], [s, c]])
+    return np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]])
 
 
 def rotate(vec, th):
-    return np.dot(rotation_matrix(th), vec)
+    return np.dot(rotation_xy(th), vec)
 
 
 def gravity(p1, p2):
@@ -147,7 +147,7 @@ class Particle:
         self.p1 = massive_obj.pos[current_step] + self.e_hat * self.rp
         self.p2 = self.p1 - 2 * self.e_hat * self.a
         self.c = (self.p1 + self.p2) / 2
-        b_hat = np.append(rotate(self.e_hat[:2], np.pi / 2), 0)
+        b_hat = rotate(self.e_hat, np.pi / 2)
         self.p3 = self.c + b_hat * self.b
         self.p4 = self.c - b_hat * self.b
 
@@ -216,6 +216,10 @@ def setup_graphics(xs=[-500, 500], ys=[-500, 500], orbital_pts=None):
     for circle in circles:
         ax.add_patch(circle)
 
+    ecc_label = plt.text(
+        0.05, 0.9, f"e={planet.e:0.2f}", fontsize=10, transform=ax.transAxes
+    )
+
     frames_label = plt.text(
         0.05,
         0.95,
@@ -279,18 +283,26 @@ def get_conic_coeffs(pts):
 
 if __name__ == "__main__":
     star = Particle(id=0, mass=1.0e7, rad=8.0, color=colors["orange"])
+
+    planet_x0 = np.append(np.random.uniform(-200, 200, 2), 0)
+    planet_v0 = (
+        np.random.uniform(0.1, 1.5)
+        * normalize(rotate(star.pos[0] - planet_x0, np.pi / 2))
+        * np.sqrt(G * star.mass / distance(star.pos[0], planet_x0))
+    )
     planet = Particle(
         id=1,
-        pos_0=100 * X_,
-        vel_0=np.sqrt(G * star.mass / 100) * Y_
-        + np.append(np.random.normal(0, 100, 2), 0),
+        pos_0=planet_x0,
+        vel_0=planet_v0,
         mass=1.0e-5,
         rad=3.0,
         color=colors["blue"],
     )
+
     particles = [star, planet]
+
     orbital_pts = planet.get_orbital_points(star)
-    print(f"orbital eccentricity = {planet.e}")
+    print(f"orbital eccentricity = {planet.e:0.2f}")
     A, B, C, D, E = get_conic_coeffs(orbital_pts[:-1])
 
     # num_particles = 10
