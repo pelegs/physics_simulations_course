@@ -210,7 +210,7 @@ def setup_graphics(xs=[-500, 500], ys=[-500, 500], orbital_pts=None):
     ax.set_xlabel("x", fontsize=15)
     ax.set_ylabel("y", rotation=0, fontsize=15)
     ax.set_aspect("equal", "box")
-    ax.grid(alpha=0.2)
+    # ax.grid(alpha=0.2)
 
     paths = [
         ax.plot(particle.pos[0, 0], particle.pos[0, 1], c=particle.color)[0]
@@ -264,7 +264,7 @@ def setup_graphics(xs=[-500, 500], ys=[-500, 500], orbital_pts=None):
         )
 
 
-def animate(frame):
+def anim_update(frame):
     step = frame * steps_per_frame
     frames_label.set_text(f"frame {step:05d}/{num_steps:05d}")
     for particle, circle, path in zip(particles, circles, paths):
@@ -342,7 +342,7 @@ if __name__ == "__main__":
     steps_per_frame = num_steps // num_frames
     ani = animation.FuncAnimation(
         fig=fig,
-        func=animate,
+        func=anim_update,
         frames=num_frames,
         interval=0,
         blit=True,
