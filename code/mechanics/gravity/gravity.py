@@ -1,11 +1,11 @@
 from random import choice as random_choice
+from sys import argv
 
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import XKCD_COLORS
 from matplotlib.patches import Circle
-from sympy import lambdify, symbols
 from tqdm import tqdm
 
 # Time-related constants, variables and parameters
@@ -164,6 +164,14 @@ class Particle:
                 self.p4,
                 self.c,
             ]
+        )
+
+    def save_data(self, filename):
+        np.savez(
+            filename,
+            pos=self.pos,
+            vel=self.vel,
+            params=np.array([self.mass, self.rad]),
         )
 
 
@@ -340,3 +348,5 @@ if __name__ == "__main__":
         blit=True,
     )
     plt.show()
+
+    planet.save_data(f"data/{argv[1]}")
