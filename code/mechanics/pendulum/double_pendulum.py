@@ -24,14 +24,14 @@ def argmax(arr):
 
 # Constants
 g = 9.8  # [m/s^2]
-L1 = 5.0  # [m]
+L1 = 3.0  # [m]
 L2 = 1.0  # [m]
 
 # Parameters
-t_max = 10.0  # [s]
+t_max = 100.0  # [s]
 dt = 0.01  # [s]
-m1 = 1.0  # [kg]
-m2 = 1.5  # [kg]
+m1 = 1.5  # [kg]
+m2 = 1.0  # [kg]
 A = m2 / m1
 B = L2 / L1
 C = g / L1  # [s^(-2)]
@@ -47,7 +47,10 @@ alpha_1 = np.zeros(num_steps)
 alpha_2 = np.zeros(num_steps)
 
 # Initial conditions
-theta_1[0] = theta_2[0] = np.pi / 1.5
+theta_1[0] = np.pi / 3
+theta_2[0] = np.pi / 1.5
+omega_1[0] = -0.0
+omega_2[0] = -1.0
 
 
 # Calc acceleration at time ti
@@ -80,7 +83,7 @@ def get_acc(i):
 
 
 # Run simulation
-for i, t in enumerate(time_series[1:-1], start=1):
+for i, t in enumerate(tqdm(time_series[1:-1]), start=1):
     alpha_1[i], alpha_2[i] = get_acc(i)
     omega_1[i] = omega_1[i - 1] + alpha_1[i] * dt
     omega_2[i] = omega_2[i - 1] + alpha_2[i] * dt
@@ -103,7 +106,11 @@ gs = GridSpec(2, 2, figure=fig)
 ax_vis = fig.add_subplot(gs[0, 0])
 ax_th1_vs_th2 = fig.add_subplot(gs[0, 1])
 ax_time = fig.add_subplot(gs[1, :])
-fig.suptitle("Damped pendulum", fontsize=25)
+figure_title = "Double pendulum"
+fig.suptitle(figure_title, fontsize=25)
+plt.get_current_fig_manager().set_window_title(
+    f"{figure_title}, m1={m1}, m2={m2}, L1={L1}, L2={L2}, θ1={theta_1[0]:0.2f}, θ2={theta_2[0]:0.2f}, ω1={omega_1[0]:0.2f}, ω2={omega_2[0]:0.2f}"
+)
 
 # Visual
 ax_vis.set_title("Visual view", fontsize=20)
@@ -145,14 +152,14 @@ trace2 = ax_vis.plot(
 rod1 = ax_vis.plot(
     (0, bob1_pos[0, 0]),
     (0, bob1_pos[0, 1]),
-    color="blue",
+    color="black",
     solid_capstyle="round",
     lw=3,
 )[0]
 rod2 = ax_vis.plot(
     (bob1_pos[0, 0], bob2_pos[0, 0]),
     (bob1_pos[0, 1], bob2_pos[0, 1]),
-    color="blue",
+    color="black",
     solid_capstyle="round",
     lw=3,
 )[0]
@@ -161,14 +168,14 @@ bob1 = ax_vis.plot(
     (bob1_pos[0, 0]),
     (bob1_pos[0, 1]),
     "o",
-    markersize=20,
+    markersize=10.0 * m1,
     color="red",
 )[0]
 bob2 = ax_vis.plot(
     (bob2_pos[0, 0]),
     (bob2_pos[0, 1]),
     "o",
-    markersize=20,
+    markersize=10.0 * m2,
     color="red",
 )[0]
 

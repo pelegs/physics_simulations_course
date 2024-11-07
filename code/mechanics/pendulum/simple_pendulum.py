@@ -27,9 +27,8 @@ g = 9.8  # [m/s^2]
 L = 1.0  # [m]
 
 # Parameters
-t_max = 10.0  # [s]
+t_max = 25.0  # [s]
 dt = 0.01  # [s]
-vel_res_sqr = g / L  # [rad/s]
 
 # Variables
 time_series = np.arange(0, t_max, dt)
@@ -39,7 +38,7 @@ omega = np.zeros(num_steps, dtype=np.float32)
 
 # Initial conditions
 theta[0] = np.pi / 2
-omega[0] = 0.0
+omega[0] = 0
 
 # Run simulation
 for i, t in enumerate(tqdm(time_series[1:-1]), start=1):
@@ -75,7 +74,11 @@ gs = GridSpec(2, 2, figure=fig)
 ax_vis = fig.add_subplot(gs[0, 0])
 ax_phase = fig.add_subplot(gs[0, 1])
 ax_time = fig.add_subplot(gs[1, :])
-fig.suptitle("Damped pendulum", fontsize=25)
+figure_title = "Simple pendulum"
+fig.suptitle(figure_title, fontsize=25)
+plt.get_current_fig_manager().set_window_title(
+    f"{figure_title}, L={L}, dt={dt}"
+)
 
 # Visual
 ax_vis.set_title("Visual view", fontsize=20)
@@ -104,7 +107,7 @@ ax_time.set_ylim(-1.2, 1.2)
 rod = ax_vis.plot(
     (0, bob_pos[0, 0]),
     (0, bob_pos[0, 1]),
-    color="blue",
+    color="black",
     solid_capstyle="round",
     lw=3,
 )[0]
