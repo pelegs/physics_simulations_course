@@ -25,6 +25,8 @@ def argmax(arr):
 # Constants
 g = 9.8  # [m/s^2]
 L = 1.0  # [m]
+vel_res_sqr = g / L  # [rad/s]
+beta = 0.5  # [1/s]
 
 # Parameters
 t_max = 10.0  # [s]
@@ -44,7 +46,8 @@ omega[0] = 0.0
 # Run simulation
 for i, t in enumerate(tqdm(time_series[1:-1]), start=1):
     a_grav = -g / L * np.sin(theta[i - 1])
-    omega[i] = omega[i - 1] + a_grav * dt
+    a_drag = -2 * beta * omega[i - 1]
+    omega[i] = omega[i - 1] + (a_grav + a_drag) * dt
     theta[i] = theta[i - 1] + omega[i] * dt
 
 # Bob position in Cartesian coordinates
@@ -60,7 +63,7 @@ bob_acc = (
     rotate(bob_pos[:-1].T, np.pi / 2).T
     * alpha.reshape((num_steps - 1, 1))
     / argmax(alpha)
-    * 10.0
+    * 0.1
 )
 
 
