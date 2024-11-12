@@ -56,9 +56,9 @@ theta_norm = theta[:-1] / np.max(np.abs(theta[:-1]))
 omega_norm = omega[:-1] / np.max(np.abs(omega[:-1]))
 
 
-###########################
-#        Animation        #
-###########################
+##########################
+#        Graphics        #
+##########################
 
 # General
 plt.rcParams.update({"text.usetex": True, "font.family": "Helvetica"})
