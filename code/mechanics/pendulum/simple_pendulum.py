@@ -41,7 +41,7 @@ theta[0] = np.pi / 2
 omega[0] = 0
 
 # Run simulation
-for i, t in enumerate(tqdm(time_series[1:-1]), start=1):
+for i, _ in enumerate(tqdm(time_series[1:-1]), start=1):
     a_grav = -g / L * np.sin(theta[i - 1])
     omega[i] = omega[i - 1] + a_grav * dt
     theta[i] = theta[i - 1] + omega[i] * dt
@@ -59,7 +59,7 @@ bob_acc = (
     rotate(bob_pos[:-1].T, np.pi / 2).T
     * alpha.reshape((num_steps - 1, 1))
     / argmax(alpha)
-    * 10.0
+    * 50.0
 )
 
 
@@ -121,7 +121,6 @@ bob = ax_vis.plot(
 fix = ax_vis.plot([0, 0], [0, 0], "o", markersize=5, color="black")[0]
 phase_plt = ax_phase.plot(theta[0], omega[0], "red")[0]
 time_plt_theta = ax_time.plot(time_series[0], theta[0], "blue")[0]
-time_plt_omega = ax_time.plot(time_series[0], omega[0], "green")[0]
 time_plt_omega = ax_time.plot(time_series[0], omega[0], "green")[0]
 time_plt_alpha = ax_time.plot(time_series[0], alpha[0], "purple")[0]
 
