@@ -124,6 +124,23 @@ data_euler_implicit = euler_implicit()
 data_RK2 = RK2()
 data_RK4 = RK4()
 
+########################
+#        Errors        #
+########################
+
+
+def error(method, exact):
+    diff = np.abs(method - exact)
+    global_error = np.sum(diff, axis=1)
+    local_error = np.mean(diff, axis=1)
+    return global_error, local_error
+
+
+global_error_euler_explicit, local_error_euler_explicit = error(
+    data_euler_explicit, data_exact
+)
+
+
 ##########################
 #        Graphics        #
 ##########################
@@ -158,9 +175,15 @@ def generate_figure(var, last_step=-1):
     ax.set_xlim(0, times_series[last_step])
     ax.plot(
         times_series[:last_step],
+        data_exact[var, :last_step],
+        "#AAAAAA",
+        label="Precise solution",
+    )
+    ax.plot(
+        times_series[:last_step],
         data_euler_explicit[var, :last_step],
         "o",
-        markersize=2,
+        markersize=1,
         color="red",
         label="Explicit (forward) Euler",
     )
@@ -168,7 +191,7 @@ def generate_figure(var, last_step=-1):
         times_series[:last_step],
         data_euler_implicit[var, :last_step],
         "o",
-        markersize=2,
+        markersize=1,
         color="blue",
         label="Implicit (backwards) Euler",
     )
@@ -176,7 +199,7 @@ def generate_figure(var, last_step=-1):
         times_series[:last_step],
         data_RK2[var, :last_step],
         "o",
-        markersize=2,
+        markersize=1,
         color="green",
         label="Runge-Kutta 2 (explicit)",
     )
@@ -184,15 +207,9 @@ def generate_figure(var, last_step=-1):
         times_series[:last_step],
         data_RK4[var, :last_step],
         "o",
-        markersize=2,
+        markersize=1,
         color="purple",
         label="Runge-Kutta 4 (explicit)",
-    )
-    ax.plot(
-        times_series[:last_step],
-        data_exact[var, :last_step],
-        "black",
-        label="Precise solution",
     )
     plt.legend()
     plt.savefig(
