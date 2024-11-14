@@ -21,4 +21,9 @@ force:
 clean:
 	$(MAKE) LATEXMKSWITCHES=-C all
 
+reset:
+	mv main.tex MAIN.tex
+	rm main.*
+	mv MAIN.tex main.tex
+
 .PHONY: all main

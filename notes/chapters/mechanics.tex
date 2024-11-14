@@ -310,6 +310,28 @@ Then, we get
 \end{align}
 (lovely, isn't it?)
 
+\section{Numerical Integration Methods}
+TBW: explanation for all derivation, etc. At the moment it's just the equations (for use by me during the lectures).
+\subsection{Forwards (Excplicit) Euler}
+Substituting $a=t_{n}$ and  $x-a=\Delta t$ into the Taylor expansion of $x(t)$, we get
+\begin{equation}
+	x_{n+1} = x\left(t_n+\Delta t\right) = \dot{x}\left(t_{n}\right)\Delta t + \frac{1}{2}\ddot{x}\left(t_{n}\right)\Delta t^{2} + \dots
+	\label{eq:Taylor_expansion_forward_Euler}
+\end{equation}
+We truncate the exapnsion after the linear term, and get:
+\begin{equation}
+	x_{n+1} = x_{n}+\dot{x}_{n}\Delta t + \bigO{\Delta t^{2}}.
+	\label{eq:Taylor_expansion_forward_Euler_trunc}
+\end{equation}
+
+Local (truncation) error: $\bigO{\Delta t^{2}}$. Global error: if reduce $\Delta t$ by $\alpha$, we would need $\alpha$ times the amount of steps, hence the global error is $\bigO{\Delta t}$.
+
+
+\subsection{Backwards (Implicit) Euler}
+\subsection{Modified Euler (2nd-order Runge-Kutta)}
+\subsection{4th-order Runge-Kutta}
+\subsection{Other Runge-Kutta}
+
 \section{Orbital Mechanics}
 \subsection{Classic Gravitational Force}
 Already in the 17th century, \textit{Isaac Newton} formulated the gravitational force existing between any two objects with masses greater than zero. The strength of the force is given by the equation
