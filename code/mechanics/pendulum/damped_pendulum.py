@@ -25,8 +25,8 @@ def argmax(arr):
 # Constants
 g = 9.8  # [m/s^2]
 L = 1.0  # [m]
-vel_res = np.sqrt(g / L)  # [rad/s]
-beta = 0.1 * vel_res  # [1/s]
+res_freq = np.sqrt(g / L)  # [rad/s]
+beta = 1.5 * res_freq  # [1/s]
 
 # Parameters
 t_max = 25.0  # [s]
@@ -168,8 +168,8 @@ def animate(frame):
         acc_arrow,
         phase_plt,
         time_plt_theta,
-        time_plt_omega,
-        time_plt_alpha,
+        # time_plt_omega,
+        # time_plt_alpha,
     ]
 
 

@@ -28,7 +28,7 @@ L1 = 3.0  # [m]
 L2 = 1.0  # [m]
 
 # Parameters
-t_max = 100.0  # [s]
+t_max = 20.0  # [s]
 dt = 0.01  # [s]
 m1 = 1.5  # [kg]
 m2 = 1.0  # [kg]
@@ -47,7 +47,7 @@ alpha_1 = np.zeros(num_steps)
 alpha_2 = np.zeros(num_steps)
 
 # Initial conditions
-theta_1[0] = np.pi / 3
+theta_1[0] = np.pi / 2.1
 theta_2[0] = np.pi / 1.5
 omega_1[0] = -0.0
 omega_2[0] = -1.0
