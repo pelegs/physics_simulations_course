@@ -1,4 +1,4 @@
-from random import choice as random_choice
+# from random import choice as random_choice
 from sys import argv
 
 import matplotlib.animation as animation
@@ -172,6 +172,8 @@ class Particle:
             pos=self.pos,
             vel=self.vel,
             params=np.array([self.mass, self.rad]),
+            ecc=self.e_vec,
+            ellipse=np.array([self.a, self.b]),
         )
 
 
