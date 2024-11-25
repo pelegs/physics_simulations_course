@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 # Time-related constants, variables and parameters
 num_steps = 10000
-dt = 0.001
+dt = 0.01
 max_t = num_steps * dt
 time_series = np.arange(0, max_t, dt)
 current_step = 0
@@ -130,50 +130,28 @@ class Particle:
                 * dt
             )
 
-    def calc_ecc_vec(self, massive_obj):
-        self.e_vec = ecc_vec(massive_obj, self)
-        self.e_hat = normalize(self.e_vec)
-        self.e = np.linalg.norm(self.e_vec)
+    def get_ecc_vec(self, massive_object, idx=0):
+        mu = G * (massive_object.mass + self.mass)
+        r = self.pos[idx] - massive_object.pos[idx]
+        v = self.vel[idx] - massive_object.vel[idx]
+        h = np.cross(r, v)
+        self.ecc_vec = np.cross(v, h) / mu - normalize(r)
 
-    def calc_semi_axes(self, massive_obj):
-        r_vec = self.pos[current_step] - massive_obj.pos[current_step]
-        r = np.linalg.norm(r_vec)
-        th = angle_between(r_vec, self.e_vec)
-        self.a = r * (1 + self.e * np.cos(th)) / (1 - self.e**2)
-        self.b = self.a * np.sqrt(1 - self.e**2)
-        self.rp = 2 * self.a / ((1 + self.e) / (1 - self.e) + 1)
-
-    def calc_orbital_points(self, massive_obj):
-        self.p1 = massive_obj.pos[current_step] + self.e_hat * self.rp
-        self.p2 = self.p1 - 2 * self.e_hat * self.a
-        self.c = (self.p1 + self.p2) / 2
-        b_hat = rotate(self.e_hat, np.pi / 2)
-        self.p3 = self.c + b_hat * self.b
-        self.p4 = self.c - b_hat * self.b
-
-    def get_orbital_points(self, massive_obj):
-        self.calc_ecc_vec(massive_obj)
-        self.calc_semi_axes(massive_obj)
-        self.calc_orbital_points(massive_obj)
-        return np.array(
-            [
-                self.pos[current_step],
-                self.p1,
-                self.p2,
-                self.p3,
-                self.p4,
-                self.c,
-            ]
+    def save_orbital_data(self, filename, massive_object, idx=0):
+        global_params = np.array([G])
+        own_params = np.array([self.mass, self.rad])
+        massive_obj_params = np.array(
+            [massive_object.mass, massive_object.rad]
         )
-
-    def save_data(self, filename):
+        pos = self.pos - massive_object.pos[idx]
+        vel = self.vel - massive_object.vel[idx]
         np.savez(
             filename,
-            pos=self.pos,
-            vel=self.vel,
-            params=np.array([self.mass, self.rad]),
-            ecc=self.e_vec,
-            ellipse=np.array([self.a, self.b]),
+            global_params=global_params,
+            own_params=own_params,
+            massive_obj_params=massive_obj_params,
+            pos=pos,
+            vel=vel,
         )
 
 
@@ -203,117 +181,15 @@ def run():
         verlet_2()
 
 
-def setup_graphics(xs=[-500, 500], ys=[-500, 500], orbital_pts=None):
-    global fig, ax, frames_label, paths, circles, orbital_pts_scatter, contour
-
-    fig, ax = plt.subplots(1, 1, figsize=(10, 10))
-    ax.set_xlim(xs[0] - 10, xs[1] + 10)
-    ax.set_ylim(ys[0] - 10, ys[1] + 10)
-    ax.set_xlabel("x", fontsize=15)
-    ax.set_ylabel("y", rotation=0, fontsize=15)
-    ax.set_aspect("equal", "box")
-    # ax.grid(alpha=0.2)
-
-    paths = [
-        ax.plot(particle.pos[0, 0], particle.pos[0, 1], c=particle.color)[0]
-        for particle in particles
-    ]
-
-    circles = [
-        Circle(xy=particle.pos[0], radius=particle.rad, color=particle.color)
-        for particle in particles
-    ]
-    for circle in circles:
-        ax.add_patch(circle)
-
-    ecc_label = plt.text(
-        0.05, 0.9, f"e={planet.e:0.2f}", fontsize=10, transform=ax.transAxes
-    )
-
-    frames_label = plt.text(
-        0.05,
-        0.95,
-        f"frame {0:05d}/{num_steps:05d}",
-        fontsize=10,
-        transform=ax.transAxes,
-    )
-
-    if orbital_pts is not None:
-        num_pts = 400
-        xrange = np.linspace(xs[0], xs[1], num_pts)
-        yrange = np.linspace(ys[0], ys[1], num_pts)
-        X, Y = np.meshgrid(xrange, yrange)
-        conic = A * X**2 + B * X * Y + C * Y**2 + D * X + E * Y
-        contour = ax.contour(X, Y, (conic), [1], alpha=0.1)
-        orbital_pts_scatter = ax.scatter(
-            orbital_pts[:, 0],
-            orbital_pts[:, 1],
-            c=colors["light red"],
-            s=25,
-            alpha=0.25,
-        )
-        ax.plot(
-            orbital_pts[1:3, 0],
-            orbital_pts[1:3, 1],
-            c=colors["brick"],
-            alpha=0.25,
-        )
-        ax.plot(
-            orbital_pts[3:5, 0],
-            orbital_pts[3:5, 1],
-            c=colors["sage"],
-            alpha=0.25,
-        )
-
-
-def anim_update(frame):
-    step = frame * steps_per_frame
-    frames_label.set_text(f"frame {step:05d}/{num_steps:05d}")
-    for particle, circle, path in zip(particles, circles, paths):
-        path.set_xdata(particle.pos[:step, 0])
-        path.set_ydata(particle.pos[:step, 1])
-        circle.center = particle.pos[step]
-    return paths + circles + [frames_label]
-
-
-def ecc_vec(massive_obj, particle):
-    r_vec = particle.pos[current_step] - massive_obj.pos[current_step]
-    v_vec = particle.vel[current_step]
-    mu = G * massive_obj.mass
-    h_vec = np.cross(r_vec, v_vec)
-    return np.cross(v_vec, h_vec) / mu - normalize(r_vec)
-
-
-def get_conic_coeffs(pts):
-    x = pts[:, 0]
-    y = pts[:, 1]
-    M = np.vstack([x**2, x * y, y**2, x, y]).T
-    return np.linalg.lstsq(M, np.ones(5), rcond=-1)[0]
-
-
 if __name__ == "__main__":
-    star = Particle(id=0, mass=1.0e7, rad=8.0, color=colors["orange"])
-
-    planet_x0 = np.append(np.random.uniform(-200, 200, 2), 0)
-    planet_v0 = (
-        np.random.uniform(0.1, 1.5)
-        * normalize(rotate(star.pos[0] - planet_x0, np.pi / 2))
-        * np.sqrt(G * star.mass / distance(star.pos[0], planet_x0))
-    )
+    star = Particle(id=0, mass=1.0e6)
     planet = Particle(
         id=1,
-        pos_0=planet_x0,
-        vel_0=planet_v0,
-        mass=1.0e-5,
-        rad=3.0,
-        color=colors["blue"],
+        pos_0=np.random.uniform(-1000, 1000, 3),
+        vel_0=np.random.uniform(-55, 55, 3),
     )
 
     particles = [star, planet]
-
-    orbital_pts = planet.get_orbital_points(star)
-    print(f"orbital eccentricity = {planet.e:0.2f}")
-    A, B, C, D, E = get_conic_coeffs(orbital_pts[:-1])
 
     # num_particles = 10
     # particles = [
@@ -335,20 +211,13 @@ if __name__ == "__main__":
 
     run()
 
-    setup_graphics(
-        minmax(planet.pos[:, 0]),
-        minmax(planet.pos[:, 1]),
-        orbital_pts=orbital_pts,
+    planet.get_ecc_vec(star)
+    cont = input(
+        f"Calculated eccentricity is {np.linalg.norm(planet.ecc_vec)}. Continue? (default=yes) "
     )
-    num_frames = num_steps // 5
-    steps_per_frame = num_steps // num_frames
-    ani = animation.FuncAnimation(
-        fig=fig,
-        func=anim_update,
-        frames=num_frames,
-        interval=0,
-        blit=True,
-    )
-    plt.show()
-
-    planet.save_data(f"data/{argv[1]}")
+    if cont in ["y", "yes", ""]:
+        filename = f"data/{argv[1]}.npz"
+        planet.save_orbital_data(filename, star)
+        print(f"saved data to {filename}")
+    else:
+        print("data discarded")
