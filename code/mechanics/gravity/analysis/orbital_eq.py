@@ -2,12 +2,17 @@ from sys import argv
 
 import matplotlib.pyplot as plt
 import numpy as np
-from gravity import Z_, normalize
 from pyquaternion import Quaternion
 
 ##################################
 #        Helper functions        #
 ##################################
+
+
+def normalize(vec):
+    if not np.any(vec):
+        raise ValueError("Can't normalize the zero vector")
+    return vec / np.linalg.norm(vec)
 
 
 def pol2car(pts_pol):
@@ -23,6 +28,13 @@ def get_angle(v1, v2):
     return np.arccos(
         np.dot(v1, v2) / (np.linalg.norm(v1) * np.linalg.norm(v2))
     )
+
+
+##############################
+#        Vector const        #
+##############################
+
+Z_ = np.array([0, 0, 1], dtype=float)
 
 
 ######################
