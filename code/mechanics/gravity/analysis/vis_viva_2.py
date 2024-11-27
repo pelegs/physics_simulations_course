@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import matplotlib.pyplot as plt
 import numpy as np
 from labellines import labelLines
@@ -38,8 +40,13 @@ dist_list = list()
 speed_list = list()
 vis_viva_speed_list = list()
 ecc_list = list()
-for i in range(1, 7):
-    dist, speed, vis_viva_speed, ecc = get_data(f"data/planet_{i}.npz")
+
+planet_files = Path("data/").glob("planet_*.npz")
+other_files = Path("data/").glob("orbit_e*.npz")
+all_files = list(planet_files) + list(other_files)
+
+for filename in all_files:
+    dist, speed, vis_viva_speed, ecc = get_data(filename)
     dist_list.append(dist)
     speed_list.append(speed)
     vis_viva_speed_list.append(vis_viva_speed)
@@ -48,8 +55,8 @@ for i in range(1, 7):
 # Graphics
 fig, ax = plt.subplots()
 ax.set_title("Vis-Viva equation validation", fontsize=25)
-ax.set_xlabel(r"Distance to star", fontsize=15)
-ax.set_ylabel(r"Velocity", fontsize=15)
+ax.set_xlabel(r"Distance to star [arbitrary units]", fontsize=15)
+ax.set_ylabel(r"Velocity [arbitrary units]", fontsize=15)
 ax.xaxis.set_tick_params(labelsize=15)
 ax.yaxis.set_tick_params(labelsize=15)
 
@@ -59,7 +66,7 @@ for distance, speed, vis_viva_speed, ecc in zip(
     ax.plot(
         distance,
         vis_viva_speed,
-        linewidth=7,
+        linewidth=5,
         alpha=0.5,
         label=f"e={ecc:0.3f}",
     )
@@ -75,4 +82,6 @@ plt_lines = plt.gca().get_lines()[::2]
 mid_dists = [np.mean(dist) for dist in dist_list]
 labelLines(plt_lines, align=True, xvals=mid_dists)
 
-plt.show()
+# plt.show()
+plt.gcf().set_size_inches(20, 10)
+plt.savefig("figs/vis_viva2.png", dpi=300, bbox_inches="tight")

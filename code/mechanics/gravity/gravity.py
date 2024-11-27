@@ -130,7 +130,7 @@ class Particle:
                 * dt
             )
 
-    def get_ecc_vec(self, massive_object, idx=0):
+    def calc_ecc_vec(self, massive_object, idx=0):
         mu = G * (massive_object.mass + self.mass)
         r = self.pos[idx] - massive_object.pos[idx]
         v = self.vel[idx] - massive_object.vel[idx]
@@ -173,6 +173,14 @@ def verlet_2():
         particle.verlet_2()
 
 
+def set_filename(ecc):
+    if argv[1] == "":
+        filename = f"orbit_e_{ecc:0.3f}"
+    else:
+        filename = argv[1]
+    return f"data/{filename}.npz"
+
+
 def run():
     global current_step
     for current_step, time in enumerate(tqdm(time_series)):
@@ -186,7 +194,7 @@ if __name__ == "__main__":
     planet = Particle(
         id=1,
         pos_0=np.random.uniform(-1000, 1000, 3),
-        vel_0=np.random.uniform(-55, 55, 3),
+        vel_0=np.random.uniform(-30, 30, 3),
     )
 
     particles = [star, planet]
@@ -211,12 +219,13 @@ if __name__ == "__main__":
 
     run()
 
-    planet.get_ecc_vec(star)
+    planet.calc_ecc_vec(star)
+    ecc = np.linalg.norm(planet.ecc_vec)
     cont = input(
-        f"Calculated eccentricity is {np.linalg.norm(planet.ecc_vec)}. Continue? (default=yes) "
+        f"Calculated eccentricity is {ecc:0.3f}. Continue? (default=yes) "
     )
     if cont in ["y", "yes", ""]:
-        filename = f"data/{argv[1]}.npz"
+        filename = set_filename(ecc)
         planet.save_orbital_data(filename, star)
         print(f"saved data to {filename}")
     else:
