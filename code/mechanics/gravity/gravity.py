@@ -1,4 +1,4 @@
-# from random import choice as random_choice
+from random import choice as random_choice
 from sys import argv
 
 import matplotlib.animation as animation
@@ -190,43 +190,36 @@ def run():
 
 
 if __name__ == "__main__":
-    star = Particle(id=0, mass=1.0e6)
-    planet = Particle(
-        id=1,
-        pos_0=np.random.uniform(-1000, 1000, 3),
-        vel_0=np.random.uniform(-30, 30, 3),
-    )
-
-    particles = [star, planet]
-
-    # num_particles = 10
-    # particles = [
-    #     Particle(
-    #         id=id,
-    #         pos_0=np.append(np.random.uniform(low=-500, high=500, size=2), 0),
-    #         vel_0=np.append(np.random.uniform(low=-50, high=50, size=2), 0),
-    #         mass=np.random.uniform(1.0e-4, 1.0e-3),
-    #         color=random_choice(colors_list),
-    #     )
-    #     for id in range(num_particles)
-    # ]
-    # particles.append(
-    #     Particle(
-    #         mass=1.0e6,
-    #         color=colors["red"],
-    #     )
+    # star = Particle(id=0, mass=1.0e6)
+    # planet = Particle(
+    #     id=1,
+    #     pos_0=200 * X_,
+    #     vel_0=np.sqrt(1.0e6 / 200) * Y_,
     # )
+    #
+    # particles = [star, planet]
+
+    num_particles = 15
+    particles = [
+        Particle(
+            id=id,
+            pos_0=np.random.uniform(-1000, 1000, 3),
+            vel_0=np.random.uniform(-50, 50, 3),
+            mass=1.0e6,
+            # color=random_choice(colors_list),
+        )
+        for id in range(num_particles)
+    ]
 
     run()
 
-    planet.calc_ecc_vec(star)
-    ecc = np.linalg.norm(planet.ecc_vec)
-    cont = input(
-        f"Calculated eccentricity is {ecc:0.3f}. Continue? (default=yes) "
-    )
-    if cont in ["y", "yes", ""]:
-        filename = set_filename(ecc)
-        planet.save_orbital_data(filename, star)
-        print(f"saved data to {filename}")
-    else:
-        print("data discarded")
+    # planet.calc_ecc_vec(star)
+    # ecc = np.linalg.norm(planet.ecc_vec)
+    # filename = set_filename(ecc)
+    # planet.save_orbital_data(filename, star)
+
+    fig, ax = plt.subplots()
+    for particle in particles:
+        ax.plot(particle.pos[:, 0], particle.pos[:, 1])
+    ax.set_aspect("equal")
+    plt.show()
