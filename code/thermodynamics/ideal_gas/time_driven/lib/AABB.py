@@ -75,13 +75,15 @@ class SweepPrune:
 
 if __name__ == "__main__":
     # Testing overlaps with a visualization
+    from random import randint
+
     import matplotlib.pyplot as plt
     from matplotlib.patches import Circle, Rectangle
 
     # Create n circles, each centered in a random position
     # within a certain area (xmin, ymin), (xmax, ymax)
-    xmin, xmax = 0, 300
-    ymin, ymax = 0, 300
+    xmin, xmax = 0, 400
+    ymin, ymax = 0, 400
     zmin, zmax = 0, 0
     num_circles = 20
     centers = np.random.uniform(
@@ -100,12 +102,28 @@ if __name__ == "__main__":
     ax.set_xlim(xmin, xmax)
     ax.set_ylim(ymin, ymax)
     ax.set_aspect("equal")
-    ax.set_xlabel("x")
-    ax.set_ylabel("y")
+    ax.set_xlabel("x", fontsize=15)
+    ax.set_ylabel("y", rotation=0, fontsize=15)
+
+    intersected_set = set(
+        [
+            aabb_system.AABB_list[idx].id
+            for pair in aabb_system.overlap_ids
+            for idx in pair
+        ]
+    )
 
     for center, radius, bbox in zip(centers, radii, bbox_list):
+        circle_fill_color = "#00BBFF"
+        if bbox.id in intersected_set:
+            circle_fill_color = f'{f"#{randint(0, 256**3):06x}"}'.upper()
+
         circle = Circle(
-            center, radius, lw=1, edgecolor="black", facecolor="#00BBFF"
+            center,
+            radius,
+            lw=1,
+            edgecolor="black",
+            facecolor=circle_fill_color,
         )
         ax.add_patch(circle)
         rect = Rectangle(
