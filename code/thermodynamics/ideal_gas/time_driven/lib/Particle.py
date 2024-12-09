@@ -1,5 +1,6 @@
 import numpy as np
 
+from .AABB import AABB
 from .constants import AXES, BLB, URF, ZERO_VEC, npdarr
 from .Container import Container
 from .functions import normalize
@@ -43,7 +44,6 @@ class Particle:
         self.opacity: float = opacity
 
         # Setting non-argument variables
-        self.bbox: npdarr = np.zeros((2, 3))
         self.set_bbox()
 
     def __repr__(self) -> str:
@@ -54,8 +54,13 @@ class Particle:
         )
 
     def set_bbox(self):
-        self.bbox[BLB] = self.pos - self.rad
-        self.bbox[URF] = self.pos + self.rad
+        pts: npdarr = np.array(
+            [
+                self.pos - self.rad,
+                self.pos + self.rad,
+            ]
+        )
+        self.bbox: AABB = AABB(self, pts)
 
     def bounce_wall(self, direction: int) -> None:
         self.vel[direction] *= -1.0
