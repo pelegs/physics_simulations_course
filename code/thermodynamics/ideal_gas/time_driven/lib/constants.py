@@ -9,6 +9,7 @@ npiarr = npt.NDArray[np.int8]
 X: int = 0
 Y: int = 1
 Z: int = 2
+UNION: int = 3
 AXES: list[int] = [X, Y, Z]
 ZERO_VEC: npdarr = np.zeros(3)
 X_DIR, Y_DIR, Z_DIR = np.identity(3)

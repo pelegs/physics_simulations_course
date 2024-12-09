@@ -1,6 +1,5 @@
 import numpy as np
-
-from .constants import npdarr
+from constants import npdarr
 
 
 def normalize(v: npdarr) -> npdarr:
