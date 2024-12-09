@@ -80,8 +80,8 @@ if __name__ == "__main__":
 
     # Create n circles, each centered in a random position
     # within a certain area (xmin, ymin), (xmax, ymax)
-    xmin, xmax = 0, 500
-    ymin, ymax = 0, 500
+    xmin, xmax = 0, 300
+    ymin, ymax = 0, 300
     zmin, zmax = 0, 0
     num_circles = 20
     centers = np.random.uniform(
@@ -119,5 +119,9 @@ if __name__ == "__main__":
         ax.add_patch(rect)
         ax.annotate(f"{bbox.id}", center[:Z])
 
+    ax.annotate(
+        ",".join([f"({p1},{p2})" for p1, p2 in aabb_system.overlap_ids]),
+        (10, 10),
+    )
+
     plt.show()
-    print(aabb_system.overlap_ids)
