@@ -3,6 +3,7 @@ from copy import deepcopy
 import numpy as np
 from tqdm import tqdm
 
+from .AABB import AABB, SweepPrune
 from .constants import AXES, BLB, URF, X, Y, Z, npdarr, npiarr
 from .Container import Container
 from .functions import distance
@@ -29,12 +30,6 @@ class Simulation:
         self.time_series: np.ndarray = np.arange(0, max_t, dt)
         self.num_steps: int = len(self.time_series)
         self.num_particles: int = len(self.particle_list)
-        self.sorted_by_bboxes: list[list[Particle]] = [
-            deepcopy(self.particle_list),
-            deepcopy(self.particle_list),
-            deepcopy(self.particle_list),
-        ]
-        self.reset_overlaps()
 
         # Data matrices
         self.pos_matrix: npdarr = np.zeros(
@@ -47,54 +42,15 @@ class Simulation:
             (self.num_steps, self.num_particles), dtype=int
         )
 
+        # !!!!!! TO BE IMPLEMENTED !!!!!!
+        # Sweep and prune system
+        # !!!!!! TO BE IMPLEMENTED !!!!!!
+        self.sweep_prune_system: SweepPrune
+
     def __repr__(self) -> str:
         return (
             f"Container: {self.container}, particles: {self.particle_list}, "
             f"dt: {self.dt}, max time: {self.max_t}"
-        )
-
-    @staticmethod
-    def order_x(particle: Particle):
-        return particle.bbox[BLB, X]
-
-    @staticmethod
-    def order_y(particle: Particle):
-        return particle.bbox[BLB, Y]
-
-    @staticmethod
-    def order_z(particle: Particle):
-        return particle.bbox[BLB, Z]
-
-    def sort_particles(self):
-        for axis, order_func in zip(
-            AXES, [self.order_x, self.order_y, self.order_z]
-        ):
-            self.sorted_by_bboxes[axis] = sorted(
-                self.particle_list, key=order_func
-            )
-
-    def check_axis_overlaps(self, axis: int) -> None:
-        for p1_idx, p1 in enumerate(self.sorted_by_bboxes[axis]):
-            for p2 in self.sorted_by_bboxes[axis][p1_idx + 1 :]:
-                if p2.bbox[BLB, axis] <= p1.bbox[URF, axis]:
-                    self.axis_overlap_matrix[axis, p1.id, p2.id] = 1
-                    self.axis_overlap_matrix[axis, p2.id, p1.id] = 1
-                else:
-                    break
-
-    def set_full_overlaps(self):
-        # reduce() is used because there are three overlap matrices
-        self.full_overlap_matrix = np.triu(
-            np.logical_and.reduce(self.axis_overlap_matrix)
-        )
-        self.overlap_ids = np.vstack(np.where(self.full_overlap_matrix)).T
-
-    def reset_overlaps(self):
-        self.axis_overlap_matrix: npiarr = np.zeros(
-            (2, self.num_particles, self.num_particles), dtype=bool
-        )
-        self.full_overlap_matrix: npiarr = np.zeros(
-            (self.num_particles, self.num_particles), dtype=bool
         )
 
     def resolve_elastic_collisions(self, time: int):
@@ -122,11 +78,6 @@ class Simulation:
         for time, _ in enumerate(
             tqdm(self.time_series, desc="Running simulation")
         ):
-            self.reset_overlaps()
-            self.sort_particles()
-            self.check_axis_overlaps(axis=X)
-            self.check_axis_overlaps(axis=Y)
-            self.set_full_overlaps()
             self.resolve_elastic_collisions(time)
             self.resolve_wall_collisions()
             self.advance_step()
