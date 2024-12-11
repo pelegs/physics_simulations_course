@@ -16,13 +16,12 @@ x = np.linspace(dL, L - dL, N)
 y = np.linspace(dL, L - dL, N)
 xv, yv = np.meshgrid(x, y)
 coordinates = np.column_stack((xv.ravel(), yv.ravel()))
-hlid = 13
+hlid = N**2 // 2
 particle_list: list[Particle] = [
     Particle(
         id=id,
         container=container,
         pos=np.append(xy, L / 2),
-        vel=np.append(np.random.uniform(-50, 50, 2), 0),
         rad=7,
         color="#00AAFF",
     )
@@ -30,6 +29,7 @@ particle_list: list[Particle] = [
 ]
 # particle_list[hlid].vel = np.array([100, 200, 0])
 particle_list[hlid].color = "#FF0000"
+particle_list[hlid].vel = np.append(np.random.uniform(-1000, 1000, 2), 0)
 
 # Simulation
 max_t = 25.0
@@ -48,7 +48,6 @@ ax.set_aspect("equal")
 frames_label = ax.annotate(
     f"frame: 0/{simulation.num_steps:04d}", xy=(10, L - 10)
 )
-Ek_label = ax.annotate("<Ek>=?", xy=(10, L - 20))
 circles = [
     Circle(
         pos[:2],
@@ -68,8 +67,7 @@ def update_animation(frame):
     for pos, circle in zip(simulation.pos_matrix[frame], circles):
         circle.set_center(pos[:2])
     frames_label.set_text(f"frame: {frame:04d}/{simulation.num_steps:04d}")
-    Ek_label.set_text(f"<Ek>={Ek[frame]:0.2f}")
-    return circles + [frames_label, Ek_label]
+    return circles + [frames_label]
 
 
 animation = FuncAnimation(
