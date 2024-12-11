@@ -31,10 +31,10 @@ particle_list: list[Particle] = [
 particle_list[hlid].vel = np.zeros(3)
 particle_list[hlid].mass = 25.0
 particle_list[hlid].rad = 10.0
-particle_list[hlid].color = "#FF0000"
+particle_list[hlid].color = "#FF7799"
 
 # Simulation
-max_t = 100.0
+max_t = 25.0
 dt = 0.025
 simulation = Simulation(container, particle_list, dt, max_t)
 simulation.run()
@@ -46,6 +46,11 @@ ax.set_ylim(0, L)
 ax.set_xticks([])
 ax.set_yticks([])
 ax.set_aspect("equal")
+motion_line = ax.plot(
+    simulation.pos_matrix[0, hlid, 0],
+    simulation.pos_matrix[0, hlid, 1],
+    color="red",
+)[0]
 frames_label = ax.annotate(
     f"frame: 0/{simulation.num_steps:04d}", xy=(10, L - 10)
 )
@@ -67,8 +72,12 @@ for circle in tqdm(circles, desc="Drawing first frame"):
 def update_animation(frame):
     for pos, circle in zip(simulation.pos_matrix[frame], circles):
         circle.set_center(pos[:2])
+        motion_line.set_data(
+            simulation.pos_matrix[:frame, hlid, 0],
+            simulation.pos_matrix[:frame, hlid, 1],
+        )
     frames_label.set_text(f"frame: {frame:04d}/{simulation.num_steps:04d}")
-    return circles + [frames_label]
+    return circles + [frames_label] + [motion_line]
 
 
 animation = FuncAnimation(
