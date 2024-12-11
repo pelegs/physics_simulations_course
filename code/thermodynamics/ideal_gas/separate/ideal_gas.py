@@ -23,6 +23,12 @@ Z_DIR: npdarr = np.array([0, 0, 1])
 BLB: int = 0
 URF: int = 1
 
+CPOS_DEFAULT = [
+    (500.0, 500.0, 250.0),
+    (0.0, 0.0, 0.0),
+    (0.0, 1.0, 0.0),
+]
+
 
 # Useful variables
 colors = [
@@ -137,6 +143,9 @@ class Particle:
             if (self.bbox[BLB, axis] < 0.0) or (
                 self.bbox[URF, axis] > self.container.dimensions[axis]
             ):
+                # t: float = (self.pos[axis] - self.rad) / self.vel[axis]
+                # if self.bbox[BLB, axis] < 0.0:
+                #     self.pos = self.pos - self.vel * t
                 self.bounce_wall(axis)
 
     def move(self, dt: float) -> None:
@@ -354,7 +363,7 @@ def load_scene(scene_path: str | Path) -> Simulation:
     )
 
 
-def visualize_3D(simulation: Simulation):
+def visualize_3D(simulation: Simulation, cpos=CPOS_DEFAULT):
     print(
         f"Showing {simulation.num_particles} particles "
         f"in {simulation.num_steps} steps"
@@ -379,11 +388,7 @@ def visualize_3D(simulation: Simulation):
     pl.add_timer_event(
         max_steps=simulation.num_steps, duration=200, callback=callback
     )
-    cpos = [
-        (500.0, 500.0, 250.0),
-        (0.0, 0.0, 0.0),
-        (0.0, 1.0, 0.0),
-    ]
+    cpos = cpos
     pl.show(cpos=cpos, interactive=True)
 
 
