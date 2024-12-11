@@ -27,16 +27,14 @@ particle_list: list[Particle] = [
     )
     for id, xy in enumerate(coordinates)
 ]
-# particle_list[hlid].vel = np.array([100, 200, 0])
 particle_list[hlid].color = "#FF0000"
-particle_list[hlid].vel = np.append(np.random.uniform(-1000, 1000, 2), 0)
+particle_list[hlid].vel = np.array([500, 300, 0.0])
 
 # Simulation
-max_t = 25.0
+max_t = 100.0
 dt = 0.025
 simulation = Simulation(container, particle_list, dt, max_t)
 simulation.run()
-Ek = np.mean(np.linalg.norm(simulation.vel_matrix, axis=2), axis=1) ** 2
 
 # Graphics
 fig, ax = plt.subplots()
@@ -74,4 +72,16 @@ animation = FuncAnimation(
     fig=fig, func=update_animation, frames=simulation.num_steps, interval=0
 )
 
+# plt.show()
+
+# Test
+Ek = np.mean(np.linalg.norm(simulation.vel_matrix, axis=2), axis=1) ** 2
+Err = np.std(np.linalg.norm(simulation.vel_matrix, axis=2), axis=1) ** 2
+fig, ax = plt.subplots()
+ax.set_xlim(0, max_t)
+ax.set_ylim(0, np.max(Ek + Err))
+ax.fill_between(
+    simulation.time_series, Ek - Err, Ek + Err, alpha=0.5, linewidth=0
+)
+ax.plot(simulation.time_series, Ek)
 plt.show()
