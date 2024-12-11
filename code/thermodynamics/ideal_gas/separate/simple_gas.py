@@ -31,7 +31,7 @@ particle_list[hlid].color = "#FF0000"
 particle_list[hlid].vel = np.array([500, 300, 0.0])
 
 # Simulation
-max_t = 100.0
+max_t = 50.0
 dt = 0.025
 simulation = Simulation(container, particle_list, dt, max_t)
 simulation.run()
@@ -72,16 +72,15 @@ animation = FuncAnimation(
     fig=fig, func=update_animation, frames=simulation.num_steps, interval=0
 )
 
-# plt.show()
+plt.show()
 
 # Test
-Ek = np.mean(np.linalg.norm(simulation.vel_matrix, axis=2), axis=1) ** 2
-Err = np.std(np.linalg.norm(simulation.vel_matrix, axis=2), axis=1) ** 2
+Ek = 0.5 * np.mean(np.linalg.norm(simulation.vel_matrix, axis=2), axis=1) ** 2
+plt.rcParams["text.usetex"] = True
 fig, ax = plt.subplots()
 ax.set_xlim(0, max_t)
-ax.set_ylim(0, np.max(Ek + Err))
-ax.fill_between(
-    simulation.time_series, Ek - Err, Ek + Err, alpha=0.5, linewidth=0
-)
+ax.set_title("Average kinetic energy over time", fontsize=30)
+ax.set_xlabel("Time", fontsize=20)
+ax.set_ylabel(r"$\langle E_{k}\rangle$", rotation=0, fontsize=20)
 ax.plot(simulation.time_series, Ek)
 plt.show()
