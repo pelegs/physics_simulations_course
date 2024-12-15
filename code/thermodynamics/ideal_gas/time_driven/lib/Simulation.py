@@ -1,36 +1,60 @@
 from copy import deepcopy
 
 import numpy as np
-from lib.AABB import AABB, SweepPruneSystem
-from lib.constants import AXES, BLB, URF, X, Y, Z, npdarr, npiarr
-from lib.Container import Container
-from lib.functions import distance
-from lib.Particle import Particle, elastic_collision
-from tqdm import tqdm
+from lib.AABB import SweepPruneSystem
+from lib.constants import npdarr, npiarr
+from lib.Object import Object
+from lib.Particle import Particle
+
+# from tqdm import tqdm
 
 
 class Simulation:
     """Docstring for Simulation."""
 
+    objects_list: list[Object] = list()
+    particle_list: list[Particle] = list()
+
     def __init__(
         self,
-        container: Container,
-        particle_list: list[Particle],
         dt: float = 0.01,
         max_t: float = 100.0,
+        sides: list[float] = [100, 100, 100],
     ) -> None:
-        # Setting argument variables
-        self.container: Container = container
-        self.particle_list: list[Particle] = particle_list
         self.dt: float = dt
         self.max_t: float = max_t
+        self.sides = np.array(sides)
 
-        # Setting non-argument variables
-        self.time_series: np.ndarray = np.arange(0, max_t, dt)
-        self.num_steps: int = len(self.time_series)
+    def __repr__(self) -> str:
+        return (
+            f"Objects: {self.objects_list}, "
+            f"Particles: {self.particle_list}, "
+            f"dt: {self.dt}, max time: {self.max_t}, "
+            f"num steps: {self.num_steps}"
+        )
+
+    def add_object(self, object: Object) -> None:
+        """
+        Note: exception handling should be done better.
+        """
+        try:
+            self.objects_list.append(object)
+            if isinstance(object, Particle):
+                self.particle_list.append(object)
+        except Exception as e:
+            print(e)
+
+    def setup_sweep_prune_system(self) -> None:
+        self.sweep_prune_system: SweepPruneSystem = SweepPruneSystem(
+            [object.bbox for object in self.objects_list]
+        )
+
+    def setup_simulation_parameters(self) -> None:
+        self.time_series: np.ndarray = np.arange(0, self.max_t, self.dt)
+        self.num_steps: int = self.time_series.shape[0]
         self.num_particles: int = len(self.particle_list)
 
-        # Data matrices
+    def setup_data_matrices(self) -> None:
         self.pos_matrix: npdarr = np.zeros(
             (self.num_steps, self.num_particles, 3)
         )
@@ -41,28 +65,10 @@ class Simulation:
             (self.num_steps, self.num_particles), dtype=int
         )
 
-        # !!!!!! TO BE IMPLEMENTED !!!!!!
-        # Sweep and prune system
-        # !!!!!! TO BE IMPLEMENTED !!!!!!
-        self.sweep_prune_system: SweepPruneSystem
-
-    def __repr__(self) -> str:
-        return (
-            f"Container: {self.container}, particles: {self.particle_list}, "
-            f"dt: {self.dt}, max time: {self.max_t}"
-        )
-
-    def resolve_elastic_collisions(self, time: int):
-        for i, j in self.overlap_ids:
-            p1, p2 = self.particle_list[i], self.particle_list[j]
-            if distance(p1.pos, p2.pos) <= p1.rad + p2.rad:
-                p1.vel, p2.vel = elastic_collision(p1, p2)
-                self.collision_matrix[time, i] = 1
-                self.collision_matrix[time, j] = 1
-
-    def resolve_wall_collisions(self):
-        for particle in self.particle_list:
-            particle.resolve_wall_collisions()
+    def setup_system(self) -> None:
+        self.setup_sweep_prune_system()
+        self.setup_simulation_parameters()
+        self.setup_data_matrices()
 
     def advance_step(self) -> None:
         for particle in self.particle_list:
@@ -73,33 +79,31 @@ class Simulation:
             self.pos_matrix[time, pidx] = particle.pos
             self.vel_matrix[time, pidx] = particle.vel
 
-    def run(self) -> None:
-        for time, _ in enumerate(
-            tqdm(self.time_series, desc="Running simulation")
-        ):
-            self.resolve_elastic_collisions(time)
-            self.resolve_wall_collisions()
-            self.advance_step()
-            self.update_data_matrices(time)
-
-    def save_np(self, filename: str) -> None:
-        radii_data: npdarr = np.array(
-            [particle.rad for particle in self.particle_list]
-        )
-        masses_data: npdarr = np.array(
-            [particle.mass for particle in self.particle_list]
-        )
-        time_data: npdarr = np.array([self.dt, self.max_t])
-        np.savez(
-            filename,
-            time_data=time_data,
-            pos=self.pos_matrix,
-            vel=self.vel_matrix,
-            radii=radii_data,
-            masses=masses_data,
-            collisions=self.collision_matrix,
-        )
+    # def run(self) -> None:
+    #     for time, _ in enumerate(
+    #         tqdm(self.time_series, desc="Running simulation")
+    #     ):
+    #         self.advance_step()
+    #         self.update_data_matrices(time)
+    #
+    # def save_np(self, filename: str) -> None:
+    #     radii_data: npdarr = np.array(
+    #         [particle.rad for particle in self.particle_list]
+    #     )
+    #     masses_data: npdarr = np.array(
+    #         [particle.mass for particle in self.particle_list]
+    #     )
+    #     time_data: npdarr = np.array([self.dt, self.max_t])
+    #     np.savez(
+    #         filename,
+    #         time_data=time_data,
+    #         pos=self.pos_matrix,
+    #         vel=self.vel_matrix,
+    #         radii=radii_data,
+    #         masses=masses_data,
+    #         collisions=self.collision_matrix,
+    #     )
 
 
 if __name__ == "__main__":
-    print("Testing Simulation class")
+    pass

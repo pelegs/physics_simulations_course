@@ -29,7 +29,7 @@ class Particle(MovingObject):
 
     def __repr__(self) -> str:
         return (
-            f"id: {self.id}, position: {self.pos}, velocity: {self.vel}, "
+            f"position: {self.pos}, velocity: {self.vel}, "
             f"radius: {self.rad}, mass: {self.mass}, color: {self.color}, "
             f"bbox: {self.bbox}"
         )

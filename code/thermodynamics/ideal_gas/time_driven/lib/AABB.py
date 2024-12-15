@@ -14,8 +14,14 @@ class AABB:
         self.center = np.average(self.pts, axis=0).flatten()
         self.sides = np.diff(self.pts, axis=0).flatten()
 
+    def set_id(self, id: int) -> None:
+        self.id = id
+
     def translate(self, dr: npdarr) -> None:
         self.pts = self.pts + dr
+
+    def __str__(self) -> str:
+        return f"id: {self.id}, LLF: {self.pts[0]}, URB: {self.pts[1]}"
 
 
 def AABB_order(axis: int):
@@ -30,12 +36,9 @@ class SweepPruneSystem:
 
     def __init__(self, AABB_list: list[AABB]) -> None:
         self.AABB_list: list[AABB] = AABB_list
-        # Make sure that the ids of the AABBs correspond to
-        # their index in the list
-        for index, bbox in enumerate(self.AABB_list):
-            bbox.id = index
 
         # Setup overlap stuff
+        self.assign_ids()
         self.num_AABBs: int = len(AABB_list)
         self.AABB_sorted: list[list[AABB]] = [
             deepcopy(self.AABB_list),
@@ -43,6 +46,10 @@ class SweepPruneSystem:
             deepcopy(self.AABB_list),
         ]
         self.reset_overlaps()
+
+    def assign_ids(self):
+        for id, bbox in enumerate(self.AABB_list):
+            bbox.set_id(id)
 
     def reset_overlaps(self) -> None:
         self.overlap_matrix: npiarr = np.zeros(
