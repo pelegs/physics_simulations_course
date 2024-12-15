@@ -1,7 +1,7 @@
 from copy import deepcopy
 
 import numpy as np
-from constants import AXES, BLB, UNION, URF, X, Y, Z, npdarr, npiarr
+from lib.constants import AXES, BLB, UNION, URF, X, Y, Z, npdarr, npiarr
 
 
 class AABB:
@@ -25,12 +25,13 @@ def AABB_order(axis: int):
     return order_axis
 
 
-class SweepPrune:
+class SweepPruneSystem:
     """Docstring for SweepPrune."""
 
     def __init__(self, AABB_list: list[AABB]) -> None:
         self.AABB_list: list[AABB] = AABB_list
-        # Make sure that the ids of the AABBs correspond to their index in the list
+        # Make sure that the ids of the AABBs correspond to
+        # their index in the list
         for index, bbox in enumerate(self.AABB_list):
             bbox.id = index
 
@@ -94,7 +95,7 @@ if __name__ == "__main__":
         AABB(obj=1, pts=np.array([center - radius, center + radius]))
         for center, radius in zip(centers, radii)
     ]
-    aabb_system = SweepPrune(bbox_list)
+    aabb_system = SweepPruneSystem(bbox_list)
     aabb_system.calc_overlaps()
 
     # Draw figure

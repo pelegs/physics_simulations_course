@@ -1,13 +1,12 @@
 from copy import deepcopy
 
 import numpy as np
+from lib.AABB import AABB, SweepPruneSystem
+from lib.constants import AXES, BLB, URF, X, Y, Z, npdarr, npiarr
+from lib.Container import Container
+from lib.functions import distance
+from lib.Particle import Particle, elastic_collision
 from tqdm import tqdm
-
-from .AABB import AABB, SweepPrune
-from .constants import AXES, BLB, URF, X, Y, Z, npdarr, npiarr
-from .Container import Container
-from .functions import distance
-from .Particle import Particle, elastic_collision
 
 
 class Simulation:
@@ -45,7 +44,7 @@ class Simulation:
         # !!!!!! TO BE IMPLEMENTED !!!!!!
         # Sweep and prune system
         # !!!!!! TO BE IMPLEMENTED !!!!!!
-        self.sweep_prune_system: SweepPrune
+        self.sweep_prune_system: SweepPruneSystem
 
     def __repr__(self) -> str:
         return (

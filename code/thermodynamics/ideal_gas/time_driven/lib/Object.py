@@ -3,6 +3,8 @@ from lib.constants import npdarr
 
 
 class Object:
+    """Docstring for Object."""
+
     id: int = -1
 
     def __init__(

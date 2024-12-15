@@ -1,34 +1,29 @@
 import numpy as np
-from lib.AABB import AABB
-from lib.constants import AXES, BLB, URF, ZERO_VEC, npdarr
+from lib.constants import ZERO_VEC, npdarr
 from lib.functions import normalize
-from lib.Object import Object
+from lib.Object import MovingObject
 
 
 class Particle(MovingObject):
     """An ellastic, perfectly spherical particle.
 
     Attributes:
-        id: Particle's unique identification number.
-        pos: Position of the particle in (x,y,z) format (numpt ndarr, double).
-        vel: Velocity of the particle in (x,y,z) format (numpt ndarr, double).
         rad: Radius of the particle.
         mass: Mass of the particle.
     """
 
     def __init__(
         self,
-        pos: npdarr = ZERO_VEC,
-        vel: npdarr = ZERO_VEC,
+        pos: npdarr = np.copy(ZERO_VEC),
+        vel: npdarr = np.copy(ZERO_VEC),
         rad: float = 1.0,
         mass: float = 1.0,
-        color: str = "#aaaaaa",
+        color: str = "#FF0000",
         opacity: float = 1.0,
     ) -> None:
         bbox_pts: npdarr = np.array([pos - rad, pos + rad])
-        super().__init__(pos, bbox_pts, color, opacity)
+        super().__init__(pos, vel, bbox_pts, color, opacity)
 
-        self.vel: npdarr = vel
         self.rad: float = rad
         self.mass: float = mass
 
