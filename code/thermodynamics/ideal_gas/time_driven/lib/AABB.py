@@ -14,7 +14,7 @@ class AABB:
         self.center = np.average(self.pts, axis=0).flatten()
         self.sides = np.diff(self.pts, axis=0).flatten()
 
-    def move(self, dr: npdarr) -> None:
+    def translate(self, dr: npdarr) -> None:
         self.pts = self.pts + dr
 
 

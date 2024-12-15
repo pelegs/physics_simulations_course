@@ -15,6 +15,6 @@ other_course/
 *.npz
 code/**/*.txt
 code/**/*.json
-code/mechanics/pendulum/n_tuple_pendulum.py
+code/mechanics/pendulum/n_tuple_pendulum/
 code/assignments/
 notes/external_references/
