@@ -1,3 +1,5 @@
+from enum import IntEnum
+
 import numpy as np
 import numpy.typing as npt
 
@@ -5,16 +7,23 @@ import numpy.typing as npt
 npdarr = npt.NDArray[np.float64]
 npiarr = npt.NDArray[np.int8]
 
-# Useful constants
-X: int = 0
-Y: int = 1
-Z: int = 2
-UNION: int = 3
-AXES: list[int] = [X, Y, Z]
+
+class Axes(IntEnum):
+    X = 0
+    Y = 1
+    Z = 2
+
+
+UNION = 3
+
+
+class Pts(IntEnum):
+    LLF = 0
+    RHB = 1
+
+
 ZERO_VEC: npdarr = np.zeros(3)
 X_DIR, Y_DIR, Z_DIR = np.identity(3)
-BLB: int = 0
-URF: int = 1
 
 if __name__ == "__main__":
-    print("test:", AXES, X_DIR, Y_DIR, Z_DIR)
+    print("test:", Axes, X_DIR, Y_DIR, Z_DIR)

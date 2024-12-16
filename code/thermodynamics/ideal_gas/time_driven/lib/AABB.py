@@ -1,7 +1,7 @@
 from copy import deepcopy
 
 import numpy as np
-from lib.constants import AXES, BLB, UNION, URF, X, Y, Z, npdarr, npiarr
+from lib.constants import UNION, Axes, Pts, npdarr, npiarr
 
 
 class AABB:
@@ -26,13 +26,15 @@ class AABB:
 
 def AABB_order(axis: int):
     def order_axis(bbox: AABB):
-        return bbox.pts[BLB, axis]
+        return bbox.pts[Pts.LLF, axis]
 
     return order_axis
 
 
 class SweepPruneSystem:
     """Docstring for SweepPrune."""
+
+    overlap_ids: npiarr
 
     def __init__(self, AABB_list: list[AABB]) -> None:
         self.AABB_list: list[AABB] = AABB_list
@@ -61,7 +63,7 @@ class SweepPruneSystem:
         self.AABB_sorted[axis] = sorted(self.AABB_list, key=AABB_order(axis))
         for bbox1_id, bbox1 in enumerate(self.AABB_sorted[axis]):
             for bbox2 in self.AABB_sorted[axis][bbox1_id + 1 :]:
-                if bbox2.pts[BLB, axis] <= bbox1.pts[URF, axis]:
+                if bbox1.pts[Pts.RHB, axis] >= bbox2.pts[Pts.LLF, axis]:
                     self.overlap_matrix[axis, bbox1.id, bbox2.id] = 1
                     self.overlap_matrix[axis, bbox2.id, bbox1.id] = 1
                 else:
@@ -74,11 +76,12 @@ class SweepPruneSystem:
         )
         self.overlap_ids = np.vstack(np.where(self.overlap_matrix[UNION])).T
 
-    def calc_overlaps(self) -> None:
+    def calc_overlaps(self) -> npiarr:
         self.reset_overlaps()
-        for axis in AXES:
+        for axis in Axes:
             self.check_axis_overlaps(axis)
         self.set_full_overlaps()
+        return self.overlap_ids
 
 
 if __name__ == "__main__":
@@ -136,14 +139,14 @@ if __name__ == "__main__":
         ax.add_patch(circle)
         rect = Rectangle(
             bbox.pts[0],
-            bbox.sides[X],
-            bbox.sides[Y],
+            bbox.sides[Axes.X],
+            bbox.sides[Axes.Y],
             lw=2,
             edgecolor="red",
             facecolor="none",
         )
         ax.add_patch(rect)
-        ax.annotate(f"{bbox.id}", center[:Z])
+        ax.annotate(f"{bbox.id}", center[: Axes.Z])
 
     ax.annotate(
         ",".join([f"({p1},{p2})" for p1, p2 in aabb_system.overlap_ids]),
