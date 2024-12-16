@@ -1,9 +1,16 @@
+import os
+import sys
+
 import matplotlib.pyplot as plt
 import numpy as np
-from lib.Particle import Particle
-from lib.Simulation import Boundary, Simulation
 from matplotlib.animation import FuncAnimation
 from matplotlib.patches import Circle
+
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+)
+from lib.Particle import Particle
+from lib.Simulation import Boundary, Simulation
 
 if __name__ == "__main__":
     print("Testing Simulation class")

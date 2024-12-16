@@ -3,7 +3,7 @@ from enum import Enum
 import numpy as np
 from lib.AABB import SweepPruneSystem
 from lib.constants import ZERO_VEC, Axes, npdarr, npiarr
-from lib.functions import dist_sqr
+from lib.functions import distance
 from lib.Object import Object
 from lib.Particle import Particle, elastic_collision, untangle_spheres
 from tqdm import tqdm
@@ -34,6 +34,7 @@ class Simulation:
         self.max_t: float = max_t
         self.sides = np.array(sides)
         self.boundaries = boundaries
+        self.center = self.sides / 2.0
 
     def __repr__(self) -> str:
         return (
@@ -53,6 +54,23 @@ class Simulation:
                 self.particle_list.append(object)
         except Exception as e:
             print(e)
+
+    def add_objects(self, objects: list[Object]) -> None:
+        for object in objects:
+            self.add_object(object)
+
+    def remove_object(self, object: Object):
+        """
+        Note: exception handling should be implemented
+        """
+        if object in self.objects_list:
+            self.objects_list.remove(object)
+        if object in self.particle_list:
+            self.particle_list.remove(object)
+
+    def remove_objects(self, objects: list[Object]):
+        for object in objects:
+            self.remove_object(object)
 
     def put_particles_on_grid(self, Ns: npiarr, dL: npdarr = ZERO_VEC) -> None:
         lspaces = [
@@ -122,12 +140,9 @@ class Simulation:
             obj_1 = self.sweep_prune_system.AABB_list[id_1].obj
             obj_2 = self.sweep_prune_system.AABB_list[id_2].obj
             if isinstance(obj_1, Particle) and isinstance(obj_2, Particle):
-                if (
-                    d2 := dist_sqr(obj_1.pos, obj_2.pos)
-                    <= (obj_1.rad + obj_2.rad) ** 2
-                ):
-                    if d2 < (obj_1.rad + obj_2.rad) ** 2:
-                        obj_1.pos, obj_2.pos = untangle_spheres(obj_1, obj_2)
+                d = distance(obj_1.pos, obj_2.pos)
+                if d <= (obj_1.rad + obj_2.rad):
+                    obj_1.pos, obj_2.pos = untangle_spheres(obj_1, obj_2)
                     obj_1.vel, obj_2.vel = elastic_collision(obj_1, obj_2)
                     # self.collision_matrix[time, i] = 1
                     # self.collision_matrix[time, j] = 1
