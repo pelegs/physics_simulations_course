@@ -19,12 +19,9 @@ class Object:
         self.color = color
         self.opacity = opacity
 
-    def move_to(self, new_pos: npdarr) -> None:
-        self.translate(new_pos - self.pos)
-
-    def translate(self, dr: npdarr) -> None:
-        self.pos = self.pos + dr
-        self.bbox.translate(dr)
+    def set_pos(self, new_pos: npdarr) -> None:
+        self.pos = new_pos
+        self.bbox.set_pos(new_pos)
 
 
 class MovingObject(Object):
@@ -42,4 +39,4 @@ class MovingObject(Object):
         self.vel: npdarr = vel
 
     def move(self, dt: float):
-        self.translate(self.vel * dt)
+        self.set_pos(self.pos + self.vel * dt)

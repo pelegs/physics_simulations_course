@@ -10,28 +10,30 @@ if __name__ == "__main__":
     L = 500.0
     simulation = Simulation(
         dt=0.05,
-        max_t=500.0,
+        max_t=50.0,
         sides=[L, L, L],
-        boundaries=[Boundary.PERIODIC, Boundary.WALL, Boundary.EMPTY],
+        boundaries=[Boundary.WALL, Boundary.WALL, Boundary.EMPTY],
     )
 
-    p1 = Particle(
-        pos=np.array([250, 250, 0]),
-        vel=np.array([-15, 0, 0]),
-        rad=10,
-        mass=10,
-        color="#00FFAA",
-    )
-    p2 = Particle(
-        pos=np.array([400, 250, 0]),
-        vel=np.array([10, 0, 0]),
-        rad=5,
-        mass=1,
-        color="#FF0000",
-    )
-    simulation.add_object(p1)
-    simulation.add_object(p2)
+    num_paricles: int = 100
+    particles = [
+        Particle(
+            vel=np.append(np.random.uniform(-20, 20, 2), 0),
+            rad=2.5,
+            mass=1,
+        )
+        for _ in range(num_paricles)
+    ]
+    for i, particle in enumerate(particles):
+        simulation.add_object(particle)
+        if i % 5 == 0:
+            particle.rad = 5
+            particle.mass = 20
+            particle.color = "#00FF00"
     simulation.setup_system()
+    simulation.put_particles_on_grid(
+        Ns=np.array([10, 10, 1]), dL=np.array([20.0, 20.0, 0.0])
+    )
 
     # Graphics
     fig, ax = plt.subplots()

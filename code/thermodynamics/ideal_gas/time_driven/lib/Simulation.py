@@ -62,7 +62,7 @@ class Simulation:
         xv, yv, zv = np.meshgrid(*lspaces)
         coordinates = np.column_stack((xv.ravel(), yv.ravel(), zv.ravel()))
         for particle, coordinate in zip(self.particle_list, coordinates):
-            particle.move_to(coordinate)
+            particle.set_pos(coordinate)
 
     def setup_sweep_prune_system(self) -> None:
         self.sweep_prune_system: SweepPruneSystem = SweepPruneSystem(
@@ -104,8 +104,9 @@ class Simulation:
         self, axis: Axes, particle: Particle
     ) -> None:
         if not (0 <= particle.pos[axis] <= self.sides[axis]):
-            new_pos: npdarr = particle.pos[axis] % self.sides[axis]
-            particle.move_to(new_pos)
+            new_pos: npdarr = particle.pos
+            new_pos[axis] = new_pos[axis] % self.sides[axis]
+            particle.set_pos(new_pos)
 
     def resolve_boundries(self) -> None:
         for particle in self.particle_list:

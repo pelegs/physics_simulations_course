@@ -13,12 +13,14 @@ class AABB:
         self.pts: npdarr = pts
         self.center = np.average(self.pts, axis=0).flatten()
         self.sides = np.diff(self.pts, axis=0).flatten()
+        self.diff_sides_center = self.pts - self.center
 
     def set_id(self, id: int) -> None:
         self.id = id
 
-    def translate(self, dr: npdarr) -> None:
-        self.pts = self.pts + dr
+    def set_pos(self, new_pos) -> None:
+        self.center = new_pos
+        self.pts = self.center + self.diff_sides_center
 
     def __str__(self) -> str:
         return f"id: {self.id}, LLF: {self.pts[0]}, URB: {self.pts[1]}"
