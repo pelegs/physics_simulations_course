@@ -35,6 +35,28 @@ class Particle(MovingObject):
         )
 
 
+def untangle_spheres(p1: Particle, p2: Particle) -> npdarr:
+    DX: npdarr = p1.pos - p2.pos
+    DV: npdarr = p1.vel - p2.vel
+    R1: float = p1.rad
+    R2: float = p2.rad
+
+    A: float = np.dot(DV, DV)
+    B: float = 2 * np.dot(DX, DV)
+    C: float = np.dot(DX, DX) - (R1 + R2) ** 2
+
+    DESC = B**2 - 4 * A * C
+    if DESC >= 0.0:
+        t0: float = (-B - np.sqrt(DESC)) / (2 * A)
+        t1: float = (-B + np.sqrt(DESC)) / (2 * A)
+        t_back: float = min(t0, t1)
+        P1 = p1.pos + t_back * p1.vel
+        P2 = p2.pos + t_back * p2.vel
+        return np.array([P1, P2])
+    else:
+        return np.array([p1.pos, p2.pos])
+
+
 def elastic_collision(p1: Particle, p2: Particle) -> npdarr:
     m1: float = p1.mass
     m2: float = p2.mass

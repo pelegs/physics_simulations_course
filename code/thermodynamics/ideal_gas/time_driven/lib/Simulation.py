@@ -2,9 +2,10 @@ from enum import Enum
 
 import numpy as np
 from lib.AABB import SweepPruneSystem
-from lib.constants import Axes, npdarr, npiarr
+from lib.constants import ZERO_VEC, Axes, npdarr, npiarr
+from lib.functions import dist_sqr
 from lib.Object import Object
-from lib.Particle import Particle
+from lib.Particle import Particle, elastic_collision, untangle_spheres
 from tqdm import tqdm
 
 
@@ -52,6 +53,16 @@ class Simulation:
                 self.particle_list.append(object)
         except Exception as e:
             print(e)
+
+    def put_particles_on_grid(self, Ns: npiarr, dL: npdarr = ZERO_VEC) -> None:
+        lspaces = [
+            np.linspace(dL[axis], self.sides[axis] - dL[axis], Ns[axis])
+            for axis in Axes
+        ]
+        xv, yv, zv = np.meshgrid(*lspaces)
+        coordinates = np.column_stack((xv.ravel(), yv.ravel(), zv.ravel()))
+        for particle, coordinate in zip(self.particle_list, coordinates):
+            particle.move_to(coordinate)
 
     def setup_sweep_prune_system(self) -> None:
         self.sweep_prune_system: SweepPruneSystem = SweepPruneSystem(
@@ -105,6 +116,21 @@ class Simulation:
                     case Boundary.PERIODIC:
                         self.resolve_periodic_condition(axis, particle)
 
+    def resolve_collisions(self) -> None:
+        for id_1, id_2 in self.AABBs_overlaps[-1]:
+            obj_1 = self.sweep_prune_system.AABB_list[id_1].obj
+            obj_2 = self.sweep_prune_system.AABB_list[id_2].obj
+            if isinstance(obj_1, Particle) and isinstance(obj_2, Particle):
+                if (
+                    d2 := dist_sqr(obj_1.pos, obj_2.pos)
+                    <= (obj_1.rad + obj_2.rad) ** 2
+                ):
+                    if d2 < (obj_1.rad + obj_2.rad) ** 2:
+                        obj_1.pos, obj_2.pos = untangle_spheres(obj_1, obj_2)
+                    obj_1.vel, obj_2.vel = elastic_collision(obj_1, obj_2)
+                    # self.collision_matrix[time, i] = 1
+                    # self.collision_matrix[time, j] = 1
+
     def update_data_matrices(self) -> None:
         for p_idx, particle in enumerate(self.particle_list):
             self.pos_matrix[self.step, p_idx] = particle.pos
@@ -118,6 +144,7 @@ class Simulation:
             self.advance_particles()
             self.resolve_boundries()
             self.AABBs_overlaps.append(self.sweep_prune_system.calc_overlaps())
+            self.resolve_collisions()
             self.update_data_matrices()
 
     # def save_np(self, filename: str) -> None:

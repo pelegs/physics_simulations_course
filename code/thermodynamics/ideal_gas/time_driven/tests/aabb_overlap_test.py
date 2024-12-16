@@ -1,39 +1,33 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from lib.constants import Axes
 from lib.Particle import Particle
 from lib.Simulation import Boundary, Simulation
 from matplotlib.animation import FuncAnimation
-from matplotlib.patches import Circle
+from matplotlib.patches import Circle, Rectangle
 
 if __name__ == "__main__":
     print("Testing Simulation class")
     L = 500.0
     simulation = Simulation(
         dt=0.05,
-        max_t=50.0,
+        max_t=100.0,
         sides=[L, L, L],
         boundaries=[Boundary.WALL, Boundary.WALL, Boundary.EMPTY],
     )
 
-    num_paricles: int = 100
+    num_paricles: int = 10
     particles = [
         Particle(
+            pos=np.append(np.random.uniform(20, L - 20, 2), 0),
             vel=np.append(np.random.uniform(-20, 20, 2), 0),
-            rad=2.5,
-            mass=1,
+            rad=np.random.randint(10, 20),
         )
         for _ in range(num_paricles)
     ]
-    for i, particle in enumerate(particles):
+    for particle in particles:
         simulation.add_object(particle)
-        if i % 5 == 0:
-            particle.rad = 5
-            particle.mass = 20
-            particle.color = "#00FF00"
     simulation.setup_system()
-    simulation.put_particles_on_grid(
-        Ns=np.array([10, 10, 1]), dL=np.array([20.0, 20.0, 0.0])
-    )
 
     # Graphics
     fig, ax = plt.subplots()
@@ -57,18 +51,43 @@ if __name__ == "__main__":
             simulation.particle_list, simulation.pos_matrix[0]
         )
     ]
-    for circle in circles:
+    rectangles = [
+        Rectangle(
+            obj.bbox.pts[0],
+            obj.bbox.sides[Axes.X],
+            obj.bbox.sides[Axes.Y],
+            lw=2,
+            edgecolor="black",
+            facecolor="none",
+        )
+        for obj in simulation.objects_list
+    ]
+    for circle, rectangle in zip(circles, rectangles):
         ax.add_patch(circle)
+        ax.add_patch(rectangle)
+    labels = [
+        ax.annotate(f"{i}", obj.pos[:2])
+        for i, obj in enumerate(simulation.objects_list)
+    ]
+    overlaps_label = ax.annotate("overlaps: []", (20, 20))
 
     # Create animation
     def update_sphere_animation(frame):
-        for pos, circle in zip(
+        for pos, circle, rectangle, label, particle in zip(
             simulation.pos_matrix[frame],
             circles,
+            rectangles,
+            labels,
+            simulation.particle_list,
         ):
             circle.set_center(pos[:2])
+            rectangle.set_xy(pos[:2] - particle.rad)
+            label.set_position(pos[:2])
         frames_label.set_text(f"frame: {frame:04d}/{simulation.num_steps:04d}")
-        return [frames_label]
+        overlaps_label.set_text(
+            f"overlaps:\n[{simulation.AABBs_overlaps[frame]}]"
+        )
+        return [frames_label, overlaps_label]
 
     # Run simulation and draw graphics
     simulation.run()
