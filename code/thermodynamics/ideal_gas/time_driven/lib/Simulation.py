@@ -163,23 +163,23 @@ class Simulation:
             self.resolve_collisions()
             self.update_data_matrices()
 
-    # def save_np(self, filename: str) -> None:
-    #     radii_data: npdarr = np.array(
-    #         [particle.rad for particle in self.particle_list]
-    #     )
-    #     masses_data: npdarr = np.array(
-    #         [particle.mass for particle in self.particle_list]
-    #     )
-    #     time_data: npdarr = np.array([self.dt, self.max_t])
-    #     np.savez(
-    #         filename,
-    #         time_data=time_data,
-    #         pos=self.pos_matrix,
-    #         vel=self.vel_matrix,
-    #         radii=radii_data,
-    #         masses=masses_data,
-    #         collisions=self.collision_matrix,
-    #     )
+    def save_np(self, filename: str) -> None:
+        masses_data: npdarr = np.array(
+            [particle.mass for particle in self.particle_list]
+        )
+        radii_data: npdarr = np.array(
+            [particle.rad for particle in self.particle_list]
+        )
+        time_data: npdarr = np.array([self.dt, self.max_t])
+        np.savez(
+            filename,
+            time_data=time_data,
+            pos=self.pos_matrix,
+            vel=self.vel_matrix,
+            radii=radii_data,
+            masses=masses_data,
+            # collisions=self.collision_matrix,
+        )
 
 
 if __name__ == "__main__":
