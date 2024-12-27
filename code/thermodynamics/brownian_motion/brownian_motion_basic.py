@@ -1,14 +1,13 @@
+from sys import argv
+
 import matplotlib.pyplot as plt
 import numpy as np
 
 plt.rcParams["text.usetex"] = True
 plt.rcParams["figure.constrained_layout.use"] = True
 
-num_steps = 100
-num_particles = 1000
 
-
-def Brown(num_steps, num_particles):
+def Brown(num_steps, num_particles, show=False, save=False):
     pos = np.zeros((num_steps, num_particles))
     vel = np.random.normal(size=(num_steps - 1, num_particles))
     pos[1:, :] = np.cumsum(vel, axis=0)
@@ -25,7 +24,8 @@ def Brown(num_steps, num_particles):
     plt.subplots_adjust(wspace=1)
 
     fig.suptitle(
-        rf"Simulated Brownian motion, {num_particles} particles, $\mu=0$ and $\sigma=1$",
+        rf"""Simulated Brownian motion, {num_particles} particles and {num_steps} steps.
+$\mu=0$ and $\sigma=1$""",
         fontsize=35,
     )
 
@@ -46,10 +46,19 @@ def Brown(num_steps, num_particles):
     ax[1].fill_between(time, MSD - STD, MSD + STD, color="#00AAFF", alpha=0.25)
     ax[1].plot(time, MSD, lw=2)
 
-    plt.savefig(f"figs/{num_particles}_particles.png", dpi=300)
+    if show:
+        plt.show()
 
-    # plt.show()
+    if save:
+        plt.savefig(
+            f"figs/{num_particles}_particles_{num_steps}_steps.png", dpi=300
+        )
 
 
-for n in [100, 500, 1000, 5000, 10000, 50000, 100000]:
-    Brown(100, n)
+if __name__ == "__main__":
+    Brown(
+        num_steps=int(argv[1]),
+        num_particles=int(argv[2]),
+        show=bool(int(argv[3])),
+        save=bool(int(argv[4])),
+    )
