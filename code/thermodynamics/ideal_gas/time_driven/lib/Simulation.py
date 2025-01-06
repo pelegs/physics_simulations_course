@@ -112,7 +112,7 @@ class Simulation:
         for particle in self.particle_list:
             particle.move(self.dt)
 
-    def resolve_wall_bounce(self, axis: Axes, particle: Particle) -> None:
+    def resolve_boundry_bounce(self, axis: Axes, particle: Particle) -> None:
         if (particle.pos[axis] - particle.rad <= 0) or (
             particle.pos[axis] + particle.rad >= self.sides[axis]
         ):
@@ -131,7 +131,7 @@ class Simulation:
             for axis in Axes:
                 match self.boundaries[axis]:
                     case Boundary.WALL:
-                        self.resolve_wall_bounce(axis, particle)
+                        self.resolve_boundry_bounce(axis, particle)
                     case Boundary.PERIODIC:
                         self.resolve_periodic_condition(axis, particle)
 
